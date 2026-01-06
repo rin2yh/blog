@@ -1,0 +1,8 @@
+baseURL = 'https://rin2yh.github.io/blog/'
+languageCode = 'ja'
+title = 'りんりんのメモ帳'
+theme = 'stack'
+
+# Set hasCJKLanguage to true if DefaultContentLanguage is in [zh-cn ja ko]
+# This will make .Summary and .WordCount behave correctly for CJK languages.
+hasCJKLanguage = true
