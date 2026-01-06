@@ -1,6 +1,6 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = 'https://rin2yh.github.io/blog/'
+languageCode = 'ja-jp'
+title = 'りんりんのメモ帳'
 theme = 'ananke'
 
 [caches]
