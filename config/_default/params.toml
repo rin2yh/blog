@@ -13,5 +13,5 @@ lastUpdated = "2006/01/02 15:04 JST"
 
 [sidebar.avatar]
 enabled = true
-local = false
+local = true
 src = "image/avatar.webp"
