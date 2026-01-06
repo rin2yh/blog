@@ -1,7 +1,7 @@
 baseURL = 'https://rin2yh.github.io/blog/'
 languageCode = 'ja'
 title = 'りんりんのメモ帳'
-theme = 'ananke'
+theme = 'stack'
 
 [caches]
   [caches.images]
