@@ -1,0 +1,17 @@
+# Pages placed under these sections will be shown on homepage and archive page.
+mainSections = ["post"]
+rssFullContent = true
+# favicon = "/favicon.png"
+
+[footer]
+since = 2026
+customText = ""
+
+[dateFormat]
+published = 2006/01/02
+lastUpdated = 2006/01/02 15:04 JST
+
+[sidebar.avatar]
+enabled = true
+local = true
+src = "static/image/avatar.webp"

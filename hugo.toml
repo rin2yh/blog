@@ -1,8 +1,0 @@
-baseURL = 'https://rin2yh.github.io/blog/'
-languageCode = 'ja'
-title = 'りんりんのメモ帳'
-theme = 'stack'
-
-[caches]
-  [caches.images]
-    dir = ':cacheDir/images'
