@@ -1,11 +1,34 @@
 +++
 date = '2026-01-06T09:44:05+09:00'
-draft = true
-title = 'My First Post'
+draft = false
+title = 'Hugoでブログ作ってみた。'
+categories = ['個人ブログ']
+tags = ['Hugo']
 +++
 
-## Introduction
 
-This is **bold** text, and this is *emphasized* text.
+## 動機
+パブリックな記事を書きたいわけではないが、雑記やメモを残すとかやっていきたかったことがモチベーション。
+インターネッツの黎明期で色んな作家さんや同人サークルが
+ブログ作っていて、そういった時代のクリエイターさんたちが大好きなのもある。
+あと、なんかかっこいいよね、個人ブログ。
 
-Visit the [Hugo](https://gohugo.io) website!
+## 作り方
+せっかくなので、Hugoでブログを作ってみた。公式ドキュメントが充実していて、GitHub Actionsまで完備していたおかげでデプロイ自体はすぐに終わった。ほぼやることない。
+
+https://gohugo.io/
+
+デプロイ先はお金かけるものでもなし、そこまで大きなブログにならないのでGitHub Pages。テーマはStackを選んだ。
+
+https://themes.gohugo.io/themes/hugo-theme-stack/
+
+
+サクッとできた一方で、テーマの使い方はしっかり読み込まないと分からないことがあったり、tomlの記法に慣れていないのでやらかしたりする。
+
+## 今後
+当面は運用しつつ、テーマを調整する感じだと思う。
+次は自己紹介的な部分を作りたい。
+
+個人的な要望としてはタグが記事の詳細で表示されると嬉しいが、一旦は最低限必要なものを作ろうと思う。
+タスクはGitHub Projectsで管理していく。
+https://github.com/users/rin2yh/projects/5
