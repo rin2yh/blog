@@ -3,7 +3,7 @@ date = '2024-02-29T20:46:00+09:00'
 draft = false
 title = 'Flutter Crashlytics導入ログ'
 categories = []
-tags = ["メモ"]
+tags = ["Flutter", "Firebase"]
 +++
 
 ガイドに従い、実行していく
