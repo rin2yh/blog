@@ -6,17 +6,9 @@ url = '/'
 [main.params]
 icon = 'home'
 
-[[main]]
-identifier = 'post'
-name = 'Post'
-weight = 2
-url = '/post'
-[main.params]
-icon = 'article'
+# content/page/search/index.md w=2
 
-# content/page/search/index.md w=3
-
-# content/page/archives/index.md w=5
+# content/page/archives/index.md w=3
 
 [[social]]
 identifier = "github"
