@@ -1,0 +1,17 @@
+[tools]
+go = "latest"
+
+[tasks.setup]
+description = 'Hugoをインストールする'
+run = 'go install github.com/gohugoio/hugo@latest'
+
+[tasks.post]
+description = 'Hugoで新しい記事を作成する'
+usage = '''
+arg "<file>" help="post name" default="all"
+'''
+run = 'hugo new post/${usage_file?}.md'
+
+[tasks.serve]
+description = 'Hugoでサーバを起動する'
+run = 'hugo server'
