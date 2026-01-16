@@ -1,0 +1,2 @@
+post = '/post/:slug/'
+memo = '/memo/:slug/'
