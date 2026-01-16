@@ -15,3 +15,9 @@ lastUpdated = "2006/01/02 15:04 JST"
 enabled = true
 local = true
 src = "image/avatar.webp"
+
+## Widgets
+[[widgets.homepage]]
+type = "search"
+[[widgets.homepage]]
+type = 'archives'

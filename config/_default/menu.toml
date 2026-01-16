@@ -1,7 +1,7 @@
 [[main]]
 identifier = 'home'
 name = 'Home'
-weight = -10
+weight = 1
 url = '/'
 [main.params]
 icon = 'home'
@@ -9,18 +9,14 @@ icon = 'home'
 [[main]]
 identifier = 'post'
 name = 'Post'
-weight = 10
+weight = 2
 url = '/post'
 [main.params]
 icon = 'article'
 
-[[main]]
-identifier = 'memo'
-name = 'Memo'
-weight = 20
-url = '/memo'
-[main.params]
-icon = 'git-pull-request-draft'
+# content/page/search/index.md w=3
+
+# content/page/archives/index.md w=5
 
 [[social]]
 identifier = "github"
