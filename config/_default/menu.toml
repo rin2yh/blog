@@ -24,3 +24,15 @@ url = "https://x.com/rin2yh"
 
 [social.params]
 icon = "brand-twitter"
+
+[[social]]
+identifier = "qiita"
+name = "Qiita"
+url = "https://qiita.com/yuuki-h"
+
+[[social]]
+identifier = "zenn"
+name = "Zenn"
+url = "https://zenn.dev/rinrin_yuuki"
+[social.params]
+icon = "zenn-logo"
