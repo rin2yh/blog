@@ -31,3 +31,11 @@ type = "tag-cloud"
 limit = 10
 [[widgets.page]]
 type = "toc"
+
+[opengraph.twitter]
+site = "rin2yh"
+card = "summary_large_image"
+
+[defaultImage.opengraph]
+enabled = true
+src = "image/avatar.webp"
