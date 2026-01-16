@@ -39,3 +39,12 @@ card = "summary_large_image"
 [defaultImage.opengraph]
 enabled = true
 src = "image/avatar.webp"
+
+## Google Analytics
+[services]
+[services.googleAnalytics]
+id = 'G-M2XSPTPQFB'
+[privacy]
+[privacy.googleAnalytics]
+disable = false
+respectDoNotTrack = true
