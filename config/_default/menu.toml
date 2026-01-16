@@ -1,0 +1,38 @@
+[[main]]
+identifier = 'home'
+name = 'Home'
+weight = -10
+url = '/'
+[main.params]
+icon = 'home'
+
+[[main]]
+identifier = 'post'
+name = 'Post'
+weight = 10
+url = '/post'
+[main.params]
+icon = 'article'
+
+[[main]]
+identifier = 'memo'
+name = 'Memo'
+weight = 20
+url = '/memo'
+[main.params]
+icon = 'git-pull-request-draft'
+
+[[social]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/rin2yh"
+[social.params]
+icon = 'brand-github'
+
+[[social]]
+identifier = "twitter"
+name = "Twitter"
+url = "https://x.com/rin2yh"
+
+[social.params]
+icon = "brand-twitter"
