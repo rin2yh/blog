@@ -5,7 +5,9 @@
         <a href="{{ .Site.Params.donate.link }}" target="_blank" rel="noopener noreferrer">
             {{ .Site.Params.donate.text }}
         </a>
-        <span>（宛先: {{ $.Site.Params.donate.email }}）</span>
+        <button class="donate-email"
+            onclick="const email='{{ $.Site.Params.donate.email }}'; navigator.clipboard.writeText(email).then(()=>{alert('メールアドレスをコピーしました')}).catch(()=>{alert('コピーに失敗しました')});"
+        >（宛先: {{ $.Site.Params.donate.email }}）</button>
     </section>
     {{ end }}
 
