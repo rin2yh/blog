@@ -66,6 +66,20 @@
                 }
             }
 
+            .article-donate {
+                .donate-email {
+                    background: none;
+                    border: none;
+                    color: var(--card-text-color-tertiary);
+                    cursor: pointer;
+                    font-size: 1.2rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    padding: 0;
+                }
+            }
+
             .article-tags {
                 text-transform: unset;
             }
