@@ -5,7 +5,7 @@
         <div>Amazonギフトカードで投げ銭できます。応援よろしくお願いします！</div>
         <ol>
             <li>
-                <button class="donate-email"
+                <a class="donate-email"
                     onclick="const email='{{ $.Site.Params.donate.email }}'; navigator.clipboard.writeText(email).then(()=>{alert('メールアドレスをコピーしました')}).catch(()=>{alert('コピーに失敗しました')});"
                 >
                 {{ partial "helper/icon" "clipboard" }}
