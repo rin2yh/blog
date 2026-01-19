@@ -42,6 +42,5 @@ src = "image/avatar.webp"
 
 [donate]
 enabled = true
-text = "宛先をコピーして、Amazonギフトで投げ銭する"
 link = "https://www.amazon.co.jp/Amazon-eGift-Card-Amazon-Logo-Classic-Animated/dp/B004N3APGO/?th=1&gpo=1000"
 email = "dev.rin2yh@gmail.com"

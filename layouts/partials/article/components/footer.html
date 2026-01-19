@@ -1,16 +1,23 @@
 <footer class="article-footer">
     {{ if .Site.Params.donate.enabled }}
     <section class="article-donate">
-        {{ partial "helper/icon" "donate-heart" }}
-        <a href="{{ .Site.Params.donate.link }}" target="_blank" rel="noopener noreferrer">
-            {{ .Site.Params.donate.text }}
-        </a>
-        <button class="donate-email"
-            onclick="const email='{{ $.Site.Params.donate.email }}'; navigator.clipboard.writeText(email).then(()=>{alert('メールアドレスをコピーしました')}).catch(()=>{alert('コピーに失敗しました')});"
-        >
-        {{ partial "helper/icon" "clipboard" }}
-        <span>（宛先: {{ $.Site.Params.donate.email }}）</span>
-        </button>
+        <h3>{{ partial "helper/icon" "donate-heart" }} 投げ銭</h3>
+        <p>Amazonギフトカードで投げ銭できます。応援よろしくお願いします！</p>
+        <ol>
+            <li>
+                <button class="donate-email"
+                    onclick="const email='{{ $.Site.Params.donate.email }}'; navigator.clipboard.writeText(email).then(()=>{alert('メールアドレスをコピーしました')}).catch(()=>{alert('コピーに失敗しました')});"
+                >
+                {{ partial "helper/icon" "clipboard" }}
+                <span>宛先: {{ $.Site.Params.donate.email }}をクリックしてコピー</span>
+                </button>
+            </li>
+            <li>
+                <a href="{{ .Site.Params.donate.link }}" target="_blank" rel="noopener noreferrer">
+                    Amazonギフト券の画面でメールアドレスと金額、贈り主を入力（メッセージもあると嬉しいです！）
+                </a>
+            </li>
+        </ol>
     </section>
     {{ end }}
 
