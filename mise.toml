@@ -3,7 +3,7 @@ go = "latest"
 
 [tasks.setup]
 description = 'Hugoをインストールする'
-run = 'go install github.com/gohugoio/hugo@latest'
+run = 'CGO_ENABLED=1 go install -tags extended github.com/gohugoio/hugo@latest'
 
 [tasks.post]
 description = 'Hugoで新しい記事を作成する'
