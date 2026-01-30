@@ -6,9 +6,10 @@ url = '/'
 [main.params]
 icon = 'home'
 
-# content/page/search/index.md w=2
 
-# content/page/archives/index.md w=3
+# content/page/about/index.md w=2
+# content/page/search/index.md w=3
+# content/page/archives/index.md w=4
 
 [[social]]
 identifier = "github"
