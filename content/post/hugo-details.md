@@ -1,6 +1,6 @@
 +++
 date = '2026-02-01T18:40:22+09:00'
-draft = false
+draft = true
 title = 'Hugoでdetailsタグを使う方法'
 categories = ["個人ブログ"]
 tags = ["Hugo"]
