@@ -14,4 +14,4 @@ hasCJKLanguage = true
     endLevel = 3
 
 [permalinks]
-post = '/post/:filename/'
+post = '/post/:contentbasename/'

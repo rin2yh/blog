@@ -1,2 +1,2 @@
-post = '/post/:filename/'
-memo = '/memo/:filename/'
+post = '/post/:contentbasename/'
+memo = '/memo/:contentbasename/'
