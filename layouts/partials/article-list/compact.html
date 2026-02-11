@@ -9,6 +9,27 @@
     {{ end }}
     <a href="{{ $url }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
         <div class="article-details">
+            {{ if or .Params.categories .Params.tags }}
+            <header class="article-category-tags">
+                {{ if .Params.categories }}
+                <div class="article-category">
+                    {{ range (.GetTerms "categories") }}
+                        <span {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
+                            {{ .LinkTitle }}
+                        </span>
+                    {{ end }}
+                </div>
+                {{ end }}
+                {{ if .Params.tags }}
+                <div class="article-tags">
+                    {{ range (.GetTerms "tags") }}
+                        <span>{{ .LinkTitle }}</span>
+                    {{ end }}
+                </div>
+                {{ end }}
+            </header>
+            {{ end }}
+
             <h2 class="article-title">
                 {{ if .Params.externalUrl }}{{ partial "helper/icon" "link" }}{{ end }}{{- .Title -}}
             </h2>

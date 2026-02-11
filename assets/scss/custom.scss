@@ -32,6 +32,27 @@
     }
 }
 
+/* compact list内のカテゴリ・タグ（spanタグ用） */
+.article-list--compact {
+    .article-category-tags {
+        .article-category span {
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            border-radius: var(--tag-border-radius);
+            background-color: var(--accent-color);
+            color: var(--accent-color-text);
+        }
+
+        .article-tags span {
+            font-size: 1.1rem;
+            padding: 4px 8px;
+            background-color: var(--card-text-color-tertiary);
+            color: var(--card-background);
+            border-radius: var(--tag-border-radius);
+        }
+    }
+}
+
 /* Twitter Share Widget */
 .widget.twitter-share {
     .twitter-share-button {
