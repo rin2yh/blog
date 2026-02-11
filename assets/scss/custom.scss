@@ -5,6 +5,17 @@
     color: inherit;
 }
 
+/* External link icon alignment */
+.article-title a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
 /* Twitter Share Widget */
 .widget.twitter-share {
     .twitter-share-button {

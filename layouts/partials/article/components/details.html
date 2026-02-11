@@ -21,8 +21,16 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="{{ .RelPermalink }}">
-                {{- .Title -}}
+            {{ $url := .RelPermalink }}
+            {{ $target := "" }}
+            {{ $rel := "" }}
+            {{ if .Params.externalUrl }}
+              {{ $url = .Params.externalUrl }}
+              {{ $target = "_blank" }}
+              {{ $rel = "noopener" }}
+            {{ end }}
+            <a href="{{ $url }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
+                {{ if .Params.externalUrl }}{{ partial "helper/icon" "link" }}{{ end }}{{- .Title -}}
             </a>
         </h2>
 
