@@ -1,23 +1,27 @@
 <footer class="article-footer">
     {{ if .Site.Params.donate.enabled }}
     <section class="article-donate">
-        <h3 style="display:flex;align-items: center;">{{ partial "helper/icon" "donate-heart" }} 投げ銭</h3>
-        <div>Amazonギフトカードで投げ銭できます。応援よろしくお願いします！</div>
-        <ol>
-            <li>
-                <a class="donate-email"
-                    onclick="const email='{{ $.Site.Params.donate.email }}'; navigator.clipboard.writeText(email).then(()=>{alert('メールアドレスをコピーしました')}).catch(()=>{alert('コピーに失敗しました')});"
-                >
-                {{ partial "helper/icon" "clipboard" }}
-                <span>宛先: {{ $.Site.Params.donate.email }}をクリックしてコピー</span>
-                </button>
-            </li>
-            <li>
-                <a href="{{ .Site.Params.donate.link }}" target="_blank" rel="noopener noreferrer">
-                    Amazonギフト券の画面でメールアドレスと金額、贈り主を入力（メッセージもあると嬉しいです！）
-                </a>
-            </li>
-        </ol>
+        <div class="donate-card">
+            <h3 class="donate-title">
+                {{ partial "helper/icon" "donate-heart" }}
+                <span>投げ銭</span>
+            </h3>
+            <p class="donate-description">Amazonギフトカードで投げ銭できます。応援よろしくお願いします！</p>
+            <ol class="donate-steps">
+                <li>
+                    <button type="button" class="donate-email-button"
+                        onclick="const email='{{ $.Site.Params.donate.email }}'; navigator.clipboard.writeText(email).then(()=>{alert('メールアドレスをコピーしました')}).catch(()=>{alert('コピーに失敗しました')});">
+                        {{ partial "helper/icon" "clipboard" }}
+                        <span>宛先: {{ $.Site.Params.donate.email }} をクリックしてコピー</span>
+                    </button>
+                </li>
+                <li>
+                    <a href="{{ .Site.Params.donate.link }}" target="_blank" rel="noopener noreferrer" class="donate-link">
+                        Amazonギフト券の画面でメールアドレスと金額、贈り主を入力（メッセージもあると嬉しいです！）
+                    </a>
+                </li>
+            </ol>
+        </div>
     </section>
     {{ end }}
 

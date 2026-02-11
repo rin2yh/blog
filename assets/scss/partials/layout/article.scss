@@ -67,30 +67,123 @@
             }
 
             .article-donate {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
+                max-width: 480px;
 
-                .donate-email {
+                .donate-card {
+                    background-color: var(--card-background);
+                    border-radius: var(--card-border-radius);
+                    box-shadow: var(--shadow-l1);
+                    padding: var(--card-padding);
+                    color: var(--card-text-color-main);
+                }
+
+                .donate-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin: 0 0 12px 0;
+                    font-size: 1.6rem;
+                    font-weight: 600;
+                    color: var(--card-text-color-main);
+
+                    svg {
+                        width: 24px;
+                        height: 24px;
+                        flex-shrink: 0;
+                    }
+                }
+
+                .donate-description {
+                    margin: 0 0 16px 0;
+                    font-size: 1.4rem;
+                    color: var(--card-text-color-secondary);
+                    line-height: 1.6;
+                }
+
+                .donate-steps {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+                    counter-reset: donate-step;
+
+                    li {
+                        position: relative;
+                        padding-left: 32px;
+                        margin-bottom: 12px;
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+
+                        &::before {
+                            counter-increment: donate-step;
+                            content: counter(donate-step);
+                            position: absolute;
+                            left: 0;
+                            top: 2px;
+                            width: 22px;
+                            height: 22px;
+                            background-color: var(--accent-color);
+                            color: var(--accent-color-text);
+                            border-radius: 50%;
+                            font-size: 1.2rem;
+                            font-weight: 600;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                    }
+                }
+
+                .donate-email-button {
                     background: transparent;
-                    border: 1px solid transparent;
+                    border: 1px solid var(--card-separator-color);
+                    border-radius: var(--tag-border-radius);
+                    padding: 8px 12px;
                     cursor: pointer;
                     display: inline-flex;
                     align-items: center;
-                    gap: 5px;
-                    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease, transform .06s ease;
+                    gap: 6px;
+                    font-size: 1.4rem;
+                    color: var(--card-text-color-main);
+                    font-family: inherit;
+                    line-height: 1.4;
+                    text-align: left;
+                    transition: background-color 0.15s ease,
+                                border-color 0.15s ease,
+                                box-shadow 0.15s ease,
+                                transform 0.08s ease;
+
+                    svg {
+                        width: 18px;
+                        height: 18px;
+                        flex-shrink: 0;
+                        color: var(--accent-color);
+                    }
 
                     &:hover,
-                    &:focus,
-                    &:focus-visible {
-                        background-color: rgba(0, 0, 0, 0.04);
-                        border-color: rgba(0, 0, 0, 0.08);
-                        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-                        color: var(--body-text-color);
+                    &:focus {
+                        background-color: var(--card-background-selected);
+                        border-color: var(--accent-color);
+                        box-shadow: var(--shadow-l1);
                         outline: none;
                     }
+
                     &:active {
                         transform: translateY(1px);
+                        box-shadow: none;
+                    }
+                }
+
+                .donate-link {
+                    font-size: 1.4rem;
+                    color: var(--card-text-color-secondary);
+                    text-decoration: none;
+                    line-height: 1.5;
+
+                    &:hover {
+                        color: var(--accent-color);
+                        text-decoration: underline;
                     }
                 }
             }
