@@ -7,7 +7,11 @@ run = 'CGO_ENABLED=1 go install -tags extended github.com/gohugoio/hugo@latest'
 
 [tasks.post]
 description = 'タイトル-ランダムslugで新しい記事を作成する'
-run = 'go run ./cmd/post'
+run = 'go run ./cmd/post {{ arg(i=0) }}'
+
+[tasks.external]
+description = '外部記事用のテンプレートで新しい記事を作成する'
+run = 'go run ./cmd/post {{ arg(i=0) }} external'
 
 [tasks.serve]
 description = 'Hugoでサーバを起動する'

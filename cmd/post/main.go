@@ -13,6 +13,15 @@ const (
 	contentDir = "content/post"
 )
 
+func buildHugoArgs(title, kind string) []string {
+	args := []string{"new"}
+	if kind != "" {
+		args = append(args, "--kind", kind)
+	}
+	args = append(args, fmt.Sprintf("post/%s/index.md", title))
+	return args
+}
+
 func generateSlug() (string, error) {
 	b := make([]byte, slugLength)
 	if _, err := rand.Read(b); err != nil {
@@ -26,19 +35,26 @@ func generateSlug() (string, error) {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: go run ./cmd/post <title>")
+		fmt.Fprintln(os.Stderr, "Usage: go run ./cmd/post <title> [kind]")
 		fmt.Fprintln(os.Stderr, "  title: 記事タイトル（英数字ハイフン、例: my-new-post）")
+		fmt.Fprintln(os.Stderr, "  kind:  アーキタイプ（省略可、例: external）")
 		os.Exit(1)
 	}
 
 	title := os.Args[1]
+	kind := ""
+	if len(os.Args) >= 3 {
+		kind = os.Args[2]
+	}
+
 	slug, err := generateSlug()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error generating slug: %v\n", err)
 		os.Exit(1)
 	}
 
-	cmd := exec.Command("hugo", "new", fmt.Sprintf("post/%s/index.md", title))
+	args := buildHugoArgs(title, kind)
+	cmd := exec.Command("hugo", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
