@@ -1,8 +1,6 @@
 # Pages placed under these sections will be shown on homepage and archive page.
 mainSections = ["post"]
 rssFullContent = true
-# favicon = "/favicon.png"
-
 [footer]
 since = 2026
 customText = ""
