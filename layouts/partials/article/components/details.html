@@ -1,18 +1,8 @@
 <div class="article-details">
     {{ if .Params.categories }}
     <header class="article-category">
-        {{- $palette := slice
-            "#8ea885" "#df7988" "#0177b8" "#ffb900" "#6b69d6"
-            "#e85d75" "#2aa198" "#d68e09" "#8959a8" "#3d85c6"
-        -}}
         {{ range (.GetTerms "categories") }}
-            {{- $hash := md5 .LinkTitle -}}
-            {{- $hexChar := substr $hash 0 1 -}}
-            {{- $hexMap := dict "0" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 "7" 7 "8" 8 "9" 9 "a" 10 "b" 11 "c" 12 "d" 13 "e" 14 "f" 15 -}}
-            {{- $num := index $hexMap $hexChar -}}
-            {{- $idx := mod $num (len $palette) -}}
-            {{- $bg := index $palette $idx -}}
-            <a href="{{ .RelPermalink }}" style="background-color: {{ $bg }}; color: #fff;">
+            <a href="{{ .RelPermalink }}" {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
                 {{ .LinkTitle }}
             </a>
         {{ end }}
