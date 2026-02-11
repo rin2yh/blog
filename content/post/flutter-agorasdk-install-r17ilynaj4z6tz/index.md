@@ -2,9 +2,8 @@
 date = '2023-09-11T21:20:13+09:00'
 draft = false
 title = 'Flutter Agora SDKの導入方法'
-categories = ['external']
-tags = []
-externalUrl = ''
+categories = ['tech']
+tags = ['Flutter', 'Agora SDK']
 +++
 
 
