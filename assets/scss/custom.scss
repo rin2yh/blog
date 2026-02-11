@@ -4,3 +4,29 @@
     background: none;
     color: inherit;
 }
+
+/* Twitter Share Widget */
+.widget.twitter-share {
+    .twitter-share-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        color: var(--card-text-color-main);
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        &:hover {
+            background-color: #1DA1F2;
+            color: #fff;
+        }
+    }
+}

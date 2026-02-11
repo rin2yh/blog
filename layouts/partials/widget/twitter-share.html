@@ -1,0 +1,17 @@
+{{ if .Context.IsPage }}
+{{- $title := .Context.Title -}}
+{{- $url := .Context.Permalink -}}
+{{- $text := printf "%s\n%s" $title $url | urlquery -}}
+{{- $twitterUrl := printf "https://twitter.com/intent/tweet?text=%s" $text -}}
+
+<section class="widget twitter-share">
+    <h2 class="widget-title section-title">共有</h2>
+
+    <a href="{{ $twitterUrl }}"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="twitter-share-button">
+        {{ partial "helper/icon" "brand-twitter" }}
+    </a>
+</section>
+{{ end }}
