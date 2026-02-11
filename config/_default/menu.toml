@@ -15,14 +15,23 @@ icon = 'home'
 identifier = "github"
 name = "GitHub"
 url = "https://github.com/rin2yh"
+weight = 1
 [social.params]
 icon = 'brand-github'
+
+[[social]]
+identifier = "rss"
+name = "RSS"
+url = "/index.xml"
+weight = 2
+[social.params]
+icon = "rss"
 
 [[social]]
 identifier = "twitter"
 name = "Twitter"
 url = "https://x.com/rin2yh"
-
+weight = 3
 [social.params]
 icon = "brand-twitter"
 
@@ -30,10 +39,12 @@ icon = "brand-twitter"
 identifier = "qiita"
 name = "Qiita"
 url = "https://qiita.com/yuuki-h"
+weight = 4
 
 [[social]]
 identifier = "zenn"
 name = "Zenn"
 url = "https://zenn.dev/rinrin_yuuki"
+weight = 5
 [social.params]
 icon = "zenn-logo"
