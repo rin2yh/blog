@@ -7,5 +7,11 @@ theme = 'stack'
 # This will make .Summary and .WordCount behave correctly for CJK languages.
 hasCJKLanguage = true
 
+[markup]
+  [markup.tableOfContents]
+    ordered = true
+    startLevel = 2
+    endLevel = 3
+
 [permalinks]
 post = '/post/:filename/'
