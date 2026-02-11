@@ -1,16 +1,13 @@
 [tools]
-go = "latest"
+go = "1.25.6"
 
 [tasks.setup]
 description = 'Hugoをインストールする'
 run = 'CGO_ENABLED=1 go install -tags extended github.com/gohugoio/hugo@latest'
 
 [tasks.post]
-description = 'Hugoで新しい記事を作成する'
-usage = '''
-arg "<file>" help="post name" default="all"
-'''
-run = 'hugo new post/${usage_file?}.md'
+description = 'タイトル-ランダムslugで新しい記事を作成する'
+run = 'go run ./cmd/post'
 
 [tasks.serve]
 description = 'Hugoでサーバを起動する'
