@@ -2,8 +2,8 @@
 date = '2026-01-06T09:44:05+09:00'
 draft = false
 title = 'Hugoでブログ作ってみた。'
-categories = ['個人ブログ']
-tags = ['Hugo']
+categories = ['tech']
+tags = ['Hugo', 'blog']
 +++
 
 

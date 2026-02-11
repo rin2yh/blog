@@ -2,8 +2,8 @@
 date = '2024-02-27T20:07:07+09:00'
 draft = false
 title = 'gh CLIの学習めも'
-categories = []
-tags = ["GitHub", "CLI", "メモ"]
+categories = ['tech']
+tags = ["GitHub", "CLI", "note"]
 +++
 
 ## ざっくり所感

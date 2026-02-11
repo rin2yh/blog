@@ -2,8 +2,8 @@
 date = '2026-01-07T20:22:39+09:00'
 draft = false
 title = 'Colab Conference 2025/12/13に行ってきた！'
-categories = ['カンファレンス']
-tags = ['メモ']
+categories = ['idea']
+tags = ['conference', 'note']
 +++
 
 ↓に行ってきた時のメモ。

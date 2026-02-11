@@ -2,7 +2,7 @@
 date = '2026-01-22T23:29:28+09:00'
 draft = false
 title = 'Neovimの環境構築で気づいたこと'
-categories = ["開発環境"]
+categories = ['tech']
 tags = ["Neovim", "dotfiles"]
 +++
 

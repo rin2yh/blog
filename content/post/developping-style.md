@@ -2,7 +2,7 @@
 date = '2026-01-17T23:07:49+09:00'
 draft = false
 title = '開発環境の変遷 2025'
-categories = ["開発環境"]
+categories = ["tech"]
 tags = []
 +++
 
