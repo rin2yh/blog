@@ -19,9 +19,9 @@ tags = ["Hugo"]
 以下のように記載することで、detailsタグを利用できます。
 
 ```md
-{{< details summary="See the details" >}}
+{{</* details summary="See the details" */>}}
 This is a **bold** word.
-{{< /details >}}
+{{</* /details */>}}
 ```
 
 例
