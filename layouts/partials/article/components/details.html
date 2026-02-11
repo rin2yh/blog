@@ -1,0 +1,71 @@
+<div class="article-details">
+    {{ if .Params.categories }}
+    <header class="article-category">
+        {{- $palette := slice
+            "#8ea885" "#df7988" "#0177b8" "#ffb900" "#6b69d6"
+            "#e85d75" "#2aa198" "#d68e09" "#8959a8" "#3d85c6"
+        -}}
+        {{ range (.GetTerms "categories") }}
+            {{- $hash := md5 .LinkTitle -}}
+            {{- $hexChar := substr $hash 0 1 -}}
+            {{- $hexMap := dict "0" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 "7" 7 "8" 8 "9" 9 "a" 10 "b" 11 "c" 12 "d" 13 "e" 14 "f" 15 -}}
+            {{- $num := index $hexMap $hexChar -}}
+            {{- $idx := mod $num (len $palette) -}}
+            {{- $bg := index $palette $idx -}}
+            <a href="{{ .RelPermalink }}" style="background-color: {{ $bg }}; color: #fff;">
+                {{ .LinkTitle }}
+            </a>
+        {{ end }}
+    </header>
+    {{ end }}
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="{{ .RelPermalink }}">
+                {{- .Title -}}
+            </a>
+        </h2>
+
+        {{ with .Params.description }}
+        <h3 class="article-subtitle">
+            {{ . }}
+        </h3>
+        {{ end }}
+    </div>
+
+    {{ $showReadingTime := .Params.readingTime | default (.Site.Params.article.readingTime) }}
+    {{ $showDate := not .Date.IsZero }}
+    {{ $showFooter := or $showDate $showReadingTime }}
+    {{ if $showFooter }}
+    <footer class="article-time">
+        {{ if $showDate }}
+            <div>
+                {{ partial "helper/icon" "date" }}
+                <time class="article-time--published" datetime='{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}'>
+                    {{- .Date | time.Format (or .Site.Params.dateFormat.published "Jan 02, 2006") -}}
+                </time>
+            </div>
+        {{ end }}
+
+        {{ if $showReadingTime }}
+            <div>
+                {{ partial "helper/icon" "clock" }}
+                <time class="article-time--reading">
+                    {{ T "article.readingTime" .ReadingTime }}
+                </time>
+            </div>
+        {{ end }}
+    </footer>
+    {{ end }}
+
+    {{ if .IsTranslated }}
+        <footer class="article-translations">
+            {{ partial "helper/icon" "language" }}
+            <div>
+                {{ range .Translations }}
+                    <a href="{{ .Permalink }}" class="link">{{ .Language.LanguageName }}</a>
+                {{ end }}
+            </div>
+        </footer>
+    {{ end }}
+</div>

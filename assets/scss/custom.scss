@@ -1,0 +1,6 @@
+/* カテゴリの色はテンプレート側でハッシュベースに割り当てるため、
+   位置ベース(nth-child)の色指定を無効化する */
+.article-list article .article-category a {
+    background: none;
+    color: inherit;
+}
