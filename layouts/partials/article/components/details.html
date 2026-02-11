@@ -1,10 +1,21 @@
 <div class="article-details">
-    {{ if .Params.categories }}
-    <header class="article-category">
-        {{ range (.GetTerms "categories") }}
-            <a href="{{ .RelPermalink }}" {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
-                {{ .LinkTitle }}
-            </a>
+    {{ if or .Params.categories .Params.tags }}
+    <header class="article-category-tags">
+        {{ if .Params.categories }}
+        <div class="article-category">
+            {{ range (.GetTerms "categories") }}
+                <a href="{{ .RelPermalink }}" {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
+                    {{ .LinkTitle }}
+                </a>
+            {{ end }}
+        </div>
+        {{ end }}
+        {{ if .Params.tags }}
+        <div class="article-tags">
+            {{ range (.GetTerms "tags") }}
+                <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+            {{ end }}
+        </div>
         {{ end }}
     </header>
     {{ end }}
