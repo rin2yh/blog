@@ -4,7 +4,7 @@ draft = false
 title = 'GitHub Projectsでタスク管理してみる'
 slug = 'github-projects-task-management'
 categories = ['tech']
-tags = ['GitHub Actions', 'GitHub Projects', 'iOS Shortcuts', 'Task Management']
+tags = ['GitHub Actions', 'GitHub Projects', 'iOS Shortcuts']
 +++
 
 ## はじめに
