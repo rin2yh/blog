@@ -7,23 +7,22 @@
       {{ $target = "_blank" }}
       {{ $rel = "noopener" }}
     {{ end }}
-    <a href="{{ $url }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
         <div class="article-details">
             {{ if or .Params.categories .Params.tags }}
             <header class="article-category-tags">
                 {{ if .Params.categories }}
                 <div class="article-category">
                     {{ range (.GetTerms "categories") }}
-                        <span {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
+                        <a href="{{ .RelPermalink }}" {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
                             {{ .LinkTitle }}
-                        </span>
+                        </a>
                     {{ end }}
                 </div>
                 {{ end }}
                 {{ if .Params.tags }}
                 <div class="article-tags">
                     {{ range (.GetTerms "tags") }}
-                        <span>{{ .LinkTitle }}</span>
+                        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
                     {{ end }}
                 </div>
                 {{ end }}
@@ -31,7 +30,9 @@
             {{ end }}
 
             <h2 class="article-title">
-                {{ if .Params.externalUrl }}{{ partial "helper/icon" "link" }}{{ end }}{{- .Title -}}
+                <a href="{{ $url }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
+                    {{ if .Params.externalUrl }}{{ partial "helper/icon" "link" }}{{ end }}{{- .Title -}}
+                </a>
             </h2>
             <footer class="article-time">
                 <time datetime='{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}'>
@@ -42,6 +43,7 @@
 
         {{- $image := partialCached "helper/image" (dict "Context" . "Type" "articleList") .RelPermalink "articleList" -}}
         {{ if $image.exists }}
+            <a href="{{ $url }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
             <div class="article-image">
                 {{ if $image.resource }}
                     {{- $Permalink := $image.resource.RelPermalink -}}
@@ -64,6 +66,6 @@
                     <img src="{{ $image.permalink }}" loading="lazy" alt="Featured image of post {{ .Title }}" />
                 {{ end }}
             </div>
+            </a>
         {{ end }}
-    </a>
 </article>

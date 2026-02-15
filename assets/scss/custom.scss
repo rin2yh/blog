@@ -32,10 +32,17 @@
     }
 }
 
-/* compact list内のカテゴリ・タグ（spanタグ用） */
+/* compact list内のレイアウト復元（article > a 除去に伴う補完） */
 .article-list--compact {
+    article {
+        display: flex;
+        align-items: center;
+        padding: var(--small-card-padding);
+        gap: 15px;
+    }
+
     .article-category-tags {
-        .article-category span {
+        .article-category a {
             font-size: 1.2rem;
             padding: 4px 8px;
             border-radius: var(--tag-border-radius);
@@ -43,7 +50,7 @@
             color: var(--accent-color-text);
         }
 
-        .article-tags span {
+        .article-tags a {
             font-size: 1.1rem;
             padding: 4px 8px;
             background-color: var(--card-text-color-tertiary);
