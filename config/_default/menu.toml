@@ -12,20 +12,20 @@ icon = 'home'
 # content/page/archives/index.md w=4
 
 [[social]]
-identifier = "github"
-name = "GitHub"
-url = "https://github.com/rin2yh"
-weight = 1
-[social.params]
-icon = 'brand-github'
-
-[[social]]
 identifier = "rss"
 name = "RSS"
 url = "/index.xml"
-weight = 2
+weight = 1
 [social.params]
 icon = "rss"
+
+[[social]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/rin2yh"
+weight = 2
+[social.params]
+icon = 'brand-github'
 
 [[social]]
 identifier = "twitter"
@@ -36,15 +36,18 @@ weight = 3
 icon = "brand-twitter"
 
 [[social]]
-identifier = "qiita"
-name = "Qiita"
-url = "https://qiita.com/yuuki-h"
-weight = 4
-
-[[social]]
 identifier = "zenn"
 name = "Zenn"
 url = "https://zenn.dev/rinrin_yuuki"
-weight = 5
+weight = 4
 [social.params]
 icon = "zenn-logo"
+
+
+[[social]]
+identifier = "speaker-deck"
+name = "Speaker Deck"
+url = "https://speakerdeck.com/rin2yh"
+weight = 5
+[social.params]
+icon = "speakerdeck"
