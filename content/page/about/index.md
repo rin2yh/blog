@@ -24,6 +24,7 @@ menu:
     - [劇場版アニメから得た学びを発表会](https://engineers-anime-2025-lp.pages.dev/)　スタッフ（2025.08.10）
     - 「[エンジニアニメ Anthology Tech Book 2nd Season](https://techbookfest.org/product/v0MeXEsV6CZyFMmgDj7yFV?productVariantID=1FXpr2iLmhKrgCHvsAs9gk)」 執筆　題：「ダンダダン」から学ぶスピードの大切さ
 - TinyGo Conference 2025 スタッフ (2025.10.12)
+- ReactTokyo Fes 2026 スタッフ (2026.02.28)
 
 {{< details summary="インターン" >}}
 
