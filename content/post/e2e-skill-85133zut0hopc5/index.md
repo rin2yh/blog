@@ -60,11 +60,6 @@ https://github.com/Geek-Teck-Mentors/trend_diary/blob/feat-diary-analytics-pages
  - ボタン状態（例: `ログイン中...` でdisabled）
  - 入力値がDOMに反映されているか
 
-必要に応じてtrace内ネットワークを確認:
-
-```bash
-unzip -p <trace.zip> 0-trace.network | rg "/api/v2/auth/"
-```
 ```
 
 また、gh CLIでActionsのartifactの取得やActionsのステータスチェック、ログチェックもできることが
