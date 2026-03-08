@@ -47,23 +47,25 @@ https://github.com/Geek-Teck-Mentors/trend_diary/blob/feat-diary-analytics-pages
 
 そのため、その旨がSkillに記載されました。
 
-> ## 3. artifactで画面状態遷移を読む
->
-> 必ず見る:
-> - `error-context.md`
-> - `test-failed-1.png`
-> - `video.webm`
->
-> 確認ポイント:
-> - どの画面で止まっているか（`/signup` or `/login` or `/trends`）
-> - ボタン状態（例: `ログイン中...` でdisabled）
-> - 入力値がDOMに反映されているか
->
-> 必要に応じてtrace内ネットワークを確認:
->
-> ```bash
-> unzip -p <trace.zip> 0-trace.network | rg "/api/v2/auth/"
-> ```
+```md
+## 3. artifactで画面状態遷移を読む
+
+必ず見る:
+ - `error-context.md`
+ - `test-failed-1.png`
+ - `video.webm`
+
+確認ポイント:
+ - どの画面で止まっているか（`/signup` or `/login` or `/trends`）
+ - ボタン状態（例: `ログイン中...` でdisabled）
+ - 入力値がDOMに反映されているか
+
+必要に応じてtrace内ネットワークを確認:
+
+```bash
+unzip -p <trace.zip> 0-trace.network | rg "/api/v2/auth/"
+```
+```
 
 また、gh CLIでActionsのartifactの取得やActionsのステータスチェック、ログチェックもできることが
 Codexの作業中にわかった（Codexが実行していた）ので、Skillに組み込んでいます。
