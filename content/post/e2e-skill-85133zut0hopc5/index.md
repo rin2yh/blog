@@ -90,7 +90,7 @@ ghコマンドの使い方自体をAIエージェントから学ぶことにな�
 読んでいただき、ありがとうございました！
 
 完成したSkill：
-https://github.com/Geek-Teck-Mentors/trend_diary/blob/feat-diary-analytics-pages/.claude/skills/pr-review-fix/SKILL.md
+https://github.com/Geek-Teck-Mentors/trend_diary/blob/feat-diary-analytics-pages/.claude/skills/e2e-debug-playwright/SKILL.md
 
 ## 参考文献
 - Skill Creator： https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
