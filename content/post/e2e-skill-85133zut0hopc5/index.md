@@ -17,7 +17,7 @@ tags = ['E2E', 'Playwright', 'GitHub Actions', 'Codex']
 （導入前の解決までのコミット数：6回以上、50%近く人間の介入が必要）
 
 作成したSkill：
-https://github.com/Geek-Teck-Mentors/trend_diary/blob/feat-diary-analytics-pages/.claude/skills/e2e-debug-playwright/SKILL.md
+https://github.com/Geek-Teck-Mentors/trend_diary/blob/main/.claude/skills/e2e-debug-playwright/SKILL.md
 
 ツール・環境
 - GitHub Actions
@@ -87,7 +87,7 @@ ghコマンドの使い方自体をAIエージェントから学ぶことにな�
 読んでいただき、ありがとうございました！
 
 完成したSkill：
-https://github.com/Geek-Teck-Mentors/trend_diary/blob/feat-diary-analytics-pages/.claude/skills/e2e-debug-playwright/SKILL.md
+https://github.com/Geek-Teck-Mentors/trend_diary/blob/main/.claude/skills/e2e-debug-playwright/SKILL.md
 
 ## 参考文献
 - Skill Creator： https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
