@@ -42,7 +42,7 @@ https://github.com/Geek-Teck-Mentors/trend_diary/blob/main/.claude/skills/e2e-de
 
 作成手順よりもデバッグプロセスをどう定義するかがすごく大切で
 依頼時にCIがアップロードするartifactを見るように指示しています。
-特にPlaywrightではログやトレースが丁寧に残るため、私のデバッグでも
+特にPlaywrightではログやトレースが丁寧に残っていて、私のデバッグでも
 多用していたため、依頼内容に記載していました。
 
 そのため、その旨がSkillに記載されました。
@@ -69,9 +69,8 @@ artifact取得のコマンド
 ```sh
 gh run download <run_id> -n playwright-test-results-diff-<run_id>-1 -D artifacts/run-<run_id>
 ```
-artifactやtraceには入力値や画面情報が含まれることがあるため、共有前に内容を確認します。
 
-また、終了条件も明示しています。
+終了条件も明示しています。
 
 > 終了条件:
 > - Diff actionがエラー時に確実に失敗する
