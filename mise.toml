@@ -1,5 +1,6 @@
 [tools]
 go = "1.25.6"
+hugo = "latest"
 
 [tasks.setup]
 description = 'Hugoをインストールする'
