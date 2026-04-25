@@ -1,0 +1,62 @@
+/* Animated background blobs — fixed behind everything */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scene__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  animation: blob-drift var(--dur, 18s) ease-in-out infinite alternate;
+}
+
+[data-theme="light"] .scene__blob {
+  opacity: 0.3;
+}
+
+.scene__blob--1 {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, #5ee7df, #3b82f6);
+  top: -200px;
+  left: -150px;
+  --dur: 22s;
+}
+.scene__blob--2 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #b490f5, #ec4899);
+  bottom: -200px;
+  right: -100px;
+  --dur: 17s;
+  animation-delay: -8s;
+}
+.scene__blob--3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #ffd27f, #f7a8c4);
+  top: 40%;
+  left: 50%;
+  --dur: 25s;
+  animation-delay: -13s;
+}
+
+@keyframes blob-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(60px, -40px) scale(1.08);
+  }
+  66% {
+    transform: translate(-40px, 60px) scale(0.94);
+  }
+  100% {
+    transform: translate(30px, 30px) scale(1.04);
+  }
+}

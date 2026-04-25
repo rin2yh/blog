@@ -1,0 +1,37 @@
+{{ define "main" }}
+  <header class="hero">
+    {{- with .Site.Params.sidebar.avatar -}}
+      {{- if .local -}}
+        {{- $avatar := resources.Get .src -}}
+        {{- if $avatar -}}
+          {{- $avatar = $avatar.Fill "192x192 q85" -}}
+          <img class="hero__avatar" src="{{ $avatar.RelPermalink }}" width="96" height="96" alt="{{ $.Site.Title }}">
+        {{- end -}}
+      {{- else if .src -}}
+        <img class="hero__avatar" src="{{ .src }}" width="96" height="96" alt="{{ $.Site.Title }}">
+      {{- end -}}
+    {{- end }}
+    <span class="hero__kicker">Liquid Glass</span>
+    <h1 class="hero__title">{{ .Site.Title }}</h1>
+    {{- with .Site.Params.description -}}
+      <p class="hero__sub">{{ . }}</p>
+    {{- end }}
+  </header>
+
+  <div class="layout-grid">
+    <div class="layout-grid__main">
+      {{- $mainSections := .Site.Params.mainSections | default (slice "post") -}}
+      {{- $pages := where site.RegularPages "Section" "in" $mainSections -}}
+      {{- $paginator := .Paginate $pages -}}
+      <div class="post-grid section--in">
+        {{- range $paginator.Pages -}}
+          {{ partialCached "article-card.html" . .RelPermalink }}
+        {{- end -}}
+      </div>
+      {{ partial "pagination.html" . }}
+    </div>
+    <aside class="layout-grid__sidebar">
+      {{ partial "sidebar.html" . }}
+    </aside>
+  </div>
+{{ end }}

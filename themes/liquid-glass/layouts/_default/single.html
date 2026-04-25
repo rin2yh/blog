@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div class="layout-grid">
+  <div class="layout-grid__main">
+    <article class="glass glass-card article">
+      {{ partial "article/header.html" . }}
+      <div class="article-content">
+        {{ .Content }}
+      </div>
+      {{ partial "article/footer.html" . }}
+    </article>
+
+    {{ partial "article/related.html" . }}
+  </div>
+
+  <aside class="layout-grid__sidebar">
+    {{ partial "sidebar.html" . }}
+  </aside>
+</div>
+{{ end }}

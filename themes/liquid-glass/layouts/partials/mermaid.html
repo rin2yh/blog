@@ -1,0 +1,4 @@
+{{- /* Trigger from page-level frontmatter (mermaid: true) */ -}}
+{{- if .Params.mermaid -}}
+  {{- .Store.Set "hasMermaid" true -}}
+{{- end -}}

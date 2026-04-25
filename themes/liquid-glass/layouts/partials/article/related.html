@@ -1,0 +1,13 @@
+{{- $related := first 5 (.Site.RegularPages.Related .) -}}
+{{- with $related -}}
+<section class="related">
+  <div class="section__header">
+    <h2 class="section__title">{{ T "relatedPosts" }}</h2>
+  </div>
+  <div class="post-grid post-grid--compact">
+    {{- range . -}}
+      {{ partialCached "article-card.html" . .RelPermalink }}
+    {{- end -}}
+  </div>
+</section>
+{{- end -}}

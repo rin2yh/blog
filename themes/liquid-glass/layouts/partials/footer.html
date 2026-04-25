@@ -1,0 +1,8 @@
+<footer class="site-footer">
+  <div class="container">
+    <p class="site-footer__text">
+      © {{ now.Year }}{{ with .Site.Params.footer.since }}{{ if ne . now.Year }} · since {{ . }}{{ end }}{{ end }} · {{ .Site.Title }}<br>
+      {{ T "poweredBy" }}
+    </p>
+  </div>
+</footer>

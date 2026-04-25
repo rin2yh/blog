@@ -1,0 +1,63 @@
+/* Tag chips — used for tag-cloud, article tag list */
+.glass-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  background: var(--glass-white);
+  border: 1px solid var(--glass-border-subtle);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-liquid),
+    background var(--dur-fast), color var(--dur-fast);
+  cursor: pointer;
+}
+.glass-tag:hover {
+  background: var(--glass-white-md);
+  transform: translateY(-2px);
+  color: var(--color-text);
+}
+
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+[data-theme="light"] .glass-tag {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+}
+[data-theme="light"] .glass-tag:hover {
+  background: rgba(255, 255, 255, 0.88);
+  color: #0f172a;
+}
+
+/* Category pill (used in article-card / single header) */
+.glass-category {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--glass-white-md);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-liquid),
+    box-shadow var(--dur-fast);
+}
+.glass-category:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: var(--color-text);
+}

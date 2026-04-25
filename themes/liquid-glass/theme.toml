@@ -1,0 +1,16 @@
+name = "Liquid Glass"
+license = "MIT"
+licenselink = ""
+description = "Glassmorphism / Liquid Glass theme for Hugo with light/dark mode and zero JS dependencies."
+homepage = "https://github.com/rin2yh/blog"
+tags = ["blog", "glassmorphism", "dark-mode", "minimal", "japanese"]
+features = ["dark-mode", "search", "toc", "mermaid", "external-url", "related-posts"]
+min_version = "0.146.0"
+
+[author]
+name = "rin2yh"
+
+[original]
+author = "rin2yh"
+homepage = ""
+repo = ""

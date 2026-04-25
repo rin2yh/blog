@@ -1,0 +1,31 @@
+/* Reading progress bar (sticky top) */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: var(--z-tooltip);
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.05);
+}
+.reading-progress__bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    var(--accent-aqua),
+    var(--accent-violet)
+  );
+  transition: width 90ms linear;
+  box-shadow: 0 0 12px rgba(94, 231, 223, 0.5);
+}
+
+@keyframes progress-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

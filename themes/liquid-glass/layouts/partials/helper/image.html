@@ -1,0 +1,41 @@
+{{- /*
+  Cover image resolver — Stack-compatible interface.
+  Input dict: { Context: Page, Type: "article" | "articleList" | "card" }
+  Output dict: { exists: bool, resource: Resource | nil, permalink: string }
+*/ -}}
+{{- $context := .Context -}}
+{{- $type := .Type -}}
+{{- $resource := false -}}
+{{- $permalink := "" -}}
+{{- $exists := false -}}
+
+{{- with $context.Params.image -}}
+  {{- /* String path under page bundle / static */ -}}
+  {{- $found := $context.Resources.GetMatch . -}}
+  {{- if $found -}}
+    {{- $resource = $found -}}
+    {{- $permalink = $found.RelPermalink -}}
+    {{- $exists = true -}}
+  {{- else -}}
+    {{- $permalink = . | relURL -}}
+    {{- $exists = true -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $exists -}}
+  {{- with $context.Params.cover -}}
+    {{- with .image -}}
+      {{- $found := $context.Resources.GetMatch . -}}
+      {{- if $found -}}
+        {{- $resource = $found -}}
+        {{- $permalink = $found.RelPermalink -}}
+        {{- $exists = true -}}
+      {{- else -}}
+        {{- $permalink = . | relURL -}}
+        {{- $exists = true -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return dict "exists" $exists "resource" $resource "permalink" $permalink -}}

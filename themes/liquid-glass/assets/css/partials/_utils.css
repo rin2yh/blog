@@ -1,0 +1,118 @@
+/* Utilities */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Light mode — kill text dimming. Text should be solid dark, never faded. */
+[data-theme="light"] .article-content,
+[data-theme="light"] .article-content p,
+[data-theme="light"] .article-content li,
+[data-theme="light"] .article-content strong,
+[data-theme="light"] .article-content em,
+[data-theme="light"] .article-content td,
+[data-theme="light"] .article-content th,
+[data-theme="light"] .article-content h1,
+[data-theme="light"] .article-content h2,
+[data-theme="light"] .article-content h3,
+[data-theme="light"] .article-content h4,
+[data-theme="light"] .article-content h5,
+[data-theme="light"] .article-content h6,
+[data-theme="light"] .article-title,
+[data-theme="light"] .article-title a,
+[data-theme="light"] .article-header__desc,
+[data-theme="light"] .article-meta,
+[data-theme="light"] .article-meta__item,
+[data-theme="light"] .article-card__title,
+[data-theme="light"] .article-card__summary,
+[data-theme="light"] .article-card__meta,
+[data-theme="light"] .article-card__date,
+[data-theme="light"] .article-card__tag,
+[data-theme="light"] .article-lastmod,
+[data-theme="light"] .article-license,
+[data-theme="light"] .twitter-share__title,
+[data-theme="light"] .toc__title,
+[data-theme="light"] .toc__inner,
+[data-theme="light"] .toc__inner a,
+[data-theme="light"] .widget,
+[data-theme="light"] .widget__title,
+[data-theme="light"] .widget--archives li a,
+[data-theme="light"] .widget--archives .count,
+[data-theme="light"] .widget--categories li a,
+[data-theme="light"] .widget--categories .count,
+[data-theme="light"] .widget--tag-cloud .tag-cloud a,
+[data-theme="light"] .widget--profile .name,
+[data-theme="light"] .widget--profile .bio,
+[data-theme="light"] .glass-nav__item,
+[data-theme="light"] .site-brand,
+[data-theme="light"] .site-social__link,
+[data-theme="light"] .hero__kicker,
+[data-theme="light"] .hero__sub,
+[data-theme="light"] .archives-list a,
+[data-theme="light"] .archives-list time,
+[data-theme="light"] .archives-list svg,
+[data-theme="light"] .archives-year__count,
+[data-theme="light"] .term-card,
+[data-theme="light"] .term-card .count,
+[data-theme="light"] .search-page__input,
+[data-theme="light"] .search-page__icon,
+[data-theme="light"] .search-result,
+[data-theme="light"] .search-result__title,
+[data-theme="light"] .search-result__meta,
+[data-theme="light"] .search-result__excerpt,
+[data-theme="light"] .search-page__empty,
+[data-theme="light"] .qr-card__caption,
+[data-theme="light"] .pagination__item,
+[data-theme="light"] .donate-card__desc,
+[data-theme="light"] .site-footer__text {
+  opacity: 1;
+}
+
+[data-theme="light"] {
+  color: var(--color-text);
+}
+[data-theme="light"] .toc__inner a {
+  color: var(--color-text-muted);
+}
+[data-theme="light"] .toc__inner a:hover,
+[data-theme="light"] .widget--archives li a:hover,
+[data-theme="light"] .widget--categories li a {
+  color: var(--color-text);
+}
+[data-theme="light"] .article-content blockquote,
+[data-theme="light"] .article-card__summary,
+[data-theme="light"] .article-header__desc,
+[data-theme="light"] .hero__sub,
+[data-theme="light"] .donate-card__desc {
+  color: var(--color-text);
+}
+
+.no-js .needs-js {
+  display: none;
+}
+
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.gap-sm {
+  gap: var(--space-sm);
+}
+.gap-md {
+  gap: var(--space-md);
+}
+.text-center {
+  text-align: center;
+}
+.full-width {
+  width: 100%;
+}
