@@ -1,0 +1,16 @@
+{{- /*
+  Resolve link target for a Page.
+  Input : a Page (.)
+  Output: dict { url, target, rel, icon, isExternal }
+*/ -}}
+{{- $url := .RelPermalink -}}
+{{- $target := "" -}}
+{{- $rel := "" -}}
+{{- $icon := "" -}}
+{{- with .Params.externalUrl -}}
+  {{- $url = . -}}
+  {{- $target = "_blank" -}}
+  {{- $rel = "noopener noreferrer" -}}
+  {{- $icon = "link" -}}
+{{- end -}}
+{{- return (dict "url" $url "target" $target "rel" $rel "icon" $icon "isExternal" (ne $target "")) -}}

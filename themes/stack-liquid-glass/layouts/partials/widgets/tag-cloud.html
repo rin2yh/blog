@@ -1,0 +1,27 @@
+{{- $page := .page -}}
+{{- $params := .params -}}
+{{- $site := $page.Site -}}
+{{- $taxonomy := $site.Taxonomies.tags -}}
+{{- $limit := index $params "limit" | default 30 -}}
+{{- $entries := $taxonomy.ByCount -}}
+{{- if $limit -}}
+  {{- $entries = first $limit $entries -}}
+{{- end -}}
+<aside class="glass widget widget--tag-cloud">
+  <h3 class="widget__title">
+    {{ partial "helper/icon" "tag" }}
+    <span>{{ T "tags" | default "Tags" }}</span>
+  </h3>
+  {{- if $entries -}}
+    <div class="tag-cloud">
+      {{- range $entries -}}
+        {{- $t := .Page.LinkTitle | default .Page.Title -}}
+        {{- $rest := substr $t 1 -}}
+        {{- if and (eq $rest (lower $rest)) (ne (substr $t 0 1) (lower (substr $t 0 1))) -}}
+          {{- $t = printf "%s%s" (substr $t 0 1 | lower) $rest -}}
+        {{- end -}}
+        <a href="{{ .Page.RelPermalink }}">#{{ $t }}</a>
+      {{- end -}}
+    </div>
+  {{- end -}}
+</aside>

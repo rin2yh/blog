@@ -1,0 +1,25 @@
+{{- $page := .page -}}
+{{- $params := .params -}}
+{{- $site := $page.Site -}}
+{{- $taxonomy := $site.Taxonomies.categories -}}
+{{- $limit := index $params "limit" | default 10 -}}
+{{- $entries := $taxonomy.ByCount -}}
+{{- if $limit -}}
+  {{- $entries = first $limit $entries -}}
+{{- end -}}
+<aside class="glass widget widget--categories">
+  <h3 class="widget__title">
+    {{ partial "helper/icon" "folder" }}
+    <span>{{ T "categories" | default "Categories" }}</span>
+  </h3>
+  {{- if $entries -}}
+    <div class="category-cloud">
+      {{- range $entries -}}
+        <a href="{{ .Page.RelPermalink }}"
+          {{- with .Page.Params.style }} style="background-color: {{ .background }}; color: {{ .color }};"{{ end -}}>
+          {{ .Page.LinkTitle | default .Page.Title }}
+        </a>
+      {{- end -}}
+    </div>
+  {{- end -}}
+</aside>

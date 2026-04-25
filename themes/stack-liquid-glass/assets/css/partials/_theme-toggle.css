@@ -1,0 +1,47 @@
+/* Theme toggle — sidebar row with switch icon + fixed label.
+   The thumb position reflects whether dark mode is currently ON. */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-lg);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  opacity: 0.78;
+  cursor: pointer;
+  transition: background var(--dur-fast), opacity var(--dur-fast);
+}
+.theme-toggle:hover {
+  opacity: 1;
+  background: var(--glass-white-md);
+}
+
+.theme-toggle__switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 28px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid currentColor;
+  background: transparent;
+  transition: background var(--dur-fast), border-color var(--dur-fast);
+}
+.theme-toggle__thumb {
+  position: absolute;
+  top: 50%;
+  left: calc(100% - 10px);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateY(-50%);
+  transition: left var(--dur-fast) var(--ease-liquid),
+    background var(--dur-fast);
+}
+[data-theme="light"] .theme-toggle__thumb {
+  left: 2px;
+}

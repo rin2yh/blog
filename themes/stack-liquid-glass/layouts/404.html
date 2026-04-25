@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="notfound">
+  <div class="notfound__code">404</div>
+  <h1 class="notfound__title">{{ T "notFoundTitle" }}</h1>
+  <p class="notfound__desc">{{ T "notFoundDesc" }}</p>
+  <a class="glass glass-btn glass-btn--primary" href="{{ .Site.Home.RelPermalink }}">
+    {{ partial "helper/icon" "home" }}
+    {{ T "backToHome" }}
+  </a>
+</div>
+{{ end }}

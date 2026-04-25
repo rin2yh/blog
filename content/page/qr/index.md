@@ -1,11 +1,12 @@
 ---
-title: QR Code
+title: QRコード
 description: SNSやブログのQRコードをまとめています。
 date: 2026-02-20
 lastmod: 2026-02-20
 readingTime: false
 menu:
   main:
+    name: QRコード
     weight: 5
     params:
       icon: qr-code

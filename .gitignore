@@ -21,6 +21,10 @@ bin-release/
 # Hugo
 public/
 resources/
+.hugo_cache/
+
+# Local archive of pre-rename theme files
+.archive/
 
 # Backup Files
 *.markdown~
