@@ -11,7 +11,7 @@
 {{- $h := 0 -}}
 {{- /* Hugo's .Width/.Height aren't exposed on SVG resources, so we have to gate
        even the intrinsic-dimension read on ResourceType+SubType. */ -}}
-{{- $processable := and (eq $r.ResourceType "image") (ne $r.MediaType.SubType "svg") -}}
+{{- $processable := and (eq $r.ResourceType "image") (ne $r.MediaType.Type "image/svg+xml") -}}
 {{- if $processable -}}
   {{- $w = $r.Width -}}
   {{- $h = $r.Height -}}

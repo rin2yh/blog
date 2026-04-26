@@ -4,7 +4,7 @@
   <div class="left-sidebar__profile">
     {{- if and $avatar $avatar.enabled -}}
       {{- if $avatar.local -}}
-        {{- $src := partialCached "helper/avatar-url.html" (dict "src" $avatar.src "fillSize" "192x192 q85") $avatar.src .Language.Lang -}}
+        {{- $src := partialCached "helper/avatar-url.html" (dict "src" $avatar.src "fillSize" "192x192 q85") $avatar.src -}}
         {{- with $src -}}
           <img class="left-sidebar__avatar" src="{{ . }}" alt="{{ $site.Title }}" width="96" height="96" loading="eager">
         {{- end -}}
