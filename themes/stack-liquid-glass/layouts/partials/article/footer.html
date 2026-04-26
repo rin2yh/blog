@@ -11,8 +11,8 @@
         <li>
           <button type="button" class="donate-card__email"
             data-copy="{{ $.Site.Params.donate.email }}"
-            data-copy-success="メールアドレスをコピーしました"
-            data-copy-error="コピーに失敗しました">
+            data-copy-success="{{ T "copySuccess" }}"
+            data-copy-error="{{ T "copyError" }}">
             {{ partial "helper/icon" "clipboard" }}
             <span>宛先: {{ $.Site.Params.donate.email }}（クリックでコピー）</span>
           </button>

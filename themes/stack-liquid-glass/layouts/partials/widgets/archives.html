@@ -25,7 +25,7 @@
         <li>
           <a href="{{ $archivesURL }}#year-{{ .Key }}">
             <span class="year">{{ .Key }}</span>
-            <span class="count">{{ len .Pages }}</span>
+            <span class="count">{{ T "postCount" (dict "Count" (len .Pages)) }}</span>
           </a>
         </li>
       {{- end -}}

@@ -8,7 +8,7 @@
           <section id="year-{{ .Key }}" class="archives-year">
             <h2 class="archives-year__title">
               {{ .Key }}
-              <span class="archives-year__count">{{ len .Pages }} 件</span>
+              <span class="archives-year__count">{{ T "postCount" (dict "Count" (len .Pages)) }}</span>
             </h2>
             <div class="article-list">
               {{- range .Pages -}}
