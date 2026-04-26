@@ -18,14 +18,14 @@
 {{- end -}}
 
 <meta property="og:title" content="{{ $title }}">
-<meta property="og:description" content="{{ $description }}">
+{{ with $description }}<meta property="og:description" content="{{ . }}">{{ end }}
 <meta property="og:url" content="{{ $url }}">
 <meta property="og:type" content="{{ cond .IsPage "article" "website" }}">
 <meta property="og:site_name" content="{{ .Site.Title }}">
 {{ with $image }}<meta property="og:image" content="{{ . }}">{{ end }}
 
 <meta name="twitter:card" content="{{ default "summary_large_image" .Site.Params.opengraph.twitter.card }}">
-{{ with .Site.Params.opengraph.twitter.site }}<meta name="twitter:site" content="@{{ . }}">{{ end }}
+{{ with .Site.Params.opengraph.twitter.site }}<meta name="twitter:site" content="@{{ strings.TrimPrefix "@" . }}">{{ end }}
 <meta name="twitter:title" content="{{ $title }}">
-<meta name="twitter:description" content="{{ $description }}">
+{{ with $description }}<meta name="twitter:description" content="{{ . }}">{{ end }}
 {{ with $image }}<meta name="twitter:image" content="{{ . }}">{{ end }}

@@ -38,7 +38,7 @@
   <section class="article-lastmod">
     {{ partial "helper/icon" "clock" }}
     <span>
-      {{ T "lastUpdatedOn" }}: {{ .Lastmod | time.Format (or .Site.Params.dateFormat.lastUpdated "2006/01/02 15:04 JST") }}
+      {{ T "lastUpdatedOn" }}: {{ .Lastmod | time.Format (or .Site.Params.dateFormat.lastUpdated "2006/01/02 15:04 MST") }}
     </span>
   </section>
   {{- end -}}
