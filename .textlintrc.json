@@ -1,0 +1,28 @@
+{
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "no-exclamation-question-mark": false,
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [":"]
+      },
+      "no-mix-dearu-desumasu": {
+        "preferInHeader": "",
+        "preferInBody": "ですます",
+        "preferInList": "ですます"
+      }
+    },
+    "preset-ja-spacing": {
+      "ja-space-between-half-and-full-width": {
+        "space": "always",
+        "exceptPunctuation": true
+      },
+      "ja-space-around-code": {
+        "before": true,
+        "after": true
+      }
+    }
+  }
+}

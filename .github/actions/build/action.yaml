@@ -47,7 +47,7 @@ runs:
 
     - name: Cache restore
       id: cache-restore
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ${{ runner.temp }}/hugo_cache
         key: hugo-${{ github.run_id }}
@@ -67,7 +67,7 @@ runs:
         hugo "${args[@]}"
 
     - name: Cache save
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ${{ runner.temp }}/hugo_cache
         key: ${{ steps.cache-restore.outputs.cache-primary-key }}
