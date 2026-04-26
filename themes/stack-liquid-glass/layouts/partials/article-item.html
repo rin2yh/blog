@@ -49,7 +49,7 @@
     {{- if and $showReadingTime $allowReading -}}
       <span class="article-item__footer-entry">
         <span class="article-item__footer-icon icon-frame">{{ partial "helper/icon" "clock" }}</span>
-        <span>読了時間: {{ T "readingTime" (dict "Count" .ReadingTime) }}</span>
+        <span>{{ T "readingTimeLabel" }}{{ T "readingTime" (dict "Count" .ReadingTime) }}</span>
       </span>
     {{- end -}}
   </footer>

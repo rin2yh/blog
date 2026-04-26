@@ -26,7 +26,7 @@
       document.addEventListener("click", function (evt) {
         var target = evt.target.closest(".glass-btn, .article-card");
         if (!target) return;
-        if (target.querySelectorAll("[data-ripple]").length > 2) return;
+        if (target.querySelectorAll("[data-ripple]").length > 5) return;
         var ripple = document.createElement("span");
         ripple.setAttribute("data-ripple", "");
         var rect = target.getBoundingClientRect();
@@ -34,17 +34,10 @@
         var x = evt.clientX - rect.left - size / 2;
         var y = evt.clientY - rect.top - size / 2;
         Object.assign(ripple.style, {
-          position: "absolute",
           left: x + "px",
           top: y + "px",
           width: size + "px",
-          height: size + "px",
-          borderRadius: "50%",
-          background: "rgba(255,255,255,0.16)",
-          transform: "scale(0)",
-          pointerEvents: "none",
-          animation: "lg-ripple 600ms ease-out forwards",
-          zIndex: "5"
+          height: size + "px"
         });
         target.appendChild(ripple);
         ripple.addEventListener(
@@ -115,31 +108,12 @@
     toast.className = "lg-toast";
     toast.setAttribute("role", "status");
     toast.textContent = message;
-    Object.assign(toast.style, {
-      position: "fixed",
-      left: "50%",
-      bottom: "32px",
-      transform: "translate(-50%, 8px)",
-      padding: "10px 18px",
-      borderRadius: "999px",
-      background: "rgba(15, 23, 42, 0.85)",
-      color: "#fff",
-      fontSize: "0.85rem",
-      boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
-      backdropFilter: "blur(12px)",
-      opacity: "0",
-      transition: "opacity 200ms ease, transform 200ms ease",
-      zIndex: "9999",
-      pointerEvents: "none"
-    });
     document.body.appendChild(toast);
     requestAnimationFrame(function () {
-      toast.style.opacity = "1";
-      toast.style.transform = "translate(-50%, 0)";
+      toast.classList.add("is-visible");
     });
     setTimeout(function () {
-      toast.style.opacity = "0";
-      toast.style.transform = "translate(-50%, 8px)";
+      toast.classList.remove("is-visible");
       setTimeout(function () {
         toast.remove();
       }, 220);

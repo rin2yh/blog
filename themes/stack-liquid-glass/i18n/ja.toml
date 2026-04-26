@@ -20,6 +20,9 @@ other = "About"
 one = "{{ .Count }}分"
 other = "{{ .Count }}分"
 
+[readingTimeLabel]
+other = "読了時間: "
+
 [publishedOn]
 other = "公開"
 
