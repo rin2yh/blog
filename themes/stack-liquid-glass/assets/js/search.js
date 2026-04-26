@@ -89,7 +89,7 @@
           return r.json();
         })
         .then(function (json) {
-          data = Array.isArray(json) ? json : json.entries || [];
+          data = json && Array.isArray(json) ? json : (json && json.entries) || [];
           dataPromise = null;
           return data;
         })
