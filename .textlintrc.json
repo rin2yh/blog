@@ -14,8 +14,7 @@
       "no-mix-dearu-desumasu": {
         "preferInHeader": "",
         "preferInBody": "ですます",
-        "preferInList": "ですます",
-        "strict": false
+        "preferInList": "ですます"
       }
     },
     "preset-ja-spacing": {

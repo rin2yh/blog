@@ -19,10 +19,13 @@ run = 'go run ./cmd/post {{ arg(i=0) }} external'
 description = 'Hugoでサーバを起動する'
 run = 'hugo server'
 
+[env]
+TEXTLINT_PKGS = '-p textlint@14.4.2 -p textlint-rule-preset-ja-technical-writing@12.0.2 -p textlint-rule-preset-ja-spacing@2.4.3 -p textlint-filter-rule-comments@1.2.2'
+
 [tasks.lint]
-description = 'textlintで記事を検査する（引数なしで content/**/*.md 全体）'
-run = 'npx textlint {{arg(name="files", var=true, default="content/**/*.md")}}'
+description = 'textlintで記事を検査する'
+run = 'npx --yes $TEXTLINT_PKGS -- textlint {{arg(name="files", var=true, default="content/**/*.md")}}'
 
 [tasks."lint:fix"]
-description = 'textlintで自動修正可能な問題を修正する（引数なしで content/**/*.md 全体）'
-run = 'npx textlint --fix {{arg(name="files", var=true, default="content/**/*.md")}}'
+description = 'textlintで自動修正可能な問題を修正する'
+run = 'npx --yes $TEXTLINT_PKGS -- textlint --fix {{arg(name="files", var=true, default="content/**/*.md")}}'
