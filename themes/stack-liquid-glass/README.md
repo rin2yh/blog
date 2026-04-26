@@ -11,7 +11,7 @@ A glassmorphism Hugo theme. Stack-inspired layout, three drifting color blobs in
 - **Dark + light** — `data-theme` attribute, localStorage persisted, prefers-color-scheme aware
 - **Zero JS deps** — ~5 KB vanilla JS for theme toggle, ripple, mobile nav, code copy
 - **Standard Hugo features** — search (client-side), TOC, related posts, mermaid (lazy-loaded), syntax highlighting, RSS, OpenGraph + Twitter Card
-- **i18n-ready** — Japanese ships in `i18n/ja.toml`; add other locales by dropping in `<lang>.toml`
+- **i18n-ready** — English (`i18n/en.toml`) and Japanese (`i18n/ja.toml`) ship; add other locales by dropping in `<lang>.toml`
 - **External-URL posts** — front-matter `externalUrl` turns a card into a direct out-link
 - **Responsive** — single-column on mobile, sidebar+content+widget grid on desktop
 

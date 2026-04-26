@@ -69,6 +69,14 @@ Images render full-width inside the article container, with rounded corners inhe
 
 ![placeholder](https://picsum.photos/seed/liquid-glass/1200/600)
 
+## Shortcode — `{{</* qr */>}}`
+
+The theme ships a single shortcode for embedding a QR code generated from arbitrary text. The image is fetched from `api.qrserver.com`, so it's a network dependency, not a bundled asset.
+
+{{< qr text="https://gohugo.io" title="hugo.io" />}}
+
+Self-closing form is accepted; `text` is required, `alt` and `title` default to it.
+
 ## Definition list (raw HTML)
 
 <dl>

@@ -1,7 +1,5 @@
-{{- /* hasMermaid is set by:
-       1. The render-codeblock-mermaid.html hook for ```mermaid fenced blocks
-       2. Explicit frontmatter `mermaid: true` for raw <div class="mermaid"> usage
-*/ -}}
+{{- /* Frontmatter escape hatch for raw <div class="mermaid"> usage; fenced
+       blocks are handled by render-codeblock-mermaid.html. */ -}}
 {{- if .Params.mermaid -}}
   {{- .Store.Set "hasMermaid" true -}}
 {{- end -}}

@@ -17,8 +17,8 @@ other = "Tags"
 other = "About"
 
 [readingTime]
-one = "{{ .Count }} min"
-other = "{{ .Count }} min"
+one = "1 min"
+other = "{{ .Count }} mins"
 
 [readingTimeLabel]
 other = "Reading time: "
