@@ -9,7 +9,7 @@
 {{- $url := $r.RelPermalink -}}
 {{- $w := 0 -}}
 {{- $h := 0 -}}
-{{- if and (eq $r.ResourceType "image") (ne $r.MediaType.SubType "svg") -}}
+{{- if and (eq $r.ResourceType "image") (ne $r.MediaType.SubType "svg") .spec -}}
   {{- $op := .op | default "Fill" -}}
   {{- $processed := $r -}}
   {{- if eq $op "Resize" -}}
