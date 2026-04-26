@@ -1,0 +1,64 @@
+{{- /*
+  Article card — used by home, list, term, related.
+  Uses a "stretched link" pattern: the title <a> covers the whole card
+  via CSS pseudo-element, while category/tag links stay independently clickable.
+*/ -}}
+{{- $link := partial "helper/external-link.html" . -}}
+{{- $url := $link.url -}}
+{{- $target := $link.target -}}
+{{- $rel := $link.rel -}}
+{{- $extIcon := $link.icon -}}
+
+{{- $image := partialCached "helper/image" (dict "Context" . "Type" "card") .RelPermalink "card" .Lastmod.Unix -}}
+
+<article class="glass article-card">
+  {{- if $image.exists }}
+    <div class="article-card__cover">
+      {{- if $image.resource -}}
+        {{- $thumb := $image.resource.Fill "640x360 q85" -}}
+        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="{{ .Title }}">
+      {{- else -}}
+        <img src="{{ $image.permalink }}" loading="lazy" decoding="async" alt="{{ .Title }}">
+      {{- end -}}
+    </div>
+  {{- end }}
+
+  <div class="article-card__meta">
+    {{- if not .Date.IsZero }}
+      <time class="article-card__date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+        {{- .Date | time.Format (or .Site.Params.dateFormat.published "2006/01/02") -}}
+      </time>
+    {{- end }}
+    {{- with .GetTerms "categories" }}
+      <span class="article-card__categories">
+        {{- range . -}}
+          <a class="glass-category" href="{{ .RelPermalink }}"
+             {{- with .Params.style }} style="background-color: {{ .background }}; color: {{ .color }};"{{ end -}}>
+            {{ .LinkTitle }}
+          </a>
+        {{- end -}}
+      </span>
+    {{- end }}
+  </div>
+
+  <h3 class="article-card__title">
+    {{- with $extIcon -}}
+      <span class="article-card__title-icon">{{ partial "helper/icon" . }}</span>
+    {{- end -}}
+    <a class="article-card__link" href="{{ $url }}"
+       {{- with $target }} target="{{ . }}"{{ end -}}
+       {{- with $rel }} rel="{{ . }}"{{ end -}}>{{ .Title }}</a>
+  </h3>
+
+  {{- with .Description | default .Summary }}
+    <p class="article-card__summary">{{ . | plainify | truncate 160 }}</p>
+  {{- end }}
+
+  {{- with .GetTerms "tags" }}
+    <div class="article-card__tags">
+      {{- range first 5 . -}}
+        <a class="article-card__tag" href="{{ .RelPermalink }}">#{{ partial "helper/tag-name.html" .LinkTitle }}</a>
+      {{- end -}}
+    </div>
+  {{- end }}
+</article>

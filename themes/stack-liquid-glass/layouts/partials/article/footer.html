@@ -1,0 +1,45 @@
+<footer class="article-footer">
+  {{- if and .Site.Params.donate.enabled (not .Params.externalUrl) -}}
+  <section class="article-donate">
+    <div class="donate-card">
+      <h3 class="donate-card__title">
+        {{ partial "helper/icon" "donate-heart" }}
+        <span>{{ T "donateTitle" }}</span>
+      </h3>
+      <p class="donate-card__desc">Amazonギフトカードで投げ銭できます。応援よろしくお願いします！</p>
+      <ol class="donate-card__steps">
+        <li>
+          <button type="button" class="donate-card__email"
+            data-copy="{{ $.Site.Params.donate.email }}"
+            data-copy-success="{{ T "copySuccess" }}"
+            data-copy-error="{{ T "copyError" }}">
+            {{ partial "helper/icon" "clipboard" }}
+            <span>宛先: {{ $.Site.Params.donate.email }}（クリックでコピー）</span>
+          </button>
+        </li>
+        <li>
+          <a href="{{ .Site.Params.donate.link }}" target="_blank" rel="noopener noreferrer" class="donate-card__link">
+            Amazonギフト券の画面でメールアドレスと金額、贈り主を入力（メッセージもあると嬉しいです！）
+          </a>
+        </li>
+      </ol>
+    </div>
+  </section>
+  {{- end -}}
+
+  {{- if and (.Site.Params.article.license.enabled) (not (eq .Params.license false)) -}}
+  <section class="article-license">
+    {{ partial "helper/icon" "copyright" }}
+    <span>{{ default .Site.Params.article.license.default .Params.license | markdownify }}</span>
+  </section>
+  {{- end -}}
+
+  {{- if ne .Lastmod .Date -}}
+  <section class="article-lastmod">
+    {{ partial "helper/icon" "clock" }}
+    <span>
+      {{ T "lastUpdatedOn" }}: {{ .Lastmod | time.Format (or .Site.Params.dateFormat.lastUpdated "2006/01/02 15:04 MST") }}
+    </span>
+  </section>
+  {{- end -}}
+</footer>

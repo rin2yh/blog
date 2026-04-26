@@ -1,0 +1,50 @@
+{{- $site := .Site -}}
+{{- $avatar := $site.Params.sidebar.avatar -}}
+<aside class="glass left-sidebar">
+  <div class="left-sidebar__profile">
+    {{- if and $avatar $avatar.enabled -}}
+      {{- if $avatar.local -}}
+        {{- with resources.Get $avatar.src -}}
+          {{- $img := .Fill "192x192 q85" -}}
+          <img class="left-sidebar__avatar" src="{{ $img.RelPermalink }}" alt="{{ $site.Title }}" width="96" height="96" loading="eager">
+        {{- end -}}
+      {{- else -}}
+        <img class="left-sidebar__avatar" src="{{ $avatar.src }}" alt="{{ $site.Title }}" width="96" height="96" loading="eager">
+      {{- end -}}
+    {{- end -}}
+    <a class="left-sidebar__name" href="{{ $site.Home.RelPermalink }}">{{ $site.Title }}</a>
+    {{- with $site.Params.description -}}
+      <p class="left-sidebar__bio">{{ . }}</p>
+    {{- end -}}
+  </div>
+
+  {{- with $site.Menus.social }}
+  <div class="left-sidebar__social" aria-label="Social links">
+    {{- range . -}}
+      <a class="left-sidebar__social-link" href="{{ .URL }}"
+         {{- if hasPrefix .URL "http" }} target="_blank" rel="noopener noreferrer"{{ end -}}
+         aria-label="{{ .Name }}" title="{{ .Name }}">
+        {{- with .Params.icon -}}{{ partial "helper/icon" . }}{{- end -}}
+      </a>
+    {{- end -}}
+  </div>
+  {{- end }}
+
+  {{- $currentURL := .RelPermalink -}}
+  {{- with $site.Menus.main }}
+  <nav class="left-sidebar__nav" aria-label="Main navigation">
+    {{- range . -}}
+      {{- $url := cond (eq .URL "/") $.Site.Home.RelPermalink (.URL | relLangURL) -}}
+      {{- $active := or (eq $url $currentURL) (and (ne $url $.Site.Home.RelPermalink) (hasPrefix $currentURL $url)) -}}
+      <a class="left-sidebar__nav-item{{ if $active }} left-sidebar__nav-item--active{{ end }}"
+         href="{{ $url }}">
+        {{- with .Params.icon -}}
+          <span class="left-sidebar__nav-icon icon-frame">{{ partial "helper/icon" . }}</span>
+        {{- end -}}
+        <span>{{ .Name }}</span>
+      </a>
+    {{- end -}}
+  </nav>
+  {{- end }}
+  {{ partial "theme-toggle.html" . }}
+</aside>

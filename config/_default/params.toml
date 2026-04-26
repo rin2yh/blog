@@ -1,6 +1,7 @@
 # Pages placed under these sections will be shown on homepage and archive page.
 mainSections = ["post"]
 rssFullContent = true
+googleAnalytics = "G-M2XSPTPQFB"
 [footer]
 since = 2026
 customText = ""

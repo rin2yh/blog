@@ -1,0 +1,19 @@
+{{- $page := .page -}}
+{{- $site := $page.Site -}}
+{{- $avatar := $site.Params.sidebar.avatar -}}
+<aside class="glass widget widget--profile">
+  {{- if and $avatar $avatar.enabled -}}
+    {{- if $avatar.local -}}
+      {{- with resources.Get $avatar.src -}}
+        {{- $img := .Fill "192x192 q85" -}}
+        <img class="avatar" src="{{ $img.RelPermalink }}" alt="{{ $site.Title }}" width="192" height="192" loading="lazy">
+      {{- end -}}
+    {{- else -}}
+      <img class="avatar" src="{{ $avatar.src }}" alt="{{ $site.Title }}" width="192" height="192" loading="lazy">
+    {{- end -}}
+  {{- end -}}
+  <h2 class="name">{{ $site.Title }}</h2>
+  {{- with $site.Params.description -}}
+    <p class="bio">{{ . }}</p>
+  {{- end -}}
+</aside>

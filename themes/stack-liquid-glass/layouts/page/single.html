@@ -1,0 +1,30 @@
+{{ define "main" }}
+<div class="layout-grid">
+  <div class="layout-grid__main">
+    <article class="glass glass-card article">
+      <header class="article-header">
+        <h1 class="article-title">{{ .Title }}</h1>
+        {{- with .Description }}
+          <p class="article-header__desc">{{ . }}</p>
+        {{- end }}
+        {{- if and (not .Date.IsZero) (ne .Params.readingTime false) }}
+          <div class="article-meta">
+            <span class="article-meta__item">
+              {{ partial "helper/icon" "date" }}
+              <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                {{- .Date | time.Format "2006/01/02" -}}
+              </time>
+            </span>
+          </div>
+        {{- end }}
+      </header>
+      <div class="article-content">
+        {{ .Content }}
+      </div>
+    </article>
+  </div>
+  <aside class="layout-grid__sidebar">
+    {{ partial "sidebar.html" . }}
+  </aside>
+</div>
+{{ end }}

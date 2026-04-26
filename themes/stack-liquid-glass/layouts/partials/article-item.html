@@ -1,0 +1,57 @@
+{{- $page := .page -}}
+{{- $showReadingTime := cond (isset . "showReadingTime") .showReadingTime true -}}
+{{- $link := partial "helper/external-link.html" $page -}}
+{{- with $page -}}
+{{- $cats := .GetTerms "categories" -}}
+{{- $tags := .GetTerms "tags" -}}
+{{- $allowReading := and (not .Params.externalUrl) (ne .Params.readingTime false) -}}
+<article class="glass article-item">
+  {{- if or $cats $tags }}
+    <div class="article-item__meta">
+      {{- with $cats }}
+        <span class="article-item__categories">
+          {{- range . -}}
+            <a class="glass-category" href="{{ .RelPermalink }}"
+               {{- with .Params.style }} style="background-color: {{ .background }}; color: {{ .color }};"{{ end -}}>
+              {{ .LinkTitle }}
+            </a>
+          {{- end -}}
+        </span>
+      {{- end }}
+      {{- with $tags }}
+        <span class="article-item__tags">
+          {{- range first 5 . -}}
+            <a class="article-card__tag" href="{{ .RelPermalink }}">#{{ partial "helper/tag-name.html" .LinkTitle }}</a>
+          {{- end -}}
+        </span>
+      {{- end }}
+    </div>
+  {{- end }}
+  <h2 class="article-item__title">
+    <a href="{{ $link.url }}"
+       {{- with $link.target }} target="{{ . }}"{{ end -}}
+       {{- with $link.rel }} rel="{{ . }}"{{ end -}}>
+      {{- with $link.icon -}}
+        <span class="article-item__title-icon icon-frame">{{ partial "helper/icon" . }}</span>
+      {{- end -}}
+      {{ .Title }}
+    </a>
+  </h2>
+  <footer class="article-item__footer">
+    {{- if not .Date.IsZero -}}
+      <span class="article-item__footer-entry">
+        <span class="article-item__footer-icon icon-frame">{{ partial "helper/icon" "date" }}</span>
+        <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+          {{- .Date | time.Format (or .Site.Params.dateFormat.published "2006/01/02") -}}
+        </time>
+      </span>
+    {{- end -}}
+    {{- if and $showReadingTime $allowReading -}}
+      <span class="article-item__footer-entry">
+        <span class="article-item__footer-icon icon-frame">{{ partial "helper/icon" "clock" }}</span>
+        <span>{{ T "readingTimeLabel" }}{{ T "readingTime" (dict "Count" .ReadingTime) }}</span>
+      </span>
+    {{- end -}}
+  </footer>
+</article>
+{{- end -}}

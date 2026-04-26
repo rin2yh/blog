@@ -1,0 +1,28 @@
+{{- $paginator := .Paginator -}}
+{{- if gt $paginator.TotalPages 1 -}}
+<nav class="pagination" aria-label="{{ T "paginationLabel" }}">
+  <ul class="glass pagination__list">
+    <li>
+      {{- if $paginator.HasPrev -}}
+        <a class="pagination__item" href="{{ $paginator.Prev.URL }}" aria-label="{{ T "paginationPrev" }}">‹</a>
+      {{- else -}}
+        <span class="pagination__item is-disabled" aria-disabled="true">‹</span>
+      {{- end -}}
+    </li>
+    {{- range $paginator.Pagers -}}
+      {{- if eq . $paginator -}}
+        <li><span class="pagination__item is-active" aria-current="page">{{ .PageNumber }}</span></li>
+      {{- else -}}
+        <li><a class="pagination__item" href="{{ .URL }}">{{ .PageNumber }}</a></li>
+      {{- end -}}
+    {{- end -}}
+    <li>
+      {{- if $paginator.HasNext -}}
+        <a class="pagination__item" href="{{ $paginator.Next.URL }}" aria-label="{{ T "paginationNext" }}">›</a>
+      {{- else -}}
+        <span class="pagination__item is-disabled" aria-disabled="true">›</span>
+      {{- end -}}
+    </li>
+  </ul>
+</nav>
+{{- end -}}

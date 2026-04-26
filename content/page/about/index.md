@@ -1,11 +1,12 @@
 ---
-title: About
+title: 自己紹介
 description: 過去の経歴などをまとめています。
 date: 2026-01-30
 lastmod: 2026-01-30
 readingTime: false
 menu:
   main:
+    name: 自己紹介
     weight: 2
     params:
       icon: user
@@ -21,8 +22,9 @@ menu:
 
 ### コミュニティ活動
 - エンジニアニメ (2025.07 - )
-    - [劇場版アニメから得た学びを発表会](https://engineers-anime-2025-lp.pages.dev/)　スタッフ（2025.08.10）
+    - [【劇場版】アニメから得た学びを発表会 2025](https://engineers-anime-2025-lp.pages.dev/)　スタッフ（2025.08.10）
     - 「[エンジニアニメ Anthology Tech Book 2nd Season](https://techbookfest.org/product/v0MeXEsV6CZyFMmgDj7yFV?productVariantID=1FXpr2iLmhKrgCHvsAs9gk)」 執筆　題：「ダンダダン」から学ぶスピードの大切さ
+    - [【劇場版】アニメから得た学びを発表会 2026](https://engineers-anime.connpass.com/event/375981/) スタッフ (2026.04.11)
 - TinyGo Conference 2025 スタッフ (2025.10.12)
 - ReactTokyo Fes 2026 スタッフ (2026.02.28)
 

@@ -1,0 +1,44 @@
+{{ define "main" }}
+  {{- if eq .Kind "term" -}}
+    <div class="layout-grid">
+      <div class="layout-grid__main">
+        {{- $paginator := .Paginate .RegularPages -}}
+        {{- if eq (len $paginator.Pages) 0 -}}
+          <p class="search-page__empty">記事はまだありません。</p>
+        {{- else -}}
+          <div class="article-list section--in">
+            {{- range $paginator.Pages -}}
+              {{ partialCached "article-item.html" (dict "page" .) .RelPermalink }}
+            {{- end -}}
+          </div>
+          {{ partial "pagination.html" . }}
+        {{- end -}}
+      </div>
+      <aside class="layout-grid__sidebar">
+        {{ partial "sidebar.html" . }}
+      </aside>
+    </div>
+  {{- else -}}
+    <div class="layout-grid">
+      <div class="layout-grid__main">
+        <div class="term-grid section--in">
+          {{- range .Data.Terms.Alphabetical -}}
+            {{- $page := site.GetPage (printf "/%s/%s" $.Data.Plural .Name) -}}
+            <a class="glass term-card" href="{{ .Page.RelPermalink }}"
+               {{- with $page -}}
+                 {{- with .Params.style -}}
+                   style="background-color: {{ .background }}; color: {{ .color }};"
+                 {{- end -}}
+               {{- end -}}>
+              <span>{{ .Page.LinkTitle | default .Name }}</span>
+              <span class="count">{{ .Count }}</span>
+            </a>
+          {{- end -}}
+        </div>
+      </div>
+      <aside class="layout-grid__sidebar">
+        {{ partial "sidebar.html" . }}
+      </aside>
+    </div>
+  {{- end -}}
+{{ end }}

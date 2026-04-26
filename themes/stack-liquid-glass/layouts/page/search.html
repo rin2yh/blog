@@ -1,0 +1,30 @@
+{{ define "main" }}
+<section class="search-page">
+  <form class="glass search-page__form" role="search" data-search-form>
+    <span class="search-page__icon icon-frame" aria-hidden="true">{{ partial "helper/icon" "search" }}</span>
+    <input
+      class="search-page__input"
+      type="search"
+      data-search-input
+      data-search-endpoint="{{ "index.json" | relLangURL }}"
+      placeholder="{{ T "searchPlaceholder" | default "キーワードを入力..." }}"
+      aria-label="{{ T "search" | default "検索" }}"
+      autocomplete="off"
+      autofocus>
+  </form>
+
+  <div class="search-page__results" data-search-results>
+    <p class="search-page__empty">{{ T "searchEmpty" | default "キーワードを入力して検索を開始してください。" }}</p>
+  </div>
+</section>
+
+{{- $search := resources.Get "js/search.js" -}}
+{{- if $search -}}
+  {{- if hugo.IsProduction -}}
+    {{- $search = $search | resources.Minify | resources.Fingerprint "sha256" -}}
+    <script defer src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}"></script>
+  {{- else -}}
+    <script defer src="{{ $search.RelPermalink }}"></script>
+  {{- end -}}
+{{- end -}}
+{{ end }}

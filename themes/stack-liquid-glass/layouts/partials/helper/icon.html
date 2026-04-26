@@ -1,0 +1,9 @@
+{{- /*
+  Inline SVG icon loader.
+  Usage: {{ partial "helper/icon" "search" }}
+*/ -}}
+{{- $name := . -}}
+{{- $path := printf "icons/%s.svg" $name -}}
+{{- with resources.Get $path -}}
+  {{- .Content | safeHTML -}}
+{{- end -}}

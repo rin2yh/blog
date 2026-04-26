@@ -1,0 +1,34 @@
+{{- $page := .page -}}
+{{- $params := .params -}}
+{{- $site := $page.Site -}}
+{{- $mainSections := $site.Params.mainSections | default (slice "post") -}}
+{{- $pages := where $site.RegularPages "Section" "in" $mainSections -}}
+{{- $groups := $pages.GroupByDate "2006" -}}
+{{- $limit := index $params "limit" | default 5 -}}
+{{- if and $limit (gt (len $groups) $limit) -}}
+  {{- $groups = first $limit $groups -}}
+{{- end -}}
+{{- $archivesURL := "" -}}
+{{- with $site.GetPage "/page/archives" -}}
+  {{- $archivesURL = .RelPermalink -}}
+{{- else -}}
+  {{- $archivesURL = "/page/archives/" | relLangURL -}}
+{{- end -}}
+<aside class="glass widget widget--archives">
+  <h3 class="widget__title">
+    {{ partial "helper/icon" "archives" }}
+    <span>{{ T "archives" | default "アーカイブ" }}</span>
+  </h3>
+  {{- if $groups -}}
+    <ul>
+      {{- range $groups -}}
+        <li>
+          <a href="{{ $archivesURL }}#year-{{ .Key }}">
+            <span class="year">{{ .Key }}</span>
+            <span class="count">{{ T "postCount" (dict "Count" (len .Pages)) }}</span>
+          </a>
+        </li>
+      {{- end -}}
+    </ul>
+  {{- end -}}
+</aside>

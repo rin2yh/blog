@@ -1,0 +1,19 @@
+{{- /* Widget dispatcher
+  - homepage widgets on home / list / taxonomy / term
+  - page widgets on single pages (post / page)
+*/ -}}
+{{- $list := slice -}}
+{{- if .IsPage -}}
+  {{- with .Site.Params.widgets.page -}}
+    {{- $list = . -}}
+  {{- end -}}
+{{- else -}}
+  {{- with .Site.Params.widgets.homepage -}}
+    {{- $list = . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range $list -}}
+  {{- $widgetParams := merge ($.Site.Params.widgets.params | default dict) (.params | default dict) -}}
+  {{- partial (printf "widgets/%s.html" .type) (dict "page" $ "params" $widgetParams) -}}
+{{- end -}}

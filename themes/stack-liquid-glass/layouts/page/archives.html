@@ -1,0 +1,28 @@
+{{ define "main" }}
+  <div class="layout-grid">
+    <div class="layout-grid__main">
+      <div class="archives">
+        {{- $mainSections := .Site.Params.mainSections | default (slice "post") -}}
+        {{- $pages := where .Site.RegularPages "Section" "in" $mainSections -}}
+        {{- range ($pages.GroupByDate "2006") -}}
+          <section id="year-{{ .Key }}" class="archives-year">
+            <h2 class="archives-year__title">
+              {{ .Key }}
+              <span class="archives-year__count">{{ T "postCount" (dict "Count" (len .Pages)) }}</span>
+            </h2>
+            <div class="article-list">
+              {{- range .Pages -}}
+                {{ partialCached "article-item.html" (dict "page" . "showReadingTime" false) "archives" .RelPermalink }}
+              {{- end -}}
+            </div>
+          </section>
+        {{- end -}}
+      </div>
+    </div>
+    <aside class="layout-grid__sidebar">
+      {{- range .Site.Params.widgets.homepage -}}
+        {{- partial (printf "widgets/%s.html" .type) (dict "page" $ "params" (.params | default dict)) -}}
+      {{- end -}}
+    </aside>
+  </div>
+{{ end }}

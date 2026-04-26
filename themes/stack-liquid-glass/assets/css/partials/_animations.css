@@ -1,0 +1,57 @@
+/* Cascade-in entry animation (sections fade up on load) */
+@keyframes cascade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.section--in {
+  animation: cascade-in var(--dur-slow) var(--ease-glass) both;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes edge-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(94, 231, 223, 0);
+  }
+  50% {
+    box-shadow: 0 0 30px 6px rgba(94, 231, 223, 0.35);
+  }
+}
+
+@keyframes lg-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}

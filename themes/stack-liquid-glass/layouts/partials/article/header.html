@@ -1,0 +1,72 @@
+<header class="article-header">
+  {{- $image := partialCached "helper/image" (dict "Context" . "Type" "article") .RelPermalink "article" .Lastmod.Unix -}}
+  {{- if $image.exists -}}
+    <div class="article-cover">
+      {{- if $image.resource -}}
+        {{- $thumb := $image.resource.Resize "1200x q85" -}}
+        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" decoding="async" alt="{{ .Title }}">
+      {{- else -}}
+        <img src="{{ $image.permalink }}" decoding="async" alt="{{ .Title }}">
+      {{- end -}}
+    </div>
+  {{- end -}}
+
+  {{- $link := partial "helper/external-link.html" . -}}
+  {{- $extIcon := $link.icon -}}
+
+  {{- with .GetTerms "categories" -}}
+    <div class="article-card__categories">
+      {{- range . -}}
+        <a class="glass-category" href="{{ .RelPermalink }}"
+           {{- with .Params.style }} style="background-color: {{ .background }}; color: {{ .color }};"{{ end -}}>
+          {{ .LinkTitle }}
+        </a>
+      {{- end -}}
+    </div>
+  {{- end -}}
+
+  <h1 class="article-title">
+    {{- with $extIcon -}}
+      {{ partial "helper/icon" . }}
+    {{- end -}}
+    {{- if $link.isExternal -}}
+      <a href="{{ $link.url }}"
+         {{- with $link.target }} target="{{ . }}"{{ end -}}
+         {{- with $link.rel }} rel="{{ . }}"{{ end -}}>{{ .Title }}</a>
+    {{- else -}}
+      {{ .Title }}
+    {{- end -}}
+  </h1>
+
+  {{- with .Description -}}
+    <p class="article-header__desc">{{ . }}</p>
+  {{- end -}}
+
+  <div class="article-meta">
+    {{- if not .Date.IsZero -}}
+      <span class="article-meta__item">
+        {{ partial "helper/icon" "date" }}
+        <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+          {{- .Date | time.Format (or .Site.Params.dateFormat.published "2006/01/02") -}}
+        </time>
+      </span>
+    {{- end -}}
+
+    {{- $showReadingTime := and (not .Params.externalUrl) (ne .Params.readingTime false) -}}
+    {{- if $showReadingTime -}}
+      <span class="article-meta__item">
+        {{ partial "helper/icon" "clock" }}
+        <span>{{ T "readingTime" (dict "Count" .ReadingTime) }}</span>
+      </span>
+    {{- end -}}
+
+    {{- with .GetTerms "tags" -}}
+      <span class="article-meta__item article-meta__item--tags">
+        {{ partial "helper/icon" "tag" }}
+        {{- range . -}}
+          <a class="article-card__tag" href="{{ .RelPermalink }}">#{{ partial "helper/tag-name.html" .LinkTitle }}</a>
+        {{- end -}}
+      </span>
+    {{- end -}}
+  </div>
+</header>

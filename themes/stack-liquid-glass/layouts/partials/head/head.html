@@ -1,0 +1,90 @@
+{{- /* Page meta */ -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0e1a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#e8f0fa" media="(prefers-color-scheme: light)">
+<title>{{- if .IsHome -}}{{ .Site.Title }}{{- else -}}{{ .Title }} — {{ .Site.Title }}{{- end -}}</title>
+{{- with or .Description .Summary .Site.Params.description -}}
+<meta name="description" content="{{ . | plainify | chomp | htmlUnescape | truncate 200 }}">
+{{- end }}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* Favicons */ -}}
+<link rel="apple-touch-icon" sizes="180x180" href="{{ "apple-touch-icon.png" | relURL }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ "favicon-32x32.png" | relURL }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ "favicon-16x16.png" | relURL }}">
+<link rel="manifest" href="{{ "site.webmanifest" | relURL }}">
+<link rel="shortcut icon" href="{{ "favicon.ico" | relURL }}">
+
+{{- /* Fonts — load asynchronously to avoid blocking first paint */ -}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{- $fontHref := "https://fonts.googleapis.com/css2?family=Italiana&family=DM+Sans:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" -}}
+<link rel="stylesheet" href="{{ $fontHref }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ $fontHref }}"></noscript>
+
+{{- /* OpenGraph + Twitter */ -}}
+{{ partial "head/opengraph.html" . }}
+
+{{- /* Stylesheet pipeline — plain CSS concat */ -}}
+{{- $cssFiles := slice
+  "css/partials/_tokens.css"
+  "css/partials/_base.css"
+  "css/partials/_glass.css"
+  "css/partials/_theme-toggle.css"
+  "css/partials/_components-button.css"
+  "css/partials/_components-tag.css"
+  "css/partials/_components-nav.css"
+  "css/partials/_components-card.css"
+  "css/partials/_components-toc.css"
+  "css/partials/_components-pagination.css"
+  "css/partials/_components-sidebar.css"
+  "css/partials/_components-progress.css"
+  "css/partials/_scene-blob.css"
+  "css/partials/_animations.css"
+  "css/partials/_syntax.css"
+  "css/partials/_mermaid.css"
+  "css/partials/_layout.css"
+  "css/partials/_utils.css"
+-}}
+{{- $cssParts := slice -}}
+{{- range $cssFiles -}}
+  {{- with resources.Get . -}}
+    {{- $cssParts = $cssParts | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- if $cssParts -}}
+  {{- $css := $cssParts | resources.Concat "css/liquid-glass.css" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $css = $css | resources.Minify | resources.Fingerprint "sha256" -}}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+  {{- else -}}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  {{- end }}
+{{- end }}
+
+{{- /* JS bundle */ -}}
+{{- $jsFiles := slice
+  "js/liquid-glass.js"
+  "js/toc.js"
+  "js/copy-code.js"
+  "js/progress.js"
+-}}
+{{- $jsParts := slice -}}
+{{- range $jsFiles -}}
+  {{- with resources.Get . -}}
+    {{- $jsParts = $jsParts | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- if $jsParts -}}
+  {{- $js := $jsParts | resources.Concat "js/liquid-glass.bundle.js" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $js = $js | resources.Minify | resources.Fingerprint "sha256" -}}
+    <script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+  {{- else -}}
+    <script defer src="{{ $js.RelPermalink }}"></script>
+  {{- end }}
+{{- end }}
+
+{{- /* Optional analytics */ -}}
+{{ if hugo.IsProduction }}{{ partial "google-analytics.html" . }}{{ end }}

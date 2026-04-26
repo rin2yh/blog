@@ -1,6 +1,6 @@
 [[main]]
 identifier = 'home'
-name = 'Home'
+name = 'ホーム'
 weight = 1
 url = '/'
 [main.params]

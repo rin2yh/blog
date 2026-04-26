@@ -1,0 +1,12 @@
+{{- /*
+  Hugo humanizes lower-case term keys (e.g. "go" → "Go"). Undo that
+  when the title looks humanize-shaped: first letter uppercase and
+  rest is all lowercase. Preserve mixed-case terms ("E2E", "GitHub Actions").
+  Usage: {{ partial "helper/tag-name.html" .LinkTitle }}
+*/ -}}
+{{- $t := . -}}
+{{- $rest := substr $t 1 -}}
+{{- if and (eq $rest (lower $rest)) (ne (substr $t 0 1) (lower (substr $t 0 1))) -}}
+  {{- $t = printf "%s%s" (substr $t 0 1 | lower) $rest -}}
+{{- end -}}
+{{- $t -}}

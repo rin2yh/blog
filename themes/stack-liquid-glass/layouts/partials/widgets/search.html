@@ -1,0 +1,12 @@
+{{- $searchURL := "" -}}
+{{- with site.GetPage "/page/search" -}}
+  {{- $searchURL = .RelPermalink -}}
+{{- else -}}
+  {{- $searchURL = "/page/search/" | relLangURL -}}
+{{- end -}}
+<aside class="glass widget widget--search">
+  <form class="search-input-wrap" action="{{ $searchURL }}" method="get" role="search">
+    <span class="search-input-icon icon-frame">{{ partial "helper/icon" "search" }}</span>
+    <input class="search-input" type="search" name="q" placeholder="{{ T "searchPlaceholder" | default "キーワードを入力" }}" aria-label="{{ T "search" | default "検索" }}">
+  </form>
+</aside>

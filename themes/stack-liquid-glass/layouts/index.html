@@ -1,0 +1,18 @@
+{{ define "main" }}
+  <div class="layout-grid">
+    <div class="layout-grid__main">
+      {{- $mainSections := .Site.Params.mainSections | default (slice "post") -}}
+      {{- $pages := where site.RegularPages "Section" "in" $mainSections -}}
+      {{- $paginator := .Paginate $pages -}}
+      <div class="article-list section--in">
+        {{- range $paginator.Pages -}}
+          {{ partialCached "article-item.html" (dict "page" .) .RelPermalink }}
+        {{- end -}}
+      </div>
+      {{ partial "pagination.html" . }}
+    </div>
+    <aside class="layout-grid__sidebar">
+      {{ partial "sidebar.html" . }}
+    </aside>
+  </div>
+{{ end }}

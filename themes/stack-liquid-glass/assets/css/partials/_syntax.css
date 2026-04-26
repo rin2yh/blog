@@ -1,0 +1,169 @@
+/* Code highlight — Glass-styled Chroma output */
+/* Hugo with noClasses=false emits classes like .chroma .k (keyword), .s (string), etc. */
+
+.article-content pre,
+.highlight pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-code-bg);
+  border: 1px solid var(--glass-border-subtle);
+  overflow-x: auto;
+  position: relative;
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  color: var(--color-code-text);
+}
+
+[data-theme="light"] .article-content pre,
+[data-theme="light"] .highlight pre {
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+.article-content code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--glass-white);
+  border: 1px solid var(--glass-border-subtle);
+  color: var(--accent-aqua);
+}
+.article-content pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+/* Code block wrapper for copy button */
+.code-block {
+  position: relative;
+}
+.code-block__copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border-subtle);
+  background: var(--glass-white);
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--dur-fast), background var(--dur-fast),
+    transform var(--dur-fast) var(--ease-liquid);
+}
+.code-block:hover .code-block__copy {
+  opacity: 1;
+}
+.code-block__copy:hover {
+  background: var(--glass-white-md);
+  transform: scale(1.06);
+}
+.code-block__copy svg {
+  width: 14px;
+  height: 14px;
+}
+.code-block__copy.is-copied {
+  color: var(--accent-aqua);
+}
+
+/* Chroma token colours — adapted to Glass palette */
+.chroma {
+  background: transparent;
+}
+.chroma .k, .chroma .kc, .chroma .kd, .chroma .kn, .chroma .kp, .chroma .kr, .chroma .kt {
+  color: #c084fc;
+}
+.chroma .s, .chroma .sb, .chroma .sc, .chroma .s1, .chroma .s2, .chroma .se, .chroma .sh, .chroma .sx {
+  color: #5ee7df;
+}
+.chroma .m, .chroma .mb, .chroma .mf, .chroma .mh, .chroma .mi, .chroma .mo, .chroma .il {
+  color: #f7a8c4;
+}
+.chroma .c, .chroma .ch, .chroma .cm, .chroma .c1, .chroma .cs, .chroma .cp, .chroma .cpf {
+  color: #94a3b8;
+  font-style: italic;
+}
+.chroma .nb, .chroma .bp, .chroma .vc, .chroma .vg, .chroma .vi, .chroma .nv {
+  color: #ffd27f;
+}
+.chroma .nf, .chroma .fm, .chroma .nc {
+  color: #a8f08a;
+}
+.chroma .o, .chroma .ow {
+  color: #f87171;
+}
+.chroma .err {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+.chroma .ln {
+  color: rgba(255, 255, 255, 0.3);
+  margin-right: var(--space-sm);
+  user-select: none;
+}
+
+[data-theme="light"] .chroma .k,
+[data-theme="light"] .chroma .kc,
+[data-theme="light"] .chroma .kd,
+[data-theme="light"] .chroma .kn,
+[data-theme="light"] .chroma .kp,
+[data-theme="light"] .chroma .kr,
+[data-theme="light"] .chroma .kt {
+  color: #6d28d9;
+}
+[data-theme="light"] .chroma .s,
+[data-theme="light"] .chroma .sb,
+[data-theme="light"] .chroma .sc,
+[data-theme="light"] .chroma .s1,
+[data-theme="light"] .chroma .s2,
+[data-theme="light"] .chroma .se,
+[data-theme="light"] .chroma .sh,
+[data-theme="light"] .chroma .sx {
+  color: #0891b2;
+}
+[data-theme="light"] .chroma .m,
+[data-theme="light"] .chroma .mb,
+[data-theme="light"] .chroma .mf,
+[data-theme="light"] .chroma .mh,
+[data-theme="light"] .chroma .mi,
+[data-theme="light"] .chroma .mo,
+[data-theme="light"] .chroma .il {
+  color: #be185d;
+}
+[data-theme="light"] .chroma .c,
+[data-theme="light"] .chroma .ch,
+[data-theme="light"] .chroma .cm,
+[data-theme="light"] .chroma .c1,
+[data-theme="light"] .chroma .cs {
+  color: #64748b;
+  font-style: italic;
+}
+[data-theme="light"] .chroma .nb,
+[data-theme="light"] .chroma .bp {
+  color: #b45309;
+}
+[data-theme="light"] .chroma .nf,
+[data-theme="light"] .chroma .fm {
+  color: #15803d;
+}
+[data-theme="light"] .chroma .o,
+[data-theme="light"] .chroma .ow {
+  color: #b91c1c;
+}
+[data-theme="light"] .chroma .ln {
+  color: rgba(15, 23, 42, 0.3);
+}
+[data-theme="light"] .article-content code {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0891b2;
+}

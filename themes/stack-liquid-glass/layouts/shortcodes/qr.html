@@ -1,0 +1,10 @@
+{{- /* Acknowledge .Inner so self-closing form is accepted */ -}}
+{{- $_ := .Inner -}}
+{{- $text := .Get "text" -}}
+{{- $alt := .Get "alt" | default $text -}}
+{{- $title := .Get "title" | default $text -}}
+{{- $url := printf "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=%s" ($text | urlquery) -}}
+<figure class="qr-card glass">
+  <img src="{{ $url }}" alt="{{ $alt }}" width="200" height="200" loading="lazy">
+  <figcaption class="qr-card__caption">{{ $title }}</figcaption>
+</figure>

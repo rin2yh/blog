@@ -1,2 +1,2 @@
 [images]
-dir = ':cacheDir/images'
+dir = ':resourceDir/_gen/images'

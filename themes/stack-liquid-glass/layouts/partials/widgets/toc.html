@@ -1,0 +1,12 @@
+{{- $page := .page -}}
+{{- if $page.IsPage -}}
+  {{- with $page.TableOfContents -}}
+    <aside class="glass toc widget">
+      <div class="toc__title">
+        {{ partial "helper/icon" "list" }}
+        {{ T "tableOfContents" }}
+      </div>
+      <div class="toc__inner">{{ . }}</div>
+    </aside>
+  {{- end -}}
+{{- end -}}

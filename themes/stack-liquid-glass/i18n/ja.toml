@@ -1,0 +1,112 @@
+[home]
+other = "ホーム"
+
+[search]
+other = "検索"
+
+[archives]
+other = "アーカイブ"
+
+[categories]
+other = "カテゴリ"
+
+[tags]
+other = "タグ"
+
+[about]
+other = "About"
+
+[readingTime]
+one = "{{ .Count }}分"
+other = "{{ .Count }}分"
+
+[readingTimeLabel]
+other = "読了時間: "
+
+[publishedOn]
+other = "公開"
+
+[lastUpdatedOn]
+other = "最終更新"
+
+[relatedPosts]
+other = "関連記事"
+
+[tableOfContents]
+other = "目次"
+
+[allCategories]
+other = "全てのカテゴリ"
+
+[allTags]
+other = "全てのタグ"
+
+[postCount]
+one = "{{ .Count }} 件"
+other = "{{ .Count }} 件"
+
+[shareTo]
+other = "共有"
+
+[searchPlaceholder]
+other = "記事を検索…"
+
+[searchEmpty]
+other = "キーワードを入力してください。"
+
+[searchNoResults]
+other = "該当する記事がありません。"
+
+[notFoundTitle]
+other = "ページが見つかりません"
+
+[notFoundDesc]
+other = "お探しのページは存在しないか、移動した可能性があります。"
+
+[backToHome]
+other = "ホームに戻る"
+
+[darkMode]
+other = "ダークモード"
+
+[donateTitle]
+other = "投げ銭"
+
+[poweredBy]
+other = "Powered by Hugo & Liquid Glass"
+
+[license]
+other = "© {{ .Year }} {{ .Title }}"
+
+[toggleDarkMode]
+other = "ダークモード切替"
+
+[switchToLight]
+other = "ライトモードに切替"
+
+[switchToDark]
+other = "ダークモードに切替"
+
+[paginationLabel]
+other = "ページネーション"
+
+[paginationPrev]
+other = "前へ"
+
+[paginationNext]
+other = "次へ"
+
+[toggleMenu]
+other = "メニューを開閉"
+
+[copyCode]
+other = "コードをコピー"
+
+[shareOnTwitter]
+other = "Twitterで共有"
+
+[copySuccess]
+other = "メールアドレスをコピーしました"
+
+[copyError]
+other = "コピーに失敗しました"

@@ -1,0 +1,202 @@
+/* Sidebar widget container styles */
+.widget {
+  border-radius: var(--radius-xl);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.widget + .widget {
+  margin-top: var(--space-md);
+}
+[data-theme="light"] .widget.glass {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(15, 23, 42, 0.1);
+}
+[data-theme="light"] .toc.glass {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+.widget__title {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--space-2xs);
+}
+.widget__title svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.7;
+}
+
+/* Search widget */
+.widget--search .search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.widget--search .search-input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-white-md);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  outline: none;
+  transition: border-color var(--dur-fast), background var(--dur-fast),
+    box-shadow var(--dur-fast);
+}
+.widget--search .search-input::placeholder {
+  opacity: 0.7;
+}
+.widget--search .search-input:focus {
+  border-color: rgb(var(--accent-aqua-rgb) / 0.6);
+  box-shadow: 0 0 0 3px rgb(var(--accent-aqua-rgb) / 0.18);
+  background: var(--glass-white-md);
+}
+.widget--search .search-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  opacity: 0.75;
+  pointer-events: none;
+}
+[data-theme="light"] .widget--search .search-input {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+}
+
+/* Archives widget — year groups */
+.widget--archives ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0 calc(-1 * var(--space-lg));
+}
+.widget--archives li + li {
+  border-top: 1px solid var(--glass-border-subtle);
+}
+.widget--archives li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--dur-fast);
+}
+.widget--archives li a:hover {
+  background: var(--glass-white);
+}
+.widget--archives .year {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+.widget--archives .count {
+  font-size: var(--text-sm);
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Categories widget — chip cloud */
+.widget--categories .category-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.widget--categories .category-cloud a {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--color-text);
+  background: var(--glass-white);
+  border: 1px solid var(--glass-border-subtle);
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity var(--dur-fast);
+}
+.widget--categories .category-cloud a:hover {
+  opacity: 1;
+  color: var(--color-text);
+}
+
+/* Tag-cloud widget */
+.widget--tag-cloud .tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.widget--tag-cloud .tag-cloud a {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--color-text);
+  background: var(--glass-white);
+  border: 1px solid var(--glass-border-subtle);
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity var(--dur-fast);
+}
+.widget--tag-cloud .tag-cloud a:hover {
+  opacity: 1;
+  color: var(--color-text);
+}
+
+/* Profile widget */
+.widget--profile {
+  text-align: center;
+  align-items: center;
+}
+.widget--profile .avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid var(--glass-border);
+  object-fit: cover;
+  margin-bottom: var(--space-sm);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.widget--profile .name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  margin-bottom: 4px;
+}
+.widget--profile .bio {
+  font-size: var(--text-xs);
+  opacity: 0.7;
+  line-height: 1.6;
+  max-width: 220px;
+  margin: 0 auto;
+}
+
+[data-theme="light"] .widget,
+[data-theme="light"] .widget__title,
+[data-theme="light"] .widget--archives .year,
+[data-theme="light"] .widget--archives .count,
+[data-theme="light"] .widget--categories .category-cloud a,
+[data-theme="light"] .widget--tag-cloud .tag-cloud a,
+[data-theme="light"] .widget--profile .name,
+[data-theme="light"] .widget--profile .bio {
+  opacity: 1;
+}

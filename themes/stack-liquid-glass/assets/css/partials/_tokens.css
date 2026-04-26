@@ -1,0 +1,136 @@
+/* Design tokens — CSS custom properties only */
+:root {
+  --glass-white: rgba(255, 255, 255, 0.12);
+  --glass-white-md: rgba(255, 255, 255, 0.2);
+  --glass-white-lg: rgba(255, 255, 255, 0.3);
+  --glass-dark: rgba(0, 0, 0, 0.18);
+  --glass-dark-md: rgba(0, 0, 0, 0.28);
+
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-border-subtle: rgba(255, 255, 255, 0.12);
+  --glass-border-bright: rgba(255, 255, 255, 0.5);
+
+  --blur-sm: blur(8px);
+  --blur-md: blur(18px);
+  --blur-lg: blur(32px);
+  --blur-xl: blur(60px);
+
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 40px rgba(120, 200, 255, 0.35);
+
+  --reflection-top: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0) 50%
+  );
+  --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.1);
+
+  --accent-aqua: #5ee7df;
+  --accent-aqua-rgb: 94 231 223;
+  --accent-violet: #b490f5;
+  --accent-rose: #f7a8c4;
+  --accent-amber: #ffd27f;
+  --accent-lime: #a8f08a;
+
+  --color-bg: #0b0e1a;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-code-bg: rgba(10, 12, 22, 0.78);
+  --color-code-text: #e2e8f0;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.55);
+  --color-text-subtle: rgba(255, 255, 255, 0.35);
+
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  --text-2xs: 0.68rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.82rem;
+  --text-md: 0.9rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.3rem;
+  --text-2xl: 1.6rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.8rem;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-overlay: 100;
+  --z-modal: 500;
+  --z-toast: 800;
+  --z-tooltip: 900;
+
+  --ease-glass: cubic-bezier(0.22, 0.68, 0, 1.2);
+  --ease-liquid: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  --dur-fast: 180ms;
+  --dur-mid: 360ms;
+  --dur-slow: 600ms;
+
+  --font-display: "Italiana", serif;
+  --font-ui: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Noto Sans JP", "BIZ UDPGothic", "Hiragino Sans",
+    "Yu Gothic UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Menlo", "Consolas", monospace;
+}
+
+[data-theme="light"] {
+  --glass-white: rgba(255, 255, 255, 0.62);
+  --glass-white-md: rgba(255, 255, 255, 0.78);
+  --glass-white-lg: rgba(255, 255, 255, 0.9);
+  --glass-dark: rgba(0, 0, 0, 0.06);
+  --glass-dark-md: rgba(15, 23, 42, 0.08);
+
+  --glass-border: rgba(15, 23, 42, 0.14);
+  --glass-border-subtle: rgba(15, 23, 42, 0.09);
+  --glass-border-bright: rgba(15, 23, 42, 0.22);
+
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.16),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+
+  --color-bg: #e8f0fa;
+  --color-surface: rgba(255, 255, 255, 0.55);
+  --color-code-bg: rgba(15, 23, 42, 0.04);
+  --color-code-text: #0f172a;
+  --color-text: #020617;
+  --color-text-muted: #1e293b;
+  --color-text-subtle: #334155;
+
+  --reflection-top: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0) 50%
+  );
+  --reflection-inner: inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+
+  --accent-aqua: #0891b2;
+  --accent-aqua-rgb: 8 145 178;
+  --accent-violet: #6d28d9;
+  --accent-rose: #be185d;
+  --accent-amber: #b45309;
+  --accent-lime: #15803d;
+}
