@@ -21,7 +21,7 @@
       var btn = document.createElement("button");
       btn.className = "code-block__copy";
       btn.type = "button";
-      btn.setAttribute("aria-label", "Copy code");
+      btn.setAttribute("aria-label", (window.lgI18n && window.lgI18n.copyCode) || "Copy code");
       btn.innerHTML = COPY_SVG;
       wrap.appendChild(btn);
 

@@ -37,6 +37,8 @@
 
   --color-bg: #0b0e1a;
   --color-surface: rgba(255, 255, 255, 0.04);
+  --color-code-bg: rgba(10, 12, 22, 0.78);
+  --color-code-text: #e2e8f0;
   --color-text: #ffffff;
   --color-text-muted: rgba(255, 255, 255, 0.55);
   --color-text-subtle: rgba(255, 255, 255, 0.35);
@@ -111,6 +113,8 @@
 
   --color-bg: #e8f0fa;
   --color-surface: rgba(255, 255, 255, 0.55);
+  --color-code-bg: rgba(15, 23, 42, 0.04);
+  --color-code-text: #0f172a;
   --color-text: #020617;
   --color-text-muted: #1e293b;
   --color-text-subtle: #334155;

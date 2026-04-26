@@ -77,3 +77,30 @@ other = "Powered by Hugo & Liquid Glass"
 
 [license]
 other = "© {{ .Year }} {{ .Title }}"
+
+[toggleDarkMode]
+other = "ダークモード切替"
+
+[switchToLight]
+other = "ライトモードに切替"
+
+[switchToDark]
+other = "ダークモードに切替"
+
+[paginationLabel]
+other = "ページネーション"
+
+[paginationPrev]
+other = "前へ"
+
+[paginationNext]
+other = "次へ"
+
+[toggleMenu]
+other = "メニューを開閉"
+
+[copyCode]
+other = "コードをコピー"
+
+[shareOnTwitter]
+other = "Twitterで共有"

@@ -7,6 +7,7 @@
       var btn = document.querySelector("[data-theme-toggle]");
       var root = document.documentElement;
       if (!btn) return;
+      var i18n = window.lgI18n || {};
       btn.addEventListener("click", function () {
         var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
         root.setAttribute("data-theme", next);
@@ -15,7 +16,9 @@
         } catch (e) {}
         btn.setAttribute(
           "aria-label",
-          next === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          next === "dark"
+            ? i18n.switchToLight || "Switch to light mode"
+            : i18n.switchToDark || "Switch to dark mode"
         );
       });
     }
