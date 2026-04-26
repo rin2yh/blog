@@ -53,12 +53,14 @@
     {{- $cssParts = $cssParts | append . -}}
   {{- end -}}
 {{- end -}}
-{{- $css := $cssParts | resources.Concat "css/liquid-glass.css" -}}
-{{- if hugo.IsProduction -}}
-  {{- $css = $css | resources.Minify | resources.Fingerprint "sha256" -}}
-  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
-{{- else -}}
-  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+{{- if $cssParts -}}
+  {{- $css := $cssParts | resources.Concat "css/liquid-glass.css" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $css = $css | resources.Minify | resources.Fingerprint "sha256" -}}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+  {{- else -}}
+    <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  {{- end }}
 {{- end }}
 
 {{- /* JS bundle */ -}}
@@ -74,12 +76,14 @@
     {{- $jsParts = $jsParts | append . -}}
   {{- end -}}
 {{- end -}}
-{{- $js := $jsParts | resources.Concat "js/liquid-glass.bundle.js" -}}
-{{- if hugo.IsProduction -}}
-  {{- $js = $js | resources.Minify | resources.Fingerprint "sha256" -}}
-  <script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
-{{- else -}}
-  <script defer src="{{ $js.RelPermalink }}"></script>
+{{- if $jsParts -}}
+  {{- $js := $jsParts | resources.Concat "js/liquid-glass.bundle.js" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $js = $js | resources.Minify | resources.Fingerprint "sha256" -}}
+    <script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+  {{- else -}}
+    <script defer src="{{ $js.RelPermalink }}"></script>
+  {{- end }}
 {{- end }}
 
 {{- /* Optional analytics */ -}}
