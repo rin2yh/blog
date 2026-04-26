@@ -1,16 +1,34 @@
 name = "Stack Liquid Glass"
 license = "MIT"
-licenselink = ""
-description = "Glassmorphism / Liquid Glass theme for Hugo with light/dark mode and zero JS dependencies."
+licenselink = "https://github.com/rin2yh/blog/blob/main/themes/stack-liquid-glass/LICENSE"
+description = "Glassmorphism / Liquid Glass theme for Hugo. Stack-inspired layout with backdrop-filter, drifting color blobs, and zero JS dependencies. Light/dark mode with localStorage persistence."
 homepage = "https://github.com/rin2yh/blog"
-tags = ["blog", "glassmorphism", "dark-mode", "minimal", "japanese"]
-features = ["dark-mode", "search", "toc", "mermaid", "external-url", "related-posts"]
+demosite = "https://rin2yh.github.io/blog/"
+tags = [
+  "blog",
+  "glassmorphism",
+  "liquid-glass",
+  "dark-mode",
+  "minimal",
+  "responsive",
+  "i18n",
+]
+features = [
+  "dark-mode",
+  "responsive",
+  "search",
+  "toc",
+  "mermaid",
+  "syntax-highlighting",
+  "external-url",
+  "related-posts",
+  "i18n",
+  "rss",
+  "open-graph",
+  "twitter-card",
+]
 min_version = "0.146.0"
 
 [author]
 name = "rin2yh"
-
-[original]
-author = "rin2yh"
-homepage = ""
-repo = ""
+homepage = "https://github.com/rin2yh"

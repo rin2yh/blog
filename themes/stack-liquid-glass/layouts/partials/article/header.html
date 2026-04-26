@@ -3,8 +3,8 @@
   {{- if $image.exists -}}
     <div class="article-cover">
       {{- if $image.resource -}}
-        {{- $thumb := $image.resource.Resize "1200x q85" -}}
-        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" decoding="async" alt="{{ .Title }}">
+        {{- $thumb := partial "helper/image-thumb.html" (dict "resource" $image.resource "op" "Resize" "spec" "1200x q85") -}}
+        <img src="{{ $thumb.url }}"{{ with $thumb.width }} width="{{ . }}" height="{{ $thumb.height }}"{{ end }} decoding="async" alt="{{ .Title }}">
       {{- else -}}
         <img src="{{ $image.permalink }}" decoding="async" alt="{{ .Title }}">
       {{- end -}}

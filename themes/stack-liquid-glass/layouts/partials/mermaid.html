@@ -1,4 +1,5 @@
-{{- /* Trigger from page-level frontmatter (mermaid: true) */ -}}
+{{- /* Frontmatter escape hatch for raw <div class="mermaid"> usage; fenced
+       blocks are handled by render-codeblock-mermaid.html. */ -}}
 {{- if .Params.mermaid -}}
   {{- .Store.Set "hasMermaid" true -}}
 {{- end -}}

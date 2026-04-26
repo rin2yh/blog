@@ -15,8 +15,8 @@
   {{- if $image.exists }}
     <div class="article-card__cover">
       {{- if $image.resource -}}
-        {{- $thumb := $image.resource.Fill "640x360 q85" -}}
-        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy" decoding="async" alt="{{ .Title }}">
+        {{- $thumb := partial "helper/image-thumb.html" (dict "resource" $image.resource "spec" "640x360 q85") -}}
+        <img src="{{ $thumb.url }}"{{ with $thumb.width }} width="{{ . }}" height="{{ $thumb.height }}"{{ end }} loading="lazy" decoding="async" alt="{{ .Title }}">
       {{- else -}}
         <img src="{{ $image.permalink }}" loading="lazy" decoding="async" alt="{{ .Title }}">
       {{- end -}}
