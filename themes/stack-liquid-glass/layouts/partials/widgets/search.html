@@ -1,6 +1,8 @@
-{{- $searchURL := "/page/search/" | relLangURL -}}
+{{- $searchURL := "" -}}
 {{- with site.GetPage "/page/search" -}}
   {{- $searchURL = .RelPermalink -}}
+{{- else -}}
+  {{- $searchURL = "/page/search/" | relLangURL -}}
 {{- end -}}
 <aside class="glass widget widget--search">
   <form class="search-input-wrap" action="{{ $searchURL }}" method="get" role="search">
