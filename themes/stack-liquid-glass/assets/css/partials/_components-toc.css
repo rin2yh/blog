@@ -93,3 +93,9 @@
     max-height: none;
   }
 }
+
+[data-theme="light"] .toc__title,
+[data-theme="light"] .toc__inner,
+[data-theme="light"] .toc__inner a {
+  opacity: 1;
+}

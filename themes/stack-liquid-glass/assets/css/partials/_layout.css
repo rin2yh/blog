@@ -521,3 +521,21 @@
   opacity: 0.75;
   text-align: center;
 }
+
+[data-theme="light"] .archives-list a,
+[data-theme="light"] .archives-list time,
+[data-theme="light"] .archives-list svg,
+[data-theme="light"] .archives-year__count,
+[data-theme="light"] .term-card,
+[data-theme="light"] .term-card .count,
+[data-theme="light"] .search-page__input,
+[data-theme="light"] .search-page__icon,
+[data-theme="light"] .search-result,
+[data-theme="light"] .search-result__title,
+[data-theme="light"] .search-result__meta,
+[data-theme="light"] .search-result__excerpt,
+[data-theme="light"] .search-page__empty,
+[data-theme="light"] .qr-card__caption,
+[data-theme="light"] .site-footer__text {
+  opacity: 1;
+}

@@ -189,3 +189,14 @@
   max-width: 220px;
   margin: 0 auto;
 }
+
+[data-theme="light"] .widget,
+[data-theme="light"] .widget__title,
+[data-theme="light"] .widget--archives .year,
+[data-theme="light"] .widget--archives .count,
+[data-theme="light"] .widget--categories .category-cloud a,
+[data-theme="light"] .widget--tag-cloud .tag-cloud a,
+[data-theme="light"] .widget--profile .name,
+[data-theme="light"] .widget--profile .bio {
+  opacity: 1;
+}

@@ -113,3 +113,8 @@
     gap: var(--space-xs);
   }
 }
+
+[data-theme="light"] .site-brand,
+[data-theme="light"] .site-social__link {
+  opacity: 1;
+}

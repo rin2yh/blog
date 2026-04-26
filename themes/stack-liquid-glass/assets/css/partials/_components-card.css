@@ -559,3 +559,34 @@
   width: 18px;
   height: 18px;
 }
+
+/* Light-mode opacity overrides — keep text solid in light theme. */
+[data-theme="light"] .article-content,
+[data-theme="light"] .article-content p,
+[data-theme="light"] .article-content li,
+[data-theme="light"] .article-content strong,
+[data-theme="light"] .article-content em,
+[data-theme="light"] .article-content td,
+[data-theme="light"] .article-content th,
+[data-theme="light"] .article-content h1,
+[data-theme="light"] .article-content h2,
+[data-theme="light"] .article-content h3,
+[data-theme="light"] .article-content h4,
+[data-theme="light"] .article-content h5,
+[data-theme="light"] .article-content h6,
+[data-theme="light"] .article-title,
+[data-theme="light"] .article-title a,
+[data-theme="light"] .article-header__desc,
+[data-theme="light"] .article-meta,
+[data-theme="light"] .article-meta__item,
+[data-theme="light"] .article-card__title,
+[data-theme="light"] .article-card__summary,
+[data-theme="light"] .article-card__meta,
+[data-theme="light"] .article-card__date,
+[data-theme="light"] .article-card__tag,
+[data-theme="light"] .article-lastmod,
+[data-theme="light"] .article-license,
+[data-theme="light"] .twitter-share__title,
+[data-theme="light"] .donate-card__desc {
+  opacity: 1;
+}
