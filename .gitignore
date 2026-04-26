@@ -71,3 +71,6 @@ bower_components
 .awspublish*
 
 assets/jsconfig.json
+
+# claude code
+.claude/settings.local.json
