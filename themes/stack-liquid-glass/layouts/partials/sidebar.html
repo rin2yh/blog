@@ -14,5 +14,6 @@
 {{- end -}}
 
 {{- range $list -}}
-  {{- partial (printf "widgets/%s.html" .type) (dict "page" $ "params" (.params | default dict)) -}}
+  {{- $widgetParams := merge ($.Site.Params.widgets.params | default dict) (.params | default dict) -}}
+  {{- partial (printf "widgets/%s.html" .type) (dict "page" $ "params" $widgetParams) -}}
 {{- end -}}
