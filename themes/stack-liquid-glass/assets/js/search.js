@@ -76,6 +76,7 @@
       if (dataPromise) return dataPromise;
       dataPromise = fetch(endpoint)
         .then(function (r) {
+          if (!r.ok) throw new Error("Search index fetch failed");
           return r.json();
         })
         .then(function (json) {
