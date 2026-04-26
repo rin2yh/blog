@@ -3,15 +3,14 @@
          - src      (string, required) — path passed to resources.Get
          - fillSize (string, optional) — e.g. "192x192 q85"; omitted/empty = no resize
 
-       SVG resources don't support .Fill, so they're returned as-is.
-       Raster resources are processed when fillSize is set, untouched otherwise.
+       Only raster image resources are processed via .Fill; SVGs and any
+       non-image resource (misconfigured CSS / JSON / etc.) fall back to
+       the original URL so a typo in config never crashes the build.
        Returns "" if the resource is missing.
 */ -}}
 {{- $url := "" -}}
 {{- with resources.Get .src -}}
-  {{- if eq .MediaType.SubType "svg" -}}
-    {{- $url = .RelPermalink -}}
-  {{- else if $.fillSize -}}
+  {{- if and (eq .ResourceType "image") (ne .MediaType.SubType "svg") $.fillSize -}}
     {{- $url = (.Fill $.fillSize).RelPermalink -}}
   {{- else -}}
     {{- $url = .RelPermalink -}}
