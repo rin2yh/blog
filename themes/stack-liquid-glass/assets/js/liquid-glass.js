@@ -32,6 +32,7 @@
         if (target.querySelectorAll("[data-ripple]").length > 5) return;
         var ripple = document.createElement("span");
         ripple.setAttribute("data-ripple", "");
+        ripple.setAttribute("aria-hidden", "true");
         var rect = target.getBoundingClientRect();
         var size = Math.max(rect.width, rect.height) * 1.2;
         var x = evt.clientX - rect.left - size / 2;
