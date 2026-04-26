@@ -109,6 +109,7 @@
         return;
       }
       ensureData().then(function (entries) {
+        if (input.value.trim() !== q) return;
         var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
         var matches = entries
           .map(function (e) {
