@@ -1,0 +1,5 @@
+{{- /* Render hook for ```mermaid fenced blocks. Sets the per-page flag the
+       baseof.html lazy loader checks, then emits the host div mermaid's
+       startOnLoad scanner picks up. */ -}}
+{{- .Page.Store.Set "hasMermaid" true -}}
+<div class="mermaid">{{ .Inner | safeHTML }}</div>

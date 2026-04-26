@@ -1,4 +1,7 @@
-{{- /* Trigger from page-level frontmatter (mermaid: true) */ -}}
+{{- /* hasMermaid is set by:
+       1. The render-codeblock-mermaid.html hook for ```mermaid fenced blocks
+       2. Explicit frontmatter `mermaid: true` for raw <div class="mermaid"> usage
+*/ -}}
 {{- if .Params.mermaid -}}
   {{- .Store.Set "hasMermaid" true -}}
 {{- end -}}
