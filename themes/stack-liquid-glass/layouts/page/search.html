@@ -21,7 +21,7 @@
 {{- $search := resources.Get "js/search.js" -}}
 {{- if $search -}}
   {{- if hugo.IsProduction -}}
-    {{- $search = $search | resources.Fingerprint "sha256" | resources.Minify -}}
+    {{- $search = $search | resources.Minify | resources.Fingerprint "sha256" -}}
     <script defer src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}"></script>
   {{- else -}}
     <script defer src="{{ $search.RelPermalink }}"></script>

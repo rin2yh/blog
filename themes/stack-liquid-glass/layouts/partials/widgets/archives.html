@@ -8,9 +8,10 @@
 {{- if and $limit (gt (len $groups) $limit) -}}
   {{- $groups = first $limit $groups -}}
 {{- end -}}
-{{- $archivesPage := $site.GetPage "/page/archives" -}}
-{{- $archivesURL := "" -}}
-{{- with $archivesPage -}}{{- $archivesURL = .RelPermalink -}}{{- end -}}
+{{- $archivesURL := "/page/archives/" | relLangURL -}}
+{{- with $site.GetPage "/page/archives" -}}
+  {{- $archivesURL = .RelPermalink -}}
+{{- end -}}
 <aside class="glass widget widget--archives">
   <h3 class="widget__title">
     {{ partial "helper/icon" "archives" }}

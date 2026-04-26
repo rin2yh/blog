@@ -30,7 +30,9 @@
       {{ partial "helper/icon" . }}
     {{- end -}}
     {{- if $link.isExternal -}}
-      <a href="{{ $link.url }}" target="{{ $link.target }}" rel="{{ $link.rel }}">{{ .Title }}</a>
+      <a href="{{ $link.url }}"
+         {{- with $link.target }} target="{{ . }}"{{ end -}}
+         {{- with $link.rel }} rel="{{ . }}"{{ end -}}>{{ .Title }}</a>
     {{- else -}}
       {{ .Title }}
     {{- end -}}

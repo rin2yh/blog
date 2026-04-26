@@ -26,7 +26,7 @@
 {{- /* OpenGraph + Twitter */ -}}
 {{ partial "head/opengraph.html" . }}
 
-{{- /* Stylesheet pipeline — plain CSS concat (no extended Hugo required) */ -}}
+{{- /* Stylesheet pipeline — plain CSS concat */ -}}
 {{- $cssParts := slice
   (resources.Get "css/partials/_tokens.css")
   (resources.Get "css/partials/_base.css")
