@@ -9,7 +9,7 @@
 {{- $rel := $link.rel -}}
 {{- $extIcon := $link.icon -}}
 
-{{- $image := partialCached "helper/image" (dict "Context" . "Type" "card") .RelPermalink "card" -}}
+{{- $image := partialCached "helper/image" (dict "Context" . "Type" "card") .RelPermalink "card" .Lastmod.Unix -}}
 
 <article class="glass article-card">
   {{- if $image.exists }}
