@@ -69,25 +69,26 @@
     if (!endpoint) return;
 
     var data = null;
-    var loading = false;
+    var dataPromise = null;
 
     function ensureData() {
-      if (data || loading) return Promise.resolve(data);
-      loading = true;
-      return fetch(endpoint)
+      if (data) return Promise.resolve(data);
+      if (dataPromise) return dataPromise;
+      dataPromise = fetch(endpoint)
         .then(function (r) {
           return r.json();
         })
         .then(function (json) {
           data = Array.isArray(json) ? json : json.entries || [];
-          loading = false;
+          dataPromise = null;
           return data;
         })
         .catch(function () {
-          loading = false;
           data = [];
+          dataPromise = null;
           return data;
         });
+      return dataPromise;
     }
 
     function render(query) {
