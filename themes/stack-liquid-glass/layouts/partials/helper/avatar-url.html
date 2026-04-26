@@ -10,7 +10,7 @@
 */ -}}
 {{- $url := "" -}}
 {{- with resources.Get .src -}}
-  {{- if and (eq .ResourceType "image") (ne .MediaType.Type "image/svg+xml") $.fillSize -}}
+  {{- if and (eq .ResourceType "image") (in (slice "jpeg" "png" "gif" "webp" "tiff" "avif") .MediaType.SubType) $.fillSize -}}
     {{- $url = (.Fill $.fillSize).RelPermalink -}}
   {{- else -}}
     {{- $url = .RelPermalink -}}

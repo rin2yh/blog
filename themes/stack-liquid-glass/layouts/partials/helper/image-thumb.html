@@ -6,17 +6,14 @@
        Returns dict: { url, width, height }
 
        Hugo's image-processing methods (.Fill / .Resize / .Width / .Height)
-       only support raster formats with a Go decoder: jpeg, png, gif, webp,
-       tiff. SVG, BMP, ICO, AVIF, etc. fall through to the original URL with
-       width/height = 0 — pass them through your own pipeline if you need
-       processed variants of those formats. */ -}}
+       only run on raster formats with a Go decoder. Anything outside the
+       whitelist below (SVG, BMP, ICO, etc.) falls through to the original
+       URL with width/height = 0. */ -}}
 {{- $r := .resource -}}
 {{- $url := $r.RelPermalink -}}
 {{- $w := 0 -}}
 {{- $h := 0 -}}
-{{- /* Hugo's .Width/.Height aren't exposed on SVG resources, so we have to gate
-       even the intrinsic-dimension read on ResourceType+SubType. */ -}}
-{{- $processable := and (eq $r.ResourceType "image") (ne $r.MediaType.Type "image/svg+xml") -}}
+{{- $processable := and (eq $r.ResourceType "image") (in (slice "jpeg" "png" "gif" "webp" "tiff" "avif") $r.MediaType.SubType) -}}
 {{- if $processable -}}
   {{- $w = $r.Width -}}
   {{- $h = $r.Height -}}

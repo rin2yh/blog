@@ -4,7 +4,7 @@
 <aside class="glass widget widget--profile">
   {{- if and $avatar $avatar.enabled -}}
     {{- if $avatar.local -}}
-      {{- $src := partialCached "helper/avatar-url.html" (dict "src" $avatar.src "fillSize" "192x192 q85") $avatar.src -}}
+      {{- $src := partialCached "helper/avatar-url.html" (dict "src" $avatar.src "fillSize" "192x192 q85") $avatar.src "192x192 q85" -}}
       {{- with $src -}}
         <img class="avatar" src="{{ . }}" alt="{{ $site.Title }}" width="192" height="192" loading="lazy">
       {{- end -}}
