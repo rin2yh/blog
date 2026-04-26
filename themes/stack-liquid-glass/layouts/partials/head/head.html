@@ -27,26 +27,32 @@
 {{ partial "head/opengraph.html" . }}
 
 {{- /* Stylesheet pipeline — plain CSS concat */ -}}
-{{- $cssParts := slice
-  (resources.Get "css/partials/_tokens.css")
-  (resources.Get "css/partials/_base.css")
-  (resources.Get "css/partials/_glass.css")
-  (resources.Get "css/partials/_theme-toggle.css")
-  (resources.Get "css/partials/_components-button.css")
-  (resources.Get "css/partials/_components-tag.css")
-  (resources.Get "css/partials/_components-nav.css")
-  (resources.Get "css/partials/_components-card.css")
-  (resources.Get "css/partials/_components-toc.css")
-  (resources.Get "css/partials/_components-pagination.css")
-  (resources.Get "css/partials/_components-sidebar.css")
-  (resources.Get "css/partials/_components-progress.css")
-  (resources.Get "css/partials/_scene-blob.css")
-  (resources.Get "css/partials/_animations.css")
-  (resources.Get "css/partials/_syntax.css")
-  (resources.Get "css/partials/_mermaid.css")
-  (resources.Get "css/partials/_layout.css")
-  (resources.Get "css/partials/_utils.css")
+{{- $cssFiles := slice
+  "css/partials/_tokens.css"
+  "css/partials/_base.css"
+  "css/partials/_glass.css"
+  "css/partials/_theme-toggle.css"
+  "css/partials/_components-button.css"
+  "css/partials/_components-tag.css"
+  "css/partials/_components-nav.css"
+  "css/partials/_components-card.css"
+  "css/partials/_components-toc.css"
+  "css/partials/_components-pagination.css"
+  "css/partials/_components-sidebar.css"
+  "css/partials/_components-progress.css"
+  "css/partials/_scene-blob.css"
+  "css/partials/_animations.css"
+  "css/partials/_syntax.css"
+  "css/partials/_mermaid.css"
+  "css/partials/_layout.css"
+  "css/partials/_utils.css"
 -}}
+{{- $cssParts := slice -}}
+{{- range $cssFiles -}}
+  {{- with resources.Get . -}}
+    {{- $cssParts = $cssParts | append . -}}
+  {{- end -}}
+{{- end -}}
 {{- $css := $cssParts | resources.Concat "css/liquid-glass.css" -}}
 {{- if hugo.IsProduction -}}
   {{- $css = $css | resources.Minify | resources.Fingerprint "sha256" -}}
@@ -56,12 +62,19 @@
 {{- end }}
 
 {{- /* JS bundle */ -}}
-{{- $js := slice
-  (resources.Get "js/liquid-glass.js")
-  (resources.Get "js/toc.js")
-  (resources.Get "js/copy-code.js")
-  (resources.Get "js/progress.js")
-| resources.Concat "js/liquid-glass.bundle.js" -}}
+{{- $jsFiles := slice
+  "js/liquid-glass.js"
+  "js/toc.js"
+  "js/copy-code.js"
+  "js/progress.js"
+-}}
+{{- $jsParts := slice -}}
+{{- range $jsFiles -}}
+  {{- with resources.Get . -}}
+    {{- $jsParts = $jsParts | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- $js := $jsParts | resources.Concat "js/liquid-glass.bundle.js" -}}
 {{- if hugo.IsProduction -}}
   {{- $js = $js | resources.Minify | resources.Fingerprint "sha256" -}}
   <script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>

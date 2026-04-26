@@ -14,17 +14,22 @@
 
   function highlight(text, query) {
     if (!query) return escapeHtml(text);
-    var safe = escapeHtml(text);
-    var pattern = query
-      .split(/\s+/)
-      .filter(Boolean)
+    var terms = query.split(/\s+/).filter(Boolean);
+    if (!terms.length) return escapeHtml(text);
+    var pattern = terms
       .map(function (w) {
         return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       })
       .join("|");
-    if (!pattern) return safe;
     var re = new RegExp("(" + pattern + ")", "gi");
-    return safe.replace(re, "<mark>$1</mark>");
+    return text
+      .split(re)
+      .map(function (part, i) {
+        return i % 2 === 1
+          ? "<mark>" + escapeHtml(part) + "</mark>"
+          : escapeHtml(part);
+      })
+      .join("");
   }
 
   function snippet(content, query, len) {
