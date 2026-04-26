@@ -104,8 +104,9 @@
       var q = query.trim();
       resultsEl.innerHTML = "";
       if (!q) {
+        var emptyMsg = (window.lgI18n && window.lgI18n.searchEmpty) || "キーワードを入力してください。";
         resultsEl.innerHTML =
-          '<p class="search-page__empty">キーワードを入力してください。</p>';
+          '<p class="search-page__empty">' + escapeHtml(emptyMsg) + '</p>';
         return;
       }
       ensureData().then(function (entries) {
@@ -124,8 +125,9 @@
           .slice(0, 30);
 
         if (!matches.length) {
+          var noResultsMsg = (window.lgI18n && window.lgI18n.searchNoResults) || "該当する記事がありません。";
           resultsEl.innerHTML =
-            '<p class="search-page__empty">該当する記事がありません。</p>';
+            '<p class="search-page__empty">' + escapeHtml(noResultsMsg) + '</p>';
           return;
         }
 
