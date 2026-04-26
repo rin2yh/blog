@@ -4,7 +4,7 @@
 {{- $mainSections := $site.Params.mainSections | default (slice "post") -}}
 {{- $pages := where $site.RegularPages "Section" "in" $mainSections -}}
 {{- $groups := $pages.GroupByDate "2006" -}}
-{{- $limit := index $params "limit" | default 12 -}}
+{{- $limit := index $params "limit" | default 5 -}}
 {{- if and $limit (gt (len $groups) $limit) -}}
   {{- $groups = first $limit $groups -}}
 {{- end -}}

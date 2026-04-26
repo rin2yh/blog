@@ -18,6 +18,7 @@
   padding: var(--space-lg);
   position: relative;
   isolation: isolate;
+  overflow: hidden;
 }
 .article-card:hover {
   color: inherit;

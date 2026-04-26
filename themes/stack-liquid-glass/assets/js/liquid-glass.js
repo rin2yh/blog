@@ -110,6 +110,42 @@
     }
   };
 
+  function showToast(message) {
+    var toast = document.createElement("div");
+    toast.className = "lg-toast";
+    toast.setAttribute("role", "status");
+    toast.textContent = message;
+    Object.assign(toast.style, {
+      position: "fixed",
+      left: "50%",
+      bottom: "32px",
+      transform: "translate(-50%, 8px)",
+      padding: "10px 18px",
+      borderRadius: "999px",
+      background: "rgba(15, 23, 42, 0.85)",
+      color: "#fff",
+      fontSize: "0.85rem",
+      boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
+      backdropFilter: "blur(12px)",
+      opacity: "0",
+      transition: "opacity 200ms ease, transform 200ms ease",
+      zIndex: "9999",
+      pointerEvents: "none"
+    });
+    document.body.appendChild(toast);
+    requestAnimationFrame(function () {
+      toast.style.opacity = "1";
+      toast.style.transform = "translate(-50%, 0)";
+    });
+    setTimeout(function () {
+      toast.style.opacity = "0";
+      toast.style.transform = "translate(-50%, 8px)";
+      setTimeout(function () {
+        toast.remove();
+      }, 220);
+    }, 1800);
+  }
+
   var ClipboardCopy = {
     init: function () {
       document.addEventListener("click", function (evt) {
@@ -119,15 +155,15 @@
         var ok = btn.getAttribute("data-copy-success") || "Copied";
         var ng = btn.getAttribute("data-copy-error") || "Copy failed";
         if (!navigator.clipboard) {
-          alert(ng);
+          showToast(ng);
           return;
         }
         navigator.clipboard.writeText(text).then(
           function () {
-            alert(ok);
+            showToast(ok);
           },
           function () {
-            alert(ng);
+            showToast(ng);
           }
         );
       });
