@@ -50,7 +50,7 @@
       </span>
     {{- end -}}
 
-    {{- $showReadingTime := and (not .Params.externalUrl) (default true (.Params.readingTime | default true)) -}}
+    {{- $showReadingTime := and (not .Params.externalUrl) (ne .Params.readingTime false) -}}
     {{- if $showReadingTime -}}
       <span class="article-meta__item">
         {{ partial "helper/icon" "clock" }}
