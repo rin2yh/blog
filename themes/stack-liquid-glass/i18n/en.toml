@@ -1,0 +1,112 @@
+[home]
+other = "Home"
+
+[search]
+other = "Search"
+
+[archives]
+other = "Archives"
+
+[categories]
+other = "Categories"
+
+[tags]
+other = "Tags"
+
+[about]
+other = "About"
+
+[readingTime]
+one = "{{ .Count }} min"
+other = "{{ .Count }} min"
+
+[readingTimeLabel]
+other = "Reading time: "
+
+[publishedOn]
+other = "Published"
+
+[lastUpdatedOn]
+other = "Last updated"
+
+[relatedPosts]
+other = "Related posts"
+
+[tableOfContents]
+other = "Contents"
+
+[allCategories]
+other = "All categories"
+
+[allTags]
+other = "All tags"
+
+[postCount]
+one = "{{ .Count }} post"
+other = "{{ .Count }} posts"
+
+[shareTo]
+other = "Share"
+
+[searchPlaceholder]
+other = "Search posts…"
+
+[searchEmpty]
+other = "Type a keyword to start."
+
+[searchNoResults]
+other = "No matching posts."
+
+[notFoundTitle]
+other = "Page not found"
+
+[notFoundDesc]
+other = "The page you're looking for doesn't exist or has been moved."
+
+[backToHome]
+other = "Back to home"
+
+[darkMode]
+other = "Dark mode"
+
+[donateTitle]
+other = "Support"
+
+[poweredBy]
+other = "Powered by Hugo & Liquid Glass"
+
+[license]
+other = "© {{ .Year }} {{ .Title }}"
+
+[toggleDarkMode]
+other = "Toggle dark mode"
+
+[switchToLight]
+other = "Switch to light mode"
+
+[switchToDark]
+other = "Switch to dark mode"
+
+[paginationLabel]
+other = "Pagination"
+
+[paginationPrev]
+other = "Previous"
+
+[paginationNext]
+other = "Next"
+
+[toggleMenu]
+other = "Toggle menu"
+
+[copyCode]
+other = "Copy code"
+
+[shareOnTwitter]
+other = "Share on Twitter"
+
+[copySuccess]
+other = "Copied"
+
+[copyError]
+other = "Copy failed"
