@@ -6,6 +6,7 @@ on:
       - '.textlintrc.json'
       - 'package.json'
       - 'package-lock.json'
+      - 'mise.toml'
       - '.github/workflows/textlint.yaml'
 
 jobs:
@@ -17,11 +18,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup mise
+        uses: jdx/mise-action@v2
         with:
-          node-version: '22'
-          cache: 'npm'
+          cache: true
 
       - name: Install dependencies
         run: npm ci
@@ -38,4 +38,4 @@ jobs:
 
       - name: Run textlint
         if: steps.changed.outputs.files != ''
-        run: npx textlint ${{ steps.changed.outputs.files }}
+        run: mise run lint -- ${{ steps.changed.outputs.files }}

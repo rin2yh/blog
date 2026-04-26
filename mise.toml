@@ -20,9 +20,9 @@ description = 'Hugoでサーバを起動する'
 run = 'hugo server'
 
 [tasks.lint]
-description = 'textlintで記事を検査する'
-run = 'npx textlint "content/**/*.md"'
+description = 'textlintで記事を検査する（引数なしで content/**/*.md 全体）'
+run = 'npx textlint {{arg(name="files", var=true, default="content/**/*.md")}}'
 
 [tasks."lint:fix"]
-description = 'textlintで自動修正可能な問題を修正する'
-run = 'npx textlint --fix "content/**/*.md"'
+description = 'textlintで自動修正可能な問題を修正する（引数なしで content/**/*.md 全体）'
+run = 'npx textlint --fix {{arg(name="files", var=true, default="content/**/*.md")}}'
