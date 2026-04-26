@@ -1,0 +1,14 @@
+{
+  "name": "blog",
+  "private": true,
+  "scripts": {
+    "lint": "textlint \"content/**/*.md\"",
+    "lint:fix": "textlint --fix \"content/**/*.md\""
+  },
+  "devDependencies": {
+    "textlint": "^14.4.2",
+    "textlint-filter-rule-comments": "^1.2.2",
+    "textlint-rule-preset-ja-spacing": "^2.4.3",
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2"
+  }
+}

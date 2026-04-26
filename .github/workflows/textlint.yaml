@@ -1,0 +1,41 @@
+name: textlint
+on:
+  pull_request:
+    paths:
+      - 'content/**/*.md'
+      - '.textlintrc.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/textlint.yaml'
+
+jobs:
+  textlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Collect changed Markdown files
+        id: changed
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          files=$(git diff --name-only --diff-filter=AM "${BASE_SHA}" "${HEAD_SHA}" -- 'content/**/*.md' | tr '\n' ' ')
+          echo "files=${files}" >> "${GITHUB_OUTPUT}"
+          echo "Changed Markdown: ${files:-<none>}"
+
+      - name: Run textlint
+        if: steps.changed.outputs.files != ''
+        run: npx textlint ${{ steps.changed.outputs.files }}
