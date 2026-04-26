@@ -1,8 +1,3 @@
-/**
- * liquid-glass.js — minimal runtime for the Liquid Glass theme
- *  - GlassTheme : light/dark toggle, persisted in localStorage
- *  - GlassRipple: subtle ripple on glass cards / buttons
- */
 (function () {
   "use strict";
 
@@ -63,6 +58,39 @@
     }
   };
 
+  var MobileNav = {
+    init: function () {
+      var btn = document.querySelector("[data-mobile-nav-toggle]");
+      var sidebar = document.querySelector(".left-sidebar");
+      if (!btn || !sidebar) return;
+      var body = document.body;
+      function setOpen(open) {
+        sidebar.classList.toggle("is-open", open);
+        body.classList.toggle("nav-open", open);
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      btn.addEventListener("click", function (evt) {
+        evt.stopPropagation();
+        setOpen(!sidebar.classList.contains("is-open"));
+      });
+      sidebar.addEventListener("click", function (evt) {
+        if (evt.target.closest("a")) setOpen(false);
+      });
+      document.addEventListener("click", function (evt) {
+        if (!sidebar.classList.contains("is-open")) return;
+        if (evt.target.closest(".left-sidebar")) return;
+        if (evt.target.closest("[data-mobile-nav-toggle]")) return;
+        setOpen(false);
+      });
+      document.addEventListener("keydown", function (evt) {
+        if (evt.key === "Escape" && sidebar.classList.contains("is-open")) {
+          setOpen(false);
+          btn.focus();
+        }
+      });
+    }
+  };
+
   var ScrollHoverGuard = {
     init: function () {
       var root = document.documentElement;
@@ -109,6 +137,7 @@
   function boot() {
     GlassTheme.init();
     GlassRipple.init();
+    MobileNav.init();
     ScrollHoverGuard.init();
     ClipboardCopy.init();
   }

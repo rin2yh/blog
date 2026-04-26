@@ -15,12 +15,7 @@
   {{- if $entries -}}
     <div class="tag-cloud">
       {{- range $entries -}}
-        {{- $t := .Page.LinkTitle | default .Page.Title -}}
-        {{- $rest := substr $t 1 -}}
-        {{- if and (eq $rest (lower $rest)) (ne (substr $t 0 1) (lower (substr $t 0 1))) -}}
-          {{- $t = printf "%s%s" (substr $t 0 1 | lower) $rest -}}
-        {{- end -}}
-        <a href="{{ .Page.RelPermalink }}">#{{ $t }}</a>
+        <a href="{{ .Page.RelPermalink }}">#{{ partial "helper/tag-name.html" (.Page.LinkTitle | default .Page.Title) }}</a>
       {{- end -}}
     </div>
   {{- end -}}

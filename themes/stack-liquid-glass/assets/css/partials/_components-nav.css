@@ -37,6 +37,15 @@
   border-radius: 2px;
   transition: transform var(--dur-fast), opacity var(--dur-fast);
 }
+.site-header__menu-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.site-header__menu-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.site-header__menu-toggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
 
 .site-header__inner {
   display: flex;

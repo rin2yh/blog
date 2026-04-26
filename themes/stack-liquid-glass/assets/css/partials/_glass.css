@@ -52,7 +52,7 @@
     box-shadow var(--dur-mid) var(--ease-glass), background var(--dur-mid);
 }
 
-.glass-card:hover {
+html:not(.is-scrolling) .glass-card:hover {
   box-shadow: var(--shadow-float);
   background: var(--glass-white-md);
 }
@@ -74,7 +74,7 @@
   z-index: 2;
 }
 
-.glass-card:hover::after {
+html:not(.is-scrolling) .glass-card:hover::after {
   opacity: 1;
 }
 

@@ -62,12 +62,7 @@
       <span class="article-meta__item article-meta__item--tags">
         {{ partial "helper/icon" "tag" }}
         {{- range . -}}
-          {{- $t := .LinkTitle -}}
-          {{- $rest := substr $t 1 -}}
-          {{- if and (eq $rest (lower $rest)) (ne (substr $t 0 1) (lower (substr $t 0 1))) -}}
-            {{- $t = printf "%s%s" (substr $t 0 1 | lower) $rest -}}
-          {{- end -}}
-          <a class="article-card__tag" href="{{ .RelPermalink }}">#{{ $t }}</a>
+          <a class="article-card__tag" href="{{ .RelPermalink }}">#{{ partial "helper/tag-name.html" .LinkTitle }}</a>
         {{- end -}}
       </span>
     {{- end -}}

@@ -58,8 +58,8 @@
   opacity: 0.7;
 }
 .widget--search .search-input:focus {
-  border-color: rgba(94, 231, 223, 0.6);
-  box-shadow: 0 0 0 3px rgba(94, 231, 223, 0.18);
+  border-color: rgb(var(--accent-aqua-rgb) / 0.6);
+  box-shadow: 0 0 0 3px rgb(var(--accent-aqua-rgb) / 0.18);
   background: var(--glass-white-md);
 }
 .widget--search .search-input-icon {

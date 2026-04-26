@@ -29,6 +29,7 @@
     inset 0 -1px 1px rgba(0, 0, 0, 0.1);
 
   --accent-aqua: #5ee7df;
+  --accent-aqua-rgb: 94 231 223;
   --accent-violet: #b490f5;
   --accent-rose: #f7a8c4;
   --accent-amber: #ffd27f;
@@ -123,6 +124,7 @@
     inset 0 -1px 1px rgba(0, 0, 0, 0.04);
 
   --accent-aqua: #0891b2;
+  --accent-aqua-rgb: 8 145 178;
   --accent-violet: #6d28d9;
   --accent-rose: #be185d;
   --accent-amber: #b45309;
