@@ -1,3 +1,6 @@
 [submodule "themes/stack"]
 	path = themes/stack
 	url = https://github.com/CaiJimmy/hugo-theme-stack.git
+[submodule "themes/stack-liquid-glass"]
+	path = themes/stack-liquid-glass
+	url = https://github.com/rin2yh/hugo-theme-stack-liquid-glass.git
