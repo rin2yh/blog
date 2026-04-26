@@ -4,6 +4,7 @@ date = 2026-04-05
 categories = ["Showcase"]
 tags = ["markdown", "typography"]
 description = "Every Markdown construct rendered in the Liquid Glass theme — for visual review."
+image = "cover.svg"
 +++
 
 This page exists so you can eyeball every Markdown construct in one scroll. If something looks broken, it's a theme bug.

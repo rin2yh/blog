@@ -1,0 +1,24 @@
+{{- /* Resize a Hugo image Resource for display, with SVG bypass.
+       Input dict:
+         - resource (Resource, required)
+         - op       (string, "Fill" or "Resize"; default "Fill")
+         - spec     (string, e.g. "640x360 q85"; required for raster)
+       Returns dict: { url, width, height }
+       SVG resources skip processing — Hugo's image methods don't support them. */ -}}
+{{- $r := .resource -}}
+{{- $url := $r.RelPermalink -}}
+{{- $w := 0 -}}
+{{- $h := 0 -}}
+{{- if ne $r.MediaType.SubType "svg" -}}
+  {{- $op := .op | default "Fill" -}}
+  {{- $processed := $r -}}
+  {{- if eq $op "Resize" -}}
+    {{- $processed = $r.Resize .spec -}}
+  {{- else -}}
+    {{- $processed = $r.Fill .spec -}}
+  {{- end -}}
+  {{- $url = $processed.RelPermalink -}}
+  {{- $w = $processed.Width -}}
+  {{- $h = $processed.Height -}}
+{{- end -}}
+{{- return dict "url" $url "width" $w "height" $h -}}
