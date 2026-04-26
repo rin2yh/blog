@@ -8,18 +8,22 @@
       var root = document.documentElement;
       if (!btn) return;
       var i18n = window.lgI18n || {};
+      var updateLabel = function (theme) {
+        btn.setAttribute(
+          "aria-label",
+          theme === "dark"
+            ? i18n.switchToLight || "Switch to light mode"
+            : i18n.switchToDark || "Switch to dark mode"
+        );
+      };
+      updateLabel(root.getAttribute("data-theme"));
       btn.addEventListener("click", function () {
         var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
         root.setAttribute("data-theme", next);
         try {
           localStorage.setItem(GlassTheme.KEY, next);
         } catch (e) {}
-        btn.setAttribute(
-          "aria-label",
-          next === "dark"
-            ? i18n.switchToLight || "Switch to light mode"
-            : i18n.switchToDark || "Switch to dark mode"
-        );
+        updateLabel(next);
       });
     }
   };
