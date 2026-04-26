@@ -27,18 +27,6 @@
   background: var(--glass-white-lg);
   border-color: var(--glass-border-bright);
 }
-.glass--frosted {
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
-  background: rgba(255, 255, 255, 0.08);
-}
-.glass--liquid {
-  backdrop-filter: var(--blur-xl);
-  -webkit-backdrop-filter: var(--blur-xl);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.18);
-}
-
 [data-theme="light"] .glass--dark {
   background: rgba(15, 23, 42, 0.06);
   border-color: rgba(15, 23, 42, 0.14);
@@ -78,13 +66,6 @@ html:not(.is-scrolling) .glass-card:hover::after {
   opacity: 1;
 }
 
-.glass-card__label {
-  font-size: var(--text-2xs);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.55;
-  margin-bottom: var(--space-xs);
-}
 .glass-card__title {
   font-family: var(--font-display);
   font-size: clamp(1.4rem, 2.5vw, 2rem);
@@ -106,9 +87,5 @@ html:not(.is-scrolling) .glass-card:hover::after {
 }
 [data-theme="light"] .glass-card__body {
   color: rgba(15, 23, 42, 0.78);
-  opacity: 1;
-}
-[data-theme="light"] .glass-card__label {
-  color: rgba(15, 23, 42, 0.5);
   opacity: 1;
 }
