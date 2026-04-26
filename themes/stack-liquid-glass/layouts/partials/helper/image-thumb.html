@@ -9,7 +9,14 @@
 {{- $url := $r.RelPermalink -}}
 {{- $w := 0 -}}
 {{- $h := 0 -}}
-{{- if and (eq $r.ResourceType "image") (ne $r.MediaType.SubType "svg") .spec -}}
+{{- /* Hugo's .Width/.Height aren't exposed on SVG resources, so we have to gate
+       even the intrinsic-dimension read on ResourceType+SubType. */ -}}
+{{- $processable := and (eq $r.ResourceType "image") (ne $r.MediaType.SubType "svg") -}}
+{{- if $processable -}}
+  {{- $w = $r.Width -}}
+  {{- $h = $r.Height -}}
+{{- end -}}
+{{- if and $processable .spec -}}
   {{- $op := .op | default "Fill" -}}
   {{- $processed := $r -}}
   {{- if eq $op "Resize" -}}
