@@ -147,8 +147,10 @@ Common knobs:
 
 ## Credits
 
-- Layout architecture inspired by [Hugo Theme Stack](https://github.com/CaiJimmy/hugo-theme-stack) by Jimmy Cai
-- Built from scratch — no Stack source files are vendored
+This theme draws heavily from two prior works. Big thanks to both:
+
+- **[Hugo Theme Stack](https://github.com/CaiJimmy/hugo-theme-stack)** ([demo](https://stack.jimmycai.com/)) by Jimmy Cai — the layout architecture (sidebar profile + content + widget grid, archive / search / related-posts patterns, partial structure) is a direct homage. No Stack source files are vendored; every template and stylesheet is written from scratch.
+- **[Liquid Glass UI Kit](https://codepen.io/Margarita-the-solid/pen/NPRPBjd)** by Margarita — the visual language (translucent surfaces, drifting color blobs behind the content, reflection highlights on glass cards) was adapted from this CodePen.
 
 ## License
 
