@@ -12,8 +12,11 @@
       .replace(/"/g, "&quot;");
   }
 
+  var MAX_QUERY_LEN = 100;
+
   function highlight(text, query) {
     if (!query) return escapeHtml(text);
+    if (query.length > MAX_QUERY_LEN) query = query.slice(0, MAX_QUERY_LEN);
     var terms = query.split(/\s+/).filter(Boolean);
     if (!terms.length) return escapeHtml(text);
     var pattern = terms

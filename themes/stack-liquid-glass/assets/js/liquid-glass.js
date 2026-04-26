@@ -106,18 +106,25 @@
     }
   };
 
+  var toastTimer = 0;
+  var toastFadeTimer = 0;
   function showToast(message) {
-    var toast = document.createElement("div");
-    toast.className = "lg-toast";
-    toast.setAttribute("role", "status");
+    var toast = document.querySelector(".lg-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.className = "lg-toast";
+      toast.setAttribute("role", "status");
+      document.body.appendChild(toast);
+    }
     toast.textContent = message;
-    document.body.appendChild(toast);
+    clearTimeout(toastTimer);
+    clearTimeout(toastFadeTimer);
     requestAnimationFrame(function () {
       toast.classList.add("is-visible");
     });
-    setTimeout(function () {
+    toastTimer = setTimeout(function () {
       toast.classList.remove("is-visible");
-      setTimeout(function () {
+      toastFadeTimer = setTimeout(function () {
         toast.remove();
       }, 220);
     }, 1800);
