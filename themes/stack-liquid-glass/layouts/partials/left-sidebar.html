@@ -5,8 +5,13 @@
     {{- if and $avatar $avatar.enabled -}}
       {{- if $avatar.local -}}
         {{- with resources.Get $avatar.src -}}
-          {{- $img := .Fill "192x192 q85" -}}
-          <img class="left-sidebar__avatar" src="{{ $img.RelPermalink }}" alt="{{ $site.Title }}" width="96" height="96" loading="eager">
+          {{- $src := .RelPermalink -}}
+          {{- if eq .MediaType.SubType "svg" -}}
+            {{- /* SVGs don't support .Fill — use as-is */ -}}
+          {{- else -}}
+            {{- $src = (.Fill "192x192 q85").RelPermalink -}}
+          {{- end -}}
+          <img class="left-sidebar__avatar" src="{{ $src }}" alt="{{ $site.Title }}" width="96" height="96" loading="eager">
         {{- end -}}
       {{- else -}}
         <img class="left-sidebar__avatar" src="{{ $avatar.src }}" alt="{{ $site.Title }}" width="96" height="96" loading="eager">
