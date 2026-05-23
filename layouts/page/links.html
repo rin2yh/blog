@@ -12,8 +12,20 @@
 
   <nav class="links-list" aria-label="リンク一覧">
     {{ range .Params.links }}
+      {{- $href := "" -}}
+      {{- if .external -}}
+        {{- $href = .url | safeURL -}}
+      {{- else if eq .url "/" -}}
+        {{- $href = site.Home.RelPermalink -}}
+      {{- else -}}
+        {{- with site.GetPage .url -}}
+          {{- $href = .RelPermalink -}}
+        {{- else -}}
+          {{- $href = .url | relLangURL -}}
+        {{- end -}}
+      {{- end -}}
       <a class="link-card"
-         href="{{ if .external }}{{ .url | safeURL }}{{ else }}{{ .url | relLangURL }}{{ end }}"
+         href="{{ $href }}"
          {{ if .external }}target="_blank" rel="noopener me"{{ end }}>
         <span class="link-card__icon">{{ partial "helper/icon" .icon }}</span>
         <span class="link-card__label">{{ .name }}</span>
