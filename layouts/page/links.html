@@ -50,7 +50,7 @@
   height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: var(--shadow-glass, 0 4px 12px rgba(0, 0, 0, 0.28));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
   margin: 0 auto 1rem;
   display: block;
 }
@@ -79,8 +79,8 @@
   background: var(--glass-white, rgba(255, 255, 255, 0.12));
   color: var(--color-text, inherit);
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.25));
-  backdrop-filter: var(--blur-md, blur(18px));
   -webkit-backdrop-filter: var(--blur-md, blur(18px));
+  backdrop-filter: var(--blur-md, blur(18px));
   box-shadow: var(--shadow-glass, 0 8px 32px rgba(0, 0, 0, 0.28));
   text-decoration: none;
   transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
