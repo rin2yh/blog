@@ -50,7 +50,7 @@
   height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: var(--shadow-l1, 0 4px 12px rgba(0, 0, 0, 0.12));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
   margin: 0 auto 1rem;
   display: block;
 }
@@ -58,11 +58,11 @@
   font-size: 1.5rem;
   margin: 0 0 .5rem;
   font-weight: 700;
+  color: var(--color-text, inherit);
 }
 .links-bio {
   margin: 0;
-  color: var(--body-text-color, inherit);
-  opacity: .8;
+  color: var(--color-text-muted, inherit);
   font-size: .95rem;
 }
 .links-list {
@@ -75,17 +75,21 @@
   align-items: center;
   gap: .9rem;
   padding: .95rem 1.15rem;
-  border-radius: 14px;
-  background: var(--card-background, #fff);
-  color: var(--card-text-color-main, inherit);
-  box-shadow: var(--shadow-l1, 0 2px 6px rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-md, 14px);
+  background: var(--glass-white, rgba(255, 255, 255, 0.12));
+  color: var(--color-text, inherit);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.25));
+  -webkit-backdrop-filter: var(--blur-md, blur(18px));
+  backdrop-filter: var(--blur-md, blur(18px));
+  box-shadow: var(--shadow-glass, 0 8px 32px rgba(0, 0, 0, 0.28));
   text-decoration: none;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
 }
 .link-card:hover,
 .link-card:focus-visible {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-l2, 0 6px 16px rgba(0, 0, 0, 0.14));
+  background: var(--glass-white-md, rgba(255, 255, 255, 0.2));
+  box-shadow: var(--shadow-float, 0 20px 60px rgba(0, 0, 0, 0.4));
   text-decoration: none;
 }
 .link-card__icon,

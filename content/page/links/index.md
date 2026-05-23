@@ -6,7 +6,7 @@ description: "りんりんの SNS・ブログなど各種リンク。NFC・QR �
 readingTime: false
 profile:
   name: "りんりん"
-  bio: "ここから各所へどうぞ。ブログ・GitHub・SNS など"
+  bio: "リンク集です"
   avatar: "image/avatar.webp"
 links:
   - name: "ブログを読む"
