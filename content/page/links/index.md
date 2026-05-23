@@ -2,11 +2,11 @@
 title: "Links"
 slug: "links"
 layout: "links"
-description: "りんりんのリンク集 / NFC・QRから飛んできた人向け"
+description: "りんりんの SNS・ブログなど各種リンク。NFC・QR から飛んできた方へ"
 readingTime: false
 profile:
   name: "りんりん"
-  bio: "ブログ / GitHub / SNS のリンク集です"
+  bio: "ここから各所へどうぞ。ブログ・GitHub・SNS など"
   avatar: "image/avatar.webp"
 links:
   - name: "ブログを読む"
