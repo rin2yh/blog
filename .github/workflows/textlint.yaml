@@ -14,40 +14,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
-
-      - name: Collect changed Markdown files
-        id: changed
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          # 除外パスの定義は .textlintignore に集約している。
-          # CI は変更ファイルのみを検査するため textlint に明示的な
-          # ファイルパスを渡すが、その場合 textlint は .textlintignore を
-          # 参照しない。そこで .textlintignore の各パターンを git pathspec の
-          # 除外 ':(exclude)...' に変換し、変更ファイル一覧の段階で除外する。
-          excludes=()
-          if [ -f .textlintignore ]; then
-            while IFS= read -r pattern || [ -n "${pattern}" ]; do
-              pattern="${pattern%%#*}"                 # 行末コメントを除去
-              pattern="$(echo "${pattern}" | xargs)"   # 前後の空白を除去
-              [ -z "${pattern}" ] && continue
-              excludes+=(":(exclude)${pattern}")
-            done < .textlintignore
-          fi
-          files=$(git diff --name-only --diff-filter=AM "${BASE_SHA}" "${HEAD_SHA}" -- \
-            'content/**/*.md' "${excludes[@]}" | tr '\n' ' ')
-          echo "files=${files}" >> "${GITHUB_OUTPUT}"
-          echo "Changed Markdown: ${files:-<none>}"
 
       - name: Setup mise
-        if: steps.changed.outputs.files != ''
         uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
         with:
           cache: true
 
+      # content/**/*.md を glob 検査する。除外は .textlintignore に集約。
       - name: Run textlint
-        if: steps.changed.outputs.files != ''
-        run: mise run lint -- ${{ steps.changed.outputs.files }}
+        run: mise run lint

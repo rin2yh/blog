@@ -1,7 +1,26 @@
-# textlint の検査対象から除外するパス。
-# ローカルの `mise run lint`（glob 実行）はこのファイルを直接参照する。
-# CI（変更ファイルのみ検査）はこのファイルを読み込み、
-# git pathspec の除外として適用する（.github/workflows/textlint.yaml 参照）。
+# textlint の検査対象から除外するパス（glob 実行時に textlint が参照する）。
+# CI は `mise run lint`（content/**/*.md を glob 検査）を実行し、
+# このファイルで除外を制御する。新規記事は自動的に検査対象になる。
 
-# 過去のアーカイブ記事は文体の負債が多く、メンテナンス対象外のため除外。
+# --- アーカイブ記事（恒久的に対象外） ---
 content/post/archive/**
+
+# --- 既存記事の文体負債（暫定除外。順次修正してこの行を削除する） ---
+content/page/about/index.md
+content/post/cnk2026-lgtc2d1l49rse1/index.md
+content/post/e2e-skill-85133zut0hopc5/index.md
+content/post/effective-go-slide-f6eiwslwe97h4d/index.md
+content/post/guigui-ghostty-0edgt5dtfgh8nv/index.md
+content/post/keyboard-note-ks4dvx4slvaaf3/index.md
+content/post/recurrent-effective-go-2n5nog8070s2lu/index.md
+content/post/terminal-night2-diisp24hif93op/index.md
+content/post/zenn-9b69cca81875f6-wwxz2rvvmgja48/index.md
+content/post/7days-hacking-day2-ftq5sol4isa0x7/index.md
+content/post/7days-hacking-day3-83tk4xhvvkd9ju/index.md
+content/post/2026/blog-enhancement-xbbh93sktmqlhb/index.md
+content/post/2026/colacon-2025-winter/index.md
+content/post/2026/developping-style.md
+content/post/2026/github-projects-task-management-1fc2enhv3pkmc0/index.md
+content/post/2026/hugo-details.md
+content/post/2026/my-first-post.md
+content/post/2026/neovim-setup-knowledge.md
