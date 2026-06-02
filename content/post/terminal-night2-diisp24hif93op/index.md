@@ -3,7 +3,7 @@ date = '2026-03-31T20:55:54+09:00'
 draft = false
 title = 'Terminal Night #2 メモ'
 categories = ['idea']
-tags = ['note']
+tags = ['memo']
 +++
 
 # Terminal Night #2

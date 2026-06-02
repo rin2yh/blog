@@ -3,7 +3,7 @@ date = '2026-05-04T16:56:57+09:00'
 draft = false
 title = '7days Hacking Day2'
 categories = ["tech"]
-tags = ["note", "security"]
+tags = ["memo", "security"]
 +++
 
 https://www.seshop.com/product/detail/26456?srsltid=AfmBOopr_-WJwEPXdy0dGw5oVG1yDJe9FnfaULTQgR2VN4MG_DGFl2XR

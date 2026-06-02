@@ -3,7 +3,7 @@ date = '2025-09-27T20:40:34+09:00'
 draft = false
 title = 'Gocon2025 Day1'
 categories = ['idea']
-tags = ['conference', 'note']
+tags = ['conference', 'memo']
 +++
 
 go con day1のメモ。
