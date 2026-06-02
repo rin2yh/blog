@@ -1,11 +1,11 @@
-# textlint の検査対象から除外するパス（glob 実行時に textlint が参照する）。
-# CI は `mise run lint`（content/**/*.md を glob 検査）を実行し、
-# このファイルで除外を制御する。新規記事は自動的に検査対象になる。
+# textlint で検査しないファイルの一覧。
+# CI は `mise run lint`（content/**/*.md をまとめて検査）を実行し、
+# ここに書いたファイルだけ検査から外す。新しい記事は自動で検査される。
 
-# --- アーカイブ記事（恒久的に対象外） ---
+# 昔のアーカイブ記事（検査しない）
 content/post/archive/**
 
-# --- 既存記事の文体負債（暫定除外。順次修正してこの行を削除する） ---
+# いまエラーが残っている記事（直したら、その記事の行を消す）
 content/page/about/index.md
 content/post/cnk2026-lgtc2d1l49rse1/index.md
 content/post/e2e-skill-85133zut0hopc5/index.md
