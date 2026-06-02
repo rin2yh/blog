@@ -16,18 +16,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Collect added Markdown files
+      - name: Collect changed Markdown files
         id: changed
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          # 新規追加された記事(A)のみを対象にする。
-          # 既存記事の編集(M)は、フロントマターのタグ修正などでも
-          # 本文全体が検査されてしまうため対象外とする。
-          files=$(git diff --name-only --diff-filter=A "${BASE_SHA}" "${HEAD_SHA}" -- 'content/**/*.md' | tr '\n' ' ')
+          # 検査対象から除外するパス（過去のアーカイブ記事など）。
+          # ':(exclude)' の pathspec で changed ファイル一覧から取り除く。
+          files=$(git diff --name-only --diff-filter=AM "${BASE_SHA}" "${HEAD_SHA}" -- \
+            'content/**/*.md' \
+            ':(exclude)content/post/archive/**' \
+            | tr '\n' ' ')
           echo "files=${files}" >> "${GITHUB_OUTPUT}"
-          echo "Added Markdown: ${files:-<none>}"
+          echo "Changed Markdown: ${files:-<none>}"
 
       - name: Setup mise
         if: steps.changed.outputs.files != ''
