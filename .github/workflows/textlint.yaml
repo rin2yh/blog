@@ -4,7 +4,6 @@ on:
     paths:
       - 'content/**/*.md'
       - '.textlintrc.json'
-      - '.textlintignore'
       - 'mise.toml'
       - '.github/workflows/textlint.yaml'
 
