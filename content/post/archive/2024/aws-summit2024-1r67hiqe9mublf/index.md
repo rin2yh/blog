@@ -3,7 +3,7 @@ date = '2024-06-20T00:00:00+09:00'
 draft = false
 title = 'AWS Summit 2024'
 categories = ['idea']
-tags = ['conference', 'note']
+tags = ['conference', 'memo']
 +++
 
 AWS Summit 2024の参加メモ。

@@ -3,7 +3,7 @@ date = '2026-05-06T18:00:12+09:00'
 draft = false
 title = '7days Hacking Day3'
 categories = ["tech"]
-tags = ["note", "security"]
+tags = ["memo", "security"]
 +++
 
 7日間でハッキングを始める本 day3
