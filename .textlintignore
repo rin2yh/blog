@@ -1,0 +1,7 @@
+# textlint の検査対象から除外するパス。
+# ローカルの `mise run lint`（glob 実行）はこのファイルを直接参照する。
+# CI（変更ファイルのみ検査）はこのファイルを読み込み、
+# git pathspec の除外として適用する（.github/workflows/textlint.yaml 参照）。
+
+# 過去のアーカイブ記事は文体の負債が多く、メンテナンス対象外のため除外。
+content/post/archive/**

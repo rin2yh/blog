@@ -4,6 +4,7 @@ on:
     paths:
       - 'content/**/*.md'
       - '.textlintrc.json'
+      - '.textlintignore'
       - 'mise.toml'
       - '.github/workflows/textlint.yaml'
 
@@ -22,12 +23,22 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          # 検査対象から除外するパス（過去のアーカイブ記事など）。
-          # ':(exclude)' の pathspec で changed ファイル一覧から取り除く。
+          # 除外パスの定義は .textlintignore に集約している。
+          # CI は変更ファイルのみを検査するため textlint に明示的な
+          # ファイルパスを渡すが、その場合 textlint は .textlintignore を
+          # 参照しない。そこで .textlintignore の各パターンを git pathspec の
+          # 除外 ':(exclude)...' に変換し、変更ファイル一覧の段階で除外する。
+          excludes=()
+          if [ -f .textlintignore ]; then
+            while IFS= read -r pattern || [ -n "${pattern}" ]; do
+              pattern="${pattern%%#*}"                 # 行末コメントを除去
+              pattern="$(echo "${pattern}" | xargs)"   # 前後の空白を除去
+              [ -z "${pattern}" ] && continue
+              excludes+=(":(exclude)${pattern}")
+            done < .textlintignore
+          fi
           files=$(git diff --name-only --diff-filter=AM "${BASE_SHA}" "${HEAD_SHA}" -- \
-            'content/**/*.md' \
-            ':(exclude)content/post/archive/**' \
-            | tr '\n' ' ')
+            'content/**/*.md' "${excludes[@]}" | tr '\n' ' ')
           echo "files=${files}" >> "${GITHUB_OUTPUT}"
           echo "Changed Markdown: ${files:-<none>}"
 
