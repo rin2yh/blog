@@ -1,0 +1,63 @@
+{{- /*
+  ogp-image.html — builds a per-page OGP (Twitter Card) image by overlaying
+  the page title onto the fixed themed background (assets/ogp/base.png) with
+  the images.Text filter, and returns its absolute URL.
+
+  images.Text only wraps on whitespace, which never occurs in Japanese
+  titles, so we wrap manually. The title is tokenised into ASCII alphanumeric
+  "words" (kept intact) and single other runes, then greedily packed into
+  lines: each non-ASCII rune counts as 2 width units and each ASCII character
+  as 1, breaking near maxUnits and capping the height at maxLines (with an
+  ellipsis when truncated). Keeping ASCII words intact avoids breaking words
+  like "PlantUML" mid-word. Coordinates are aligned with the background drawn
+  by cmd/ogp: the title sits below the accent bar and above the bottom-left
+  branding.
+
+  Returns an empty string when inputs are missing or the page has no title,
+  so callers can fall back to other images.
+*/ -}}
+{{- $url := "" -}}
+{{- if and .IsPage .Title -}}
+  {{- $base := resources.Get "ogp/base.png" -}}
+  {{- $font := resources.Get "ogp/NotoSansJP-Bold.ttf" -}}
+  {{- if and $base $font -}}
+    {{- $maxUnits := 28 -}}
+    {{- $maxLines := 3 -}}
+    {{- $lines := slice -}}
+    {{- $line := "" -}}
+    {{- $w := 0 -}}
+    {{- range $tok := (findRE `[A-Za-z0-9]+|.` .Title) -}}
+      {{- /* ASCII word -> byte length == rune count; otherwise a single
+             (usually full-width) rune counted as 2 units. */ -}}
+      {{- $tw := cond (eq (len $tok) (len (split $tok ""))) (len $tok) 2 -}}
+      {{- $isSpace := gt (len (findRE `^[\s　]$` $tok)) 0 -}}
+      {{- if and (gt (add $w $tw) $maxUnits) (gt (len $line) 0) -}}
+        {{- $lines = $lines | append (trim $line " 　") -}}
+        {{- $line = "" -}}
+        {{- $w = 0 -}}
+      {{- end -}}
+      {{- if not (and $isSpace (eq (len $line) 0)) -}}
+        {{- $line = printf "%s%s" $line $tok -}}
+        {{- $w = add $w $tw -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with (trim $line " 　") }}{{ $lines = $lines | append . }}{{- end -}}
+    {{- $text := "" -}}
+    {{- if gt (len $lines) $maxLines -}}
+      {{- $text = printf "%s…" (delimit (first $maxLines $lines) "\n") -}}
+    {{- else -}}
+      {{- $text = delimit $lines "\n" -}}
+    {{- end -}}
+    {{- $opts := dict
+      "color" "#ffffff"
+      "size" 60
+      "x" 120
+      "y" 150
+      "linespacing" 14
+      "font" $font
+    -}}
+    {{- $img := $base.Filter (images.Text $text $opts) -}}
+    {{- $url = $img.Permalink -}}
+  {{- end -}}
+{{- end -}}
+{{- return $url -}}
