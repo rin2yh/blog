@@ -1,0 +1,55 @@
+{{- /*
+  ogp-image.html — builds a per-page OGP (Twitter Card) image by overlaying
+  the page title onto the fixed themed background (assets/ogp/base.png) with
+  the images.Text filter, and returns its absolute URL.
+
+  images.Text only wraps on whitespace, which never occurs in Japanese
+  titles, so we wrap manually: each non-ASCII rune counts as 2 width units
+  and each ASCII rune as 1, breaking near maxUnits and capping the height at
+  maxLines (with an ellipsis when truncated). Coordinates are aligned with
+  the background drawn by cmd/ogp: the title sits below the accent bar and
+  above the bottom-left branding.
+
+  Returns an empty string when inputs are missing or the page has no title,
+  so callers can fall back to other images.
+*/ -}}
+{{- $url := "" -}}
+{{- if and .IsPage .Title -}}
+  {{- $base := resources.Get "ogp/base.png" -}}
+  {{- $font := resources.Get "ogp/NotoSansJP-Bold.ttf" -}}
+  {{- if and $base $font -}}
+    {{- $maxUnits := 28 -}}
+    {{- $maxLines := 3 -}}
+    {{- $lines := slice -}}
+    {{- $line := "" -}}
+    {{- $w := 0 -}}
+    {{- range $r := (split .Title "") -}}
+      {{- $rw := cond (gt (len $r) 1) 2 1 -}}
+      {{- if gt (add $w $rw) $maxUnits -}}
+        {{- $lines = $lines | append $line -}}
+        {{- $line = "" -}}
+        {{- $w = 0 -}}
+      {{- end -}}
+      {{- $line = printf "%s%s" $line $r -}}
+      {{- $w = add $w $rw -}}
+    {{- end -}}
+    {{- with $line }}{{ $lines = $lines | append . }}{{- end -}}
+    {{- $text := "" -}}
+    {{- if gt (len $lines) $maxLines -}}
+      {{- $text = printf "%s…" (delimit (first $maxLines $lines) "\n") -}}
+    {{- else -}}
+      {{- $text = delimit $lines "\n" -}}
+    {{- end -}}
+    {{- $opts := dict
+      "color" "#ffffff"
+      "size" 60
+      "x" 120
+      "y" 150
+      "linespacing" 14
+      "font" $font
+    -}}
+    {{- $img := $base.Filter (images.Text $text $opts) -}}
+    {{- $url = $img.Permalink -}}
+  {{- end -}}
+{{- end -}}
+{{- return $url -}}
