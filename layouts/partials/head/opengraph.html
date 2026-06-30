@@ -1,3 +1,10 @@
+{{- /*
+  Overrides themes/stack-liquid-glass/layouts/partials/head/opengraph.html.
+  The theme is a git submodule we don't edit, so the whole partial is mirrored
+  here just to extend the $image fallback chain with a generated title image
+  (see the partial "ogp-image.html" call below). When bumping the theme, diff
+  its opengraph.html against this file and re-apply that one local change.
+*/ -}}
 {{- $title := cond .IsHome .Site.Title (printf "%s — %s" .Title .Site.Title) -}}
 {{- $description := or .Description .Summary .Site.Params.description -}}
 {{- $description = $description | plainify | chomp | htmlUnescape | truncate 200 -}}

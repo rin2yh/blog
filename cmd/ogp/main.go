@@ -176,14 +176,10 @@ func drawAvatar(dst *image.RGBA, x, y int) error {
 		for i := 0; i < avatarSize; i++ {
 			d := math.Hypot(float64(i)+0.5-c, float64(j)+0.5-c)
 			a := c - d // distance inside the circle edge, for 1px AA
-			switch {
-			case a <= 0:
+			if a <= 0 {
 				continue
-			case a < 1:
-				blendPixel(dst, x+i, y+j, scaled.RGBAAt(i, j), a)
-			default:
-				blendPixel(dst, x+i, y+j, scaled.RGBAAt(i, j), 1)
 			}
+			blendPixel(dst, x+i, y+j, scaled.RGBAAt(i, j), math.Min(a, 1))
 		}
 	}
 	return nil
@@ -217,11 +213,7 @@ func loadFace(size float64) (font.Face, error) {
 // --- low-level drawing helpers ---
 
 func lerp(a, b color.RGBA, t float64) color.RGBA {
-	if t < 0 {
-		t = 0
-	} else if t > 1 {
-		t = 1
-	}
+	t = clamp(t, 0, 1)
 	return color.RGBA{
 		R: uint8(float64(a.R) + (float64(b.R)-float64(a.R))*t),
 		G: uint8(float64(a.G) + (float64(b.G)-float64(a.G))*t),
@@ -244,19 +236,6 @@ func screen(bg, c color.RGBA, a float64) color.RGBA {
 		return uint8((1 - (1-bf)*(1-sf)) * 255)
 	}
 	return color.RGBA{sc(bg.R, c.R), sc(bg.G, c.G), sc(bg.B, c.B), 0xff}
-}
-
-// fillBarGradient fills a small rounded bar with a horizontal c1->c2 gradient.
-func fillBarGradient(dst *image.RGBA, r image.Rectangle, rad int, c1, c2 color.RGBA) {
-	w := float64(r.Dx())
-	for y := r.Min.Y; y < r.Max.Y; y++ {
-		for x := r.Min.X; x < r.Max.X; x++ {
-			cov := inRoundRect(float64(x)+0.5, float64(y)+0.5, r, float64(rad))
-			if cov > 0 {
-				blendPixel(dst, x, y, lerp(c1, c2, float64(x-r.Min.X)/w), cov)
-			}
-		}
-	}
 }
 
 // blendPixel alpha-composites c over dst at (x,y), scaling c's alpha by k (0..1).
@@ -297,15 +276,31 @@ func inRoundRect(px, py float64, r image.Rectangle, rad float64) float64 {
 	return clamp(rad-d, 0, 1)
 }
 
-func fillRoundRect(dst *image.RGBA, r image.Rectangle, rad int, c color.RGBA) {
+// fillRoundRectFunc fills a rounded rectangle, taking each pixel's color from
+// colorAt (called with the column x), so callers can supply a solid color or a
+// horizontal gradient without duplicating the coverage loop.
+func fillRoundRectFunc(dst *image.RGBA, r image.Rectangle, rad int, colorAt func(x int) color.RGBA) {
 	for y := r.Min.Y; y < r.Max.Y; y++ {
 		for x := r.Min.X; x < r.Max.X; x++ {
 			cov := inRoundRect(float64(x)+0.5, float64(y)+0.5, r, float64(rad))
 			if cov > 0 {
-				blendPixel(dst, x, y, c, cov)
+				blendPixel(dst, x, y, colorAt(x), cov)
 			}
 		}
 	}
+}
+
+// fillRoundRect fills a rounded rectangle with a solid color.
+func fillRoundRect(dst *image.RGBA, r image.Rectangle, rad int, c color.RGBA) {
+	fillRoundRectFunc(dst, r, rad, func(int) color.RGBA { return c })
+}
+
+// fillBarGradient fills a small rounded bar with a horizontal c1->c2 gradient.
+func fillBarGradient(dst *image.RGBA, r image.Rectangle, rad int, c1, c2 color.RGBA) {
+	x0, w := r.Min.X, float64(r.Dx())
+	fillRoundRectFunc(dst, r, rad, func(x int) color.RGBA {
+		return lerp(c1, c2, float64(x-x0)/w)
+	})
 }
 
 func strokeRoundRect(dst *image.RGBA, r image.Rectangle, rad int, c color.RGBA, w float64) {
