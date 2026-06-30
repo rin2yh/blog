@@ -112,21 +112,31 @@ func run() error {
 }
 
 // drawScene paints the dark base then screen-blends the theme's soft accent
-// blobs over it, reproducing the liquid-glass background scene.
+// blobs over it, reproducing the liquid-glass background scene. Each blob is
+// only evaluated within its bounding box, and the (cheaper) squared distance
+// is used to reject pixels outside its radius before taking a square root.
 func drawScene(dst *image.RGBA) {
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
+	bounds := dst.Bounds()
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			dst.SetRGBA(x, y, baseBG)
 		}
 	}
 	for _, b := range blobs {
-		for y := 0; y < height; y++ {
-			for x := 0; x < width; x++ {
-				d := math.Hypot(float64(x)+0.5-b.cx, float64(y)+0.5-b.cy)
-				if d >= b.r {
+		minX := max(bounds.Min.X, int(math.Floor(b.cx-b.r)))
+		maxX := min(bounds.Max.X, int(math.Ceil(b.cx+b.r)))
+		minY := max(bounds.Min.Y, int(math.Floor(b.cy-b.r)))
+		maxY := min(bounds.Max.Y, int(math.Ceil(b.cy+b.r)))
+		r2 := b.r * b.r
+		for y := minY; y < maxY; y++ {
+			for x := minX; x < maxX; x++ {
+				dx := float64(x) + 0.5 - b.cx
+				dy := float64(y) + 0.5 - b.cy
+				d2 := dx*dx + dy*dy
+				if d2 >= r2 {
 					continue
 				}
-				t := d / b.r
+				t := math.Sqrt(d2) / b.r
 				col := lerp(b.c1, b.c2, t)
 				// Strong at the center, smoothly fading to nothing at the edge.
 				a := b.opacity * smoothstep(1, 0, t)
@@ -251,7 +261,7 @@ func fillBarGradient(dst *image.RGBA, r image.Rectangle, rad int, c1, c2 color.R
 
 // blendPixel alpha-composites c over dst at (x,y), scaling c's alpha by k (0..1).
 func blendPixel(dst *image.RGBA, x, y int, c color.RGBA, k float64) {
-	if x < 0 || y < 0 || x >= dst.Rect.Dx() || y >= dst.Rect.Dy() {
+	if !image.Pt(x, y).In(dst.Rect) {
 		return
 	}
 	a := float64(c.A) / 255 * k
