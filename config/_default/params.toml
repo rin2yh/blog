@@ -2,6 +2,9 @@
 mainSections = ["post"]
 rssFullContent = true
 googleAnalytics = "G-M2XSPTPQFB"
+# Icon shown on the article share buttons (sidebar widget + mobile floating action).
+# References assets/icons/brand-twitter.svg (the X logo already bundled for the social link).
+shareIcon = "brand-twitter"
 [footer]
 since = 2026
 customText = ""
