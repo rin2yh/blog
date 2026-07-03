@@ -18,8 +18,9 @@ tags = ['Hugo', 'blog']
 これまで使っていた [hugo-theme-stack](https://github.com/CaiJimmy/hugo-theme-stack) をベースに、
 自作テーマ [hugo-theme-stack-liquid-glass](https://github.com/rin2yh/hugo-theme-stack-liquid-glass) を作りました。
 名前のとおり、すりガラス（Liquid Glass）風の見た目に寄せたUIにしています。
-既存テーマをそのまま使うのも良いのですが、細かいところを自分好みに直そうとすると、
-結局自分で手を入れられる形にしてしまうのが早いという結論に至りました。
+最初はstackを少しずつ手直ししていただけなのですが、
+気づけば独立したテーマとして切り出せるくらいカスタマイズしていたので、
+それなら、と別のテーマとして分離しました。
 
 管理方法も整えました。最初はテーマのファイルをブログのリポジトリに直接置いていたのですが、
 テーマとコンテンツが混ざって管理しづらかったので、別リポジトリに切り出してgit submoduleにしました。
