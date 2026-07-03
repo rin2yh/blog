@@ -15,11 +15,11 @@ tags = ['Hugo', 'blog']
 ## 改善
 
 ### テーマの自作化
-これまで使っていた [hugo-theme-stack](https://github.com/CaiJimmy/hugo-theme-stack) をフォークして、
+これまで使っていた [hugo-theme-stack](https://github.com/CaiJimmy/hugo-theme-stack) をベースに、
 自作テーマ [hugo-theme-stack-liquid-glass](https://github.com/rin2yh/hugo-theme-stack-liquid-glass) を作りました。
 名前のとおり、すりガラス（Liquid Glass）風の見た目に寄せたUIにしています。
 既存テーマをそのまま使うのも良いのですが、細かいところを自分好みに直そうとすると、
-結局フォークして触るのが早いという結論に至りました。
+結局自分で手を入れられる形にしてしまうのが早いという結論に至りました。
 
 管理方法も整えました。最初はテーマのファイルをブログのリポジトリに直接置いていたのですが、
 テーマとコンテンツが混ざって管理しづらかったので、別リポジトリに切り出してgit submoduleにしました。
