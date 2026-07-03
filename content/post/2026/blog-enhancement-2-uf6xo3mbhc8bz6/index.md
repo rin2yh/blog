@@ -8,7 +8,7 @@ tags = ['Hugo', 'blog']
 +++
 
 ## はじめに
-[前回のブログ改善ログ](/post/blog-enhancement/)から数ヶ月、コツコツとブログをいじり続けていました。
+[前回のブログ改善ログ]({{< relref "/post/2026/blog-enhancement-xbbh93sktmqlhb" >}})から数ヶ月、コツコツとブログをいじり続けていました。
 気づけば結構な量の改善が溜まっていたので、その2としてまとめておきます。
 今回もClaude Codeくんに大活躍してもらいました。ありがとう、Claude Codeくん...！
 
