@@ -1,0 +1,21 @@
+{{- /*
+  Build the X share-intent URL for a page. Overrides the theme partial.
+
+  Two fixes over the theme default:
+
+  1. Point directly at x.com (not twitter.com): X 301-redirects
+     twitter.com/intent/* to x.com, and that cross-domain redirect drops the
+     query string, so the compose box opens with no text or URL.
+
+  2. Encode spaces as %20, not "+". urlquery emits "+" for spaces; html/template
+     then escapes it to "&#43;", and the href attribute escapes the "&" again to
+     "&amp;#43;". The browser decodes that back to a literal "&", which splits
+     the query string — truncating the title and dropping the permalink for any
+     title containing a space. Replacing the "+" (only spaces become "+", since
+     literal "+" is encoded to %2B) leaves no HTML-special chars in the URL.
+
+  Usage: {{ partial "helper/share-url" . }} where . is a Page.
+*/ -}}
+{{- $encoded := printf "%s\n%s" .Title .Permalink | urlquery -}}
+{{- $text := replace $encoded "+" "%20" -}}
+{{- printf "https://x.com/intent/tweet?text=%s" $text -}}
