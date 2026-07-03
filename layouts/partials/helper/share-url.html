@@ -14,8 +14,12 @@
      title containing a space. Replacing the "+" (only spaces become "+", since
      literal "+" is encoded to %2B) leaves no HTML-special chars in the URL.
 
+  The result is already fully percent-encoded, so it is marked safeURL to
+  declare it safe and stop html/template from re-escaping it in the href
+  attribute (also guards against future Hugo escaping-behaviour changes).
+
   Usage: {{ partial "helper/share-url" . }} where . is a Page.
 */ -}}
 {{- $encoded := printf "%s\n%s" .Title .Permalink | urlquery -}}
 {{- $text := replace $encoded "+" "%20" -}}
-{{- printf "https://x.com/intent/tweet?text=%s" $text -}}
+{{- printf "https://x.com/intent/tweet?text=%s" $text | safeURL -}}
