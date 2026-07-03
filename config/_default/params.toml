@@ -43,8 +43,3 @@ card = "summary_large_image"
 [defaultImage.opengraph]
 enabled = true
 src = "image/avatar.webp"
-
-[donate]
-enabled = true
-link = "https://www.amazon.co.jp/Amazon-eGift-Card-Amazon-Logo-Classic-Animated/dp/B004N3APGO/?th=1&gpo=1000"
-email = "dev.rin2yh@gmail.com"
