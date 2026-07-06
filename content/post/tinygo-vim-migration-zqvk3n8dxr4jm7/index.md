@@ -112,16 +112,27 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 
 これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
 
-## 対応: `sago35/tinygo.vim` に乗り換える
+## なぜ乗り換えたのか
 
-原因1 のあたりを継ぎ接ぎで直すよりも、target 切替と LSP 再 attach をきちんと扱うプラグインに移った方が早いと判断し、
-`sago35/tinygo.vim` に乗り換えました。
+原因1 は `pcolladosoto/tinygo.nvim` を monkey-patch し続ける手でも対応できて、実際に
+`applyConfigFile` の相対パス問題と、`setTarget` の LSP 再起動が中途半端な件の両方を
+プラグイン内部を書き換えることで一度は動く状態にできていました。
+
+とはいえ、どちらもプラグイン内部実装への手出しなので、上流のリファクタで壊れやすい構成です。
+書くコード量としては乗り換え後もラッパーと自動検出 autocmd で似たような分量になるのですが、
+`sago35/tinygo.vim` を使う場合は `:TinygoTarget` という公開コマンドの上に薄く乗せているだけで、
+プラグイン内部には一切触っていません。差し当たっての動作ではなく、メンテしやすさで見たときに
+公開 API に依存する構成の方が長く付き合えると判断して乗り換えました。
+
+補足として、`sago35/tinygo.vim` には以下の利点もあります。
 
 - `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS を LSP config に流し込んでくれる
 - attach 済みクライアントを実際に stop してくれる
 - `tinygo#TinygoTargets` でターゲット補完も提供してくれる
 
-ただ Neovim 0.11 の native LSP 側で「stop 後の再 attach」を叩いてくれないケースがあるので、
+## 対応: `sago35/tinygo.vim` に乗り換える
+
+Neovim 0.11 の native LSP 側で「stop 後の再 attach」を叩いてくれないケースがあるので、
 そこは `:Tinygo` というラッパーを用意し、FileType の再発火で拾わせるようにしました。
 
 ```lua
