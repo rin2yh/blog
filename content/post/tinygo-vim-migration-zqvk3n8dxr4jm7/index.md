@@ -21,7 +21,7 @@ Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim 上で gop
 - mise の `go` shim は env の GOROOT を尊重しないので、gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない
 - 上記 2 点は `sago35/tinygo.vim` と、gopls コマンドを `env PATH=<mise-go-dir>:...` でラップする対応で解消できた
 
-## 環境
+### 環境
 
 - Neovim 0.11 系（native LSP）
 - Go / TinyGo は mise で管理
@@ -53,7 +53,7 @@ func main() {
 {"target": "wioterminal"}
 ```
 
-## 起きていたこと
+### 起きていたこと
 
 Neovim で `main.go` を開くと、gopls が以下のエラーを出していました。
 
