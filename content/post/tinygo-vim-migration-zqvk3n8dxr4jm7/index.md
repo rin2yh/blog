@@ -6,15 +6,35 @@ categories = ['tech']
 tags = ['neovim', 'tinygo', 'go']
 +++
 
-## TL;DR
+## 概要
 
-- Wio Terminal 向けに TinyGo を書き始めたところ、gopls が `machine` パッケージを解決できず補完が効かない状態になりました
-- 原因は 2 点ありました。`pcolladosoto/tinygo.nvim` の LSP 再起動が attach 済みクライアントを止めないこと、および mise の `go` shim が GOROOT env を上書きすることです
-- `sago35/tinygo.vim` に乗り換え、`env PATH=<mise-go-dir>:...` で gopls コマンドをラップすることで解消しました
+Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim 上で gopls が `machine` パッケージを解決してくれず、
+補完もエラー表示も TinyGo 用の内容にならない状態でした。
 
-## 発端
+`.tinygo.json` を検出して `pcolladosoto/tinygo.nvim` で target を切り替える構成にしていたのですが、
+それでも補完が復活しません。原因を追ってみたところ 2 つの要因が絡んでいたので、
+プラグインを `sago35/tinygo.vim` に乗り換えつつ、mise 側の挙動も回避する形で整理しました。
 
-`tinygobook` というディレクトリを切り、Wio Terminal 向けに TinyGo を書き始めました。`main.go` は以下のように最小構成です。
+### 手短なまとめ
+
+- Neovim 0.11 の native LSP における `vim.lsp.enable(name, false)` は、attach 済みクライアントを止めてくれない
+- mise の `go` shim は env の GOROOT を尊重しないので、gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない
+- 上記 2 点は `sago35/tinygo.vim` と、gopls コマンドを `env PATH=<mise-go-dir>:...` でラップする対応で解消できた
+
+## 環境
+
+- Neovim 0.11 系（native LSP）
+- Go / TinyGo は mise で管理
+- `mise.toml`:
+
+```toml
+[tools]
+go = "1.25"
+tinygo = "latest"
+```
+
+- ボード: Wio Terminal
+- `main.go`:
 
 ```go
 package main
@@ -27,29 +47,30 @@ func main() {
 }
 ```
 
-`.tinygo.json` にターゲットを置いておきます。
+- `.tinygo.json`:
 
 ```json
 {"target": "wioterminal"}
 ```
 
-`tinygo flash -target=wioterminal` は通るのですが、Neovim で開くと gopls が以下のエラーを返しました。
+## 起きていたこと
+
+`tinygo flash -target=wioterminal` は通るのに、Neovim で開くと gopls が以下のエラーを出していました。
 
 ```
 could not import machine (no required module provides package "machine")
 ```
 
-当然 `machine.LED` の補完も効きません。組み込みを書く上で `machine.` から先が見えないのは大きな痛手です。
+当然 `machine.LED` の補完も効きません。組み込みを書くのに `machine.` の先が見えないと辛いので、
+なんとかしたいというのが出発点です。
 
-## 最初の構成: `pcolladosoto/tinygo.nvim`
+## 原因1: `vim.lsp.enable(name, false)` は attach 済みを止めてくれない
 
-もともと dotfiles には `pcolladosoto/tinygo.nvim` を仕込んでおり、`.tinygo.json` を検出して `TinyGoSetTarget <target>` を叩く導線を用意していました。プラグイン本体の `applyConfigFile` は相対パスで `.tinygo.json` を探すため、nvim の cwd がプロジェクト外の場合に検出漏れが発生します。そのため bufname から上向きに探索する版に差し替えて使っていました。
+はじめは `pcolladosoto/tinygo.nvim` を使っていて、`.tinygo.json` を見つけて `TinyGoSetTarget <target>` を叩く導線を組んでいました。
+プラグイン本体の `applyConfigFile` は相対パスで `.tinygo.json` を探すので、
+nvim の cwd がプロジェクト外だと拾えません。そこは bufname から上向き探索する版に差し替えて使っていました。
 
-これで target 切替は走るはずなのですが、それでも補完は復活しませんでした。
-
-## 犯人 その 1: `vim.lsp.enable(false)` は attach 済みを止めない
-
-`pcolladosoto/tinygo.nvim` の `setTarget` は、要約すると次のような処理です。
+これで target 切替までは走るのですが、それでも補完は戻ってきません。中で何をしているか確認すると、こういう流れでした。
 
 ```lua
 vim.lsp.config('gopls', { cmd_env = { GOROOT = ..., GOFLAGS = ... } })
@@ -57,43 +78,51 @@ vim.lsp.enable('gopls', false)
 vim.lsp.enable('gopls', true)
 ```
 
-Neovim 0.11 の native LSP における `vim.lsp.enable(name, false)` は、**FileType autocmd を解除するだけ**であり、既にバッファに attach 済みのクライアントを stop してはくれません。
+Neovim 0.11 の native LSP では、`vim.lsp.enable(name, false)` が **FileType autocmd を解除するだけ** で、
+すでに attach しているクライアントを stop してはくれません。
+つまり順を追うとこうなります。
 
-流れとしては以下のようになります。
-
-1. Neovim 起動 → `FileType go` → 通常 GOROOT の gopls が起動して attach
-2. `.tinygo.json` を検出して `TinyGoSetTarget` → `cmd_env` は書き換わる
+1. Neovim 起動 → `FileType go` で通常 GOROOT の gopls が attach
+2. `.tinygo.json` が検出されて `TinyGoSetTarget` が走り、`cmd_env` は書き換わる
 3. しかし attach 済みの gopls は古い GOROOT のまま動き続ける
-4. 結果として補完は復旧しない
+4. 結果として `machine` が解決されない
 
-`vim.lsp.get_clients({ name = 'gopls' })` 経由で明示的に `client:stop(true)` を叩き、その後 `:edit` 相当で FileType を再発火させれば直ります。実際、プラグインを monkey-patch して stop と再 attach まで叩き込むことで `machine` は解決できるようになりました。
+`vim.lsp.get_clients({ name = 'gopls' })` から `client:stop(true)` を叩き、
+その後 FileType を再発火させれば直りますが、
+プラグインを monkey-patch し続けるのは上流のリファクタで壊れやすくて避けたい構成です。
 
-とはいえ、プラグインの内部挙動に依存した継ぎ接ぎであり、上流のリファクタで簡単に壊れます。もう少し安定した構成にしたいところでした。
+## 原因2: mise の `go` shim が GOROOT env を尊重しない
 
-## 犯人 その 2: mise の `go` shim が GOROOT env を上書きする
+target 切替後、GOROOT が gopls に届いているかを確認したところ、
+gopls プロセスの env には正しい TinyGo overlay の GOROOT (`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。
+にもかかわらず、gopls 内部から `go env` を叩くと **素の Go の GOROOT** が返ってきます。
 
-target 切替後の GOROOT が gopls に届いているかを `:LspInfo` と `cmd_env` で確認したところ、gopls プロセスの env には正しい TinyGo overlay GOROOT (`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。にもかかわらず、gopls 内部から `go env` を叩くと**素の Go の GOROOT が返ってくる**という現象が見られました。
+追ってみると、mise の shim (`~/.local/share/mise/shims/go`) が env の GOROOT を尊重せず、
+mise 側で管理している GOROOT で上書きしていました。
+gopls は内部で `go env GOROOT` を呼んでモジュール解決するので、
+親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
 
-原因は mise の shim です。`mise` は `~/.local/share/mise/shims/go` のようなラッパースクリプトを PATH に置いてバージョン管理を行っていますが、この shim は env の GOROOT を尊重しません。gopls は内部で `go env GOROOT` を実行してモジュール解決するため、いくら親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
-
-回避策は shim を経由させないことです。`mise which go` で直パスが取得できるので、gopls 起動時に PATH 先頭にその bin ディレクトリを差し込みます。
+回避策として、gopls 起動時に shim を経由しない go bin を PATH 先頭に置きます。
+`mise which go` で直パスが取れるので、そこから bin ディレクトリを求めて差し込みました。
 
 ```lua
 local go_dir = vim.fs.dirname(vim.trim(vim.fn.system('mise which go')))
 M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 ```
 
-これで gopls 内部の `go env` は TinyGo overlay GOROOT を素直に参照するようになります。
+これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
 
-## 乗り換え先: `sago35/tinygo.vim`
+## 対応: `sago35/tinygo.vim` に乗り換える
 
-犯人 1 の対処を継ぎ接ぎで続けるよりも、target 切替時の LSP 再 attach をきちんと扱うプラグインに移行した方が早いと判断しました。`sago35/tinygo.vim` には以下の利点があります。
+原因1 のあたりを継ぎ接ぎで直すよりも、target 切替と LSP 再 attach をきちんと扱うプラグインに移った方が早いと判断し、
+`sago35/tinygo.vim` に乗り換えました。
 
-- `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS をすべて LSP config に流し込む
-- attach 済みクライアントを実際に stop する
-- ターゲット補完 (`tinygo#TinygoTargets`) も提供している
+- `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS を LSP config に流し込んでくれる
+- attach 済みクライアントを実際に stop してくれる
+- `tinygo#TinygoTargets` でターゲット補完も提供してくれる
 
-ただし Neovim 0.11 の native LSP 側で「client:stop 後の再 attach」を叩いてくれないケースがあるため、そこだけラッパーを噛ませます。
+ただ Neovim 0.11 の native LSP 側で「stop 後の再 attach」を叩いてくれないケースがあるので、
+そこは `:Tinygo` というラッパーを用意し、FileType の再発火で拾わせるようにしました。
 
 ```lua
 vim.pack.add({ 'https://github.com/sago35/tinygo.vim' })
@@ -110,11 +139,14 @@ end, {
 })
 ```
 
-`FileType` を再発火させれば、`vim.lsp.enable('gopls', true)` 側の autocmd が拾って、新しい設定で gopls を attach し直してくれます。
+FileType を再発火させれば `vim.lsp.enable('gopls', true)` 側の autocmd が拾って、
+新しい設定で gopls を attach し直してくれます。
 
 ## `.tinygo.json` の自動検出
 
-`pcolladosoto/tinygo.nvim` の `applyConfigFile` 相当は自前で書きました。`FileType go` のたびに上向きで `.tinygo.json` を探し、見つかれば `:Tinygo <target>` を叩きます。同一ファイル・同一 target であれば 1 セッション 1 回のみ実行するようガードしています。
+`pcolladosoto/tinygo.nvim` の `applyConfigFile` に相当する処理は自前で書きました。
+`FileType go` のたびに上向きで `.tinygo.json` を探し、あれば `:Tinygo <target>` を叩きます。
+同じファイル・同じ target なら 1 セッションで 1 回だけになるよう、簡単なガードも入れています。
 
 ```lua
 local tinygo_applied = {}
@@ -138,19 +170,25 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 ```
 
-## ついでに直したところ
+## 補足: `root_markers` に `go.mod` を追加
 
-`tinygobook` は `.git` を切っていなかったため、gopls の `root_markers` が効かずワークスペースルートを取り違えていました。`go.mod` も root marker に追加しています。
+`tinygobook` 側は `.git` を切っていなかったため、gopls の `root_markers` が効かず、
+ワークスペースルートを取り違えていました。`go.mod` も root marker に足しています。
 
 ```lua
 M.root_markers = { 'go.mod' }
 ```
 
-## まとめ
+## 終わりに
 
-- `pcolladosoto/tinygo.nvim` から `sago35/tinygo.vim` へ移行しました
-- Neovim 0.11 の native LSP 側は `FileType` 再発火のラッパーで補強しました
-- mise の go shim を PATH で迂回することで、gopls 内部の `go env` を TinyGo overlay に寄せました
-- `.tinygo.json` を開くだけで target 切替と gopls 再 attach まで自動で走るようになりました
+補完が戻ってきてからは、Wio Terminal 向けの TinyGo コードを書くのがだいぶ楽になりました。
+mise + TinyGo + Neovim の組み合わせで `machine` が解決できないケースは、
+だいたい今回の 2 つの要因のどちらか（あるいは両方）にはまっている気がします。
+同じような状況で困っている方の参考になれば嬉しいです。
 
-補完が復活してからは、組み込みコードを書く負担が大きく減りました。mise と TinyGo と Neovim を組み合わせて `machine` が解決できない状況に遭遇している方は、おおむね同じ罠にはまっているのではないかと思います。
+読んでいただき、ありがとうございました！
+
+## 参考
+
+- `sago35/tinygo.vim`: https://github.com/sago35/tinygo.vim
+- `pcolladosoto/tinygo.nvim`: https://github.com/pcolladosoto/tinygo.nvim
