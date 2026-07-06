@@ -15,7 +15,7 @@ Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim の gopls 
 ### 手短なまとめ
 
 - mise の `go` shim が env の GOROOT を尊重せず、gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない → PATH に mise が使用する go 本体の bin を差し込んだ状態で gopls を起動する
-- プラグインが LSP に流し込む `cmd_env` の対象範囲が狭く、GOROOT だけしか反映されないと gopls の view が実際のビルド環境とずれる → GOROOT / GOOS / GOARCH / GOFLAGS を全て埋めてくれるプラグインを選ぶ
+- プラグインが LSP に渡す `cmd_env` の対象範囲が狭く、GOROOT だけしか反映されないと gopls の view が実際のビルド環境とずれる → GOROOT / GOOS / GOARCH / GOFLAGS を全て指定してくれるプラグインを選ぶ
 - 上記の切り替えは `.tinygo.json` を開いた時点で自動的に走ってほしい → `FileType go` の autocmd で `:TinygoTarget` を呼ぶ
 
 ### 環境
@@ -105,7 +105,7 @@ GOROOT が届いていれば `machine` の解決自体は通ります。ただ�
 gopls はホスト環境 (macOS / arm64) の値で view を構築し、実際のビルド環境 (Wio Terminal は linux / arm) と食い違います。
 `_arm.go` や `_linux.go` のファイル名タグ、`//go:build linux` を含む分岐の解析でずれが出やすい形です。
 
-そこで `cmd_env` に GOROOT / GOOS / GOARCH / GOFLAGS を全部流し込んでくれる `sago35/tinygo.vim` に差し替えました
+そこで `cmd_env` に GOROOT / GOOS / GOARCH / GOFLAGS を全部指定してくれる `sago35/tinygo.vim` に差し替えました
 (`autoload/tinygo.vim`)。`:TinygoTarget <target>` で 4 つの env を LSP config に反映し、
 `tinygo#TinygoTargets` で target 補完も提供してくれます。
 
