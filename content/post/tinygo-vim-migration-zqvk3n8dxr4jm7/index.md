@@ -8,9 +8,9 @@ tags = ['neovim', 'tinygo', 'go']
 
 ## TL;DR
 
-- Wio Terminal で TinyGo を書き始めたら gopls が `machine` パッケージを解決できず補完が死んだ
-- 犯人は 2 つ: (1) `pcolladosoto/tinygo.nvim` の LSP 再起動が中途半端 (2) mise の `go` shim が GOROOT env を無視して上書きしていた
-- `sago35/tinygo.vim` に乗り換え、`env PATH=<mise-go-dir>:...` で gopls をラップして解決
+- Wio Terminal 向けに TinyGo を書き始めたところ、gopls が `machine` パッケージを解決できず補完が効かない状態になった
+- 原因は 2 点あった。`pcolladosoto/tinygo.nvim` の LSP 再起動が attach 済みクライアントを止めないこと、および mise の `go` shim が GOROOT env を上書きすること
+- `sago35/tinygo.vim` に乗り換え、`env PATH=<mise-go-dir>:...` で gopls コマンドをラップすることで解消した
 
 ## 発端
 
