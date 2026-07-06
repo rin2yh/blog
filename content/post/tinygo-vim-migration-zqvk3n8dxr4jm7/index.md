@@ -142,11 +142,12 @@ end, {
 FileType を再発火させれば `vim.lsp.enable('gopls', true)` 側の autocmd が拾って、
 新しい設定で gopls を attach し直してくれます。
 
-## `.tinygo.json` の自動検出
+## `.tinygo.json` を開いた時点で切り替わるようにする
 
-`pcolladosoto/tinygo.nvim` の `applyConfigFile` に相当する処理は自前で書きました。
-`FileType go` のたびに上向きで `.tinygo.json` を探し、あれば `:Tinygo <target>` を叩きます。
-同じファイル・同じ target なら 1 セッションで 1 回だけになるよう、簡単なガードも入れています。
+`sago35/tinygo.vim` は `:Tinygo <target>` で明示的にターゲットを切り替える形なので、
+プロジェクトを開いた時点で自動的に切り替わってほしい部分だけ薄く autocmd を足しました。
+`FileType go` のタイミングで上向きに `.tinygo.json` を探し、あれば `:Tinygo <target>` を呼びます。
+同じファイル・同じ target なら 1 セッションで 1 回だけ実行されるようガードも入れています。
 
 ```lua
 local tinygo_applied = {}
