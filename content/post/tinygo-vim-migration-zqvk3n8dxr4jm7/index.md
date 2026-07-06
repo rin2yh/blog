@@ -64,7 +64,9 @@ could not import machine (no required module provides package "machine")
 当然 `machine.LED` の補完も効きません。組み込みを書くのに `machine.` の先が見えないと辛いので、
 なんとかしたいというのが出発点です。
 
-## 原因1: `vim.lsp.enable(name, false)` は起動中の gopls を終了しない
+## 原因
+
+### `vim.lsp.enable(name, false)` は起動中の gopls を終了しない
 
 はじめは `pcolladosoto/tinygo.nvim` を使っていて、`.tinygo.json` を見つけて `TinyGoSetTarget <target>` を叩く導線を組んでいました。
 プラグイン本体の `applyConfigFile` は相対パスで `.tinygo.json` を探すので、
@@ -98,7 +100,7 @@ sequenceDiagram
 その後 FileType を再発火させれば直りますが、
 プラグインを monkey-patch し続けるのはプラグイン本体が更新されると壊れやすく、避けたい形です。
 
-## 原因2: mise の `go` shim が GOROOT env を尊重しない
+### mise の `go` shim が GOROOT env を上書きする
 
 target 切替後、GOROOT が gopls に届いているかを確認したところ、
 gopls プロセスの env には正しい TinyGo overlay の GOROOT (`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。
@@ -109,17 +111,9 @@ mise 側で管理している GOROOT で上書きしていました。
 gopls は内部で `go env GOROOT` を呼んでモジュール解決するので、
 親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
 
-回避策として、gopls 起動時に shim を経由しない go bin を PATH 先頭に置きます。
-`mise which go` は mise が使用する go のパスを返してくれるので、そこから bin ディレクトリを求めて差し込みました。
+## 対応
 
-```lua
-local go_dir = vim.fs.dirname(vim.trim(vim.fn.system('mise which go')))
-M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
-```
-
-これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
-
-## なぜ乗り換えたのか
+### `sago35/tinygo.vim` に乗り換えて再 attach まで扱わせる
 
 原因1 は `pcolladosoto/tinygo.nvim` を monkey-patch し続ける手でも対応できて、実際に
 `applyConfigFile` の相対パス問題と、`setTarget` の LSP 再起動が中途半端な件の両方を
@@ -136,8 +130,6 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 - `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS を LSP config に流し込んでくれる
 - 起動中の gopls をきちんと終了させてくれる
 - `tinygo#TinygoTargets` でターゲット補完も提供してくれる
-
-## 対応: `sago35/tinygo.vim` に乗り換える
 
 Neovim 0.11 の native LSP 側で「stop 後の再 attach」を叩いてくれないケースがあるので、
 そこは `:Tinygo` というラッパーを用意し、FileType の再発火で拾わせるようにしました。
@@ -160,7 +152,19 @@ end, {
 FileType を再発火させれば `vim.lsp.enable('gopls', true)` 側の autocmd が拾って、
 新しい設定で gopls を attach し直してくれます。
 
-## `.tinygo.json` を開いた時点で切り替わるようにする
+### gopls を mise の shim を経由せずに起動する
+
+shim を経由しない go bin を PATH 先頭に置いてから gopls を起動します。
+`mise which go` は mise が使用する go のパスを返してくれるので、そこから bin ディレクトリを求めて差し込みました。
+
+```lua
+local go_dir = vim.fs.dirname(vim.trim(vim.fn.system('mise which go')))
+M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
+```
+
+これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
+
+### `.tinygo.json` を開いた時点で自動で切り替える
 
 `sago35/tinygo.vim` は `:Tinygo <target>` で明示的にターゲットを切り替える形なので、
 プロジェクトを開いた時点で自動的に切り替わってほしい部分だけ薄く autocmd を足しました。
@@ -189,7 +193,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 ```
 
-## 対応後のフロー
+### 対応後のフロー
 
 `sago35/tinygo.vim` + `:Tinygo` ラッパー + `env PATH=...` を全部合わせると、
 `.tinygo.json` を持つプロジェクトを開いた時の挙動はこうなります。
