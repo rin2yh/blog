@@ -19,7 +19,8 @@ Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim 上で gop
 
 - Neovim 0.11 系 (0.11.2 未満) の native LSP では、`vim.lsp.enable(name, false)` を呼んでも起動中の gopls を停止しない
 - mise の `go` shim は env の GOROOT を尊重しないので、gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない
-- 上記 2 点を `sago35/tinygo.vim` + `:Tinygo` ラッパーと、gopls コマンドを `env PATH=<mise-go-dir>:...` でラップする対応で解消しています
+- 上記 2 点を `sago35/tinygo.vim` と、gopls コマンドを `env PATH=<mise-go-dir>:...` でラップする対応で解消しています
+- 執筆時点の Neovim は 0.12 系まで進んでおり、後述の通り 0.11.2 以降であれば追加のラッパーは不要でした
 
 ### 環境
 
@@ -111,26 +112,10 @@ sequenceDiagram
 - `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS を LSP config に流し込んでくれる
 - `tinygo#TinygoTargets` で target 補完も提供してくれる
 
-target 切替後の再 attach は `:TinygoTarget` 単体では拾えないケースがあるので、
-`:Tinygo` というラッパーを用意し、`:TinygoTarget` の後で FileType を再発火して gopls を上げ直させます。
-
-```lua
-vim.pack.add({ 'https://github.com/sago35/tinygo.vim' })
-
-vim.api.nvim_create_user_command('Tinygo', function(opts)
-  vim.cmd.TinygoTarget(opts.args)
-  local buf = vim.api.nvim_get_current_buf()
-  vim.schedule(function()
-    vim.api.nvim_exec_autocmds('FileType', { buffer = buf })
-  end)
-end, {
-  nargs = 1,
-  complete = function(arglead) return vim.fn['tinygo#TinygoTargets'](arglead, '', 0) end,
-})
-```
-
-FileType を再発火させれば `vim.lsp.enable('gopls', true)` 側の autocmd が拾って、
-新しい設定で gopls を attach し直してくれます。
+`:TinygoTarget` の内部では `vim.lsp.enable('gopls', false)` → `sleep 100m` → `vim.lsp.enable('gopls', true)` を呼ぶ実装になっているため、
+Neovim 0.11.2 以降であれば `enable(false)` が `client:stop()` を呼び、`enable(true)` が `doautoall('nvim.lsp.enable FileType')` を発火して自動的に gopls が再 attach してくれます。
+一方、当時使っていた 0.11.2 未満では上記の再 attach が拾えないケースがあったため、`:Tinygo` というラッパーで FileType を再発火させていました
+（現行の Neovim では不要です）。
 
 ## mise の `go` shim が GOROOT env を上書きする
 
@@ -159,15 +144,15 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 
 ## `.tinygo.json` の target が自動反映されない
 
-### 課題: プロジェクトを開くたびに `:Tinygo <target>` を呼ぶ必要がある
+### 課題: プロジェクトを開くたびに `:TinygoTarget <target>` を呼ぶ必要がある
 
-`sago35/tinygo.vim` は `:Tinygo <target>` で明示的に target を切り替える形なので、
+`sago35/tinygo.vim` は `:TinygoTarget <target>` で明示的に target を切り替える形なので、
 プロジェクトを開くたびに実行が必要になります。TinyGo プロジェクトごとに target は `.tinygo.json` で決まっているので、
 これを開いた時点で自動的に反映されてほしいところです。
 
 ### 対応: `FileType go` の autocmd で自動反映する
 
-`FileType go` のタイミングで上向きに `.tinygo.json` を探し、あれば `:Tinygo <target>` を呼ぶ autocmd を足しました。
+`FileType go` のタイミングで上向きに `.tinygo.json` を探し、あれば `:TinygoTarget <target>` を呼ぶ autocmd を足しました。
 同じファイル・同じ target なら 1 セッションで 1 回だけ実行されるようガードも入れています。
 
 ```lua
@@ -187,25 +172,24 @@ vim.api.nvim_create_autocmd('FileType', {
     if not ok or type(cfg) ~= 'table' or cfg.target == nil then return end
     if tinygo_applied[found[1]] == cfg.target then return end
     tinygo_applied[found[1]] = cfg.target
-    vim.cmd({ cmd = 'Tinygo', args = { cfg.target } })
+    vim.cmd({ cmd = 'TinygoTarget', args = { cfg.target } })
   end,
 })
 ```
 
 ## 対応後のフロー
 
-3 点を合わせると、`.tinygo.json` を持つプロジェクトを開いた時の挙動はこうなります。
+Neovim 0.11.2 以降であれば、`.tinygo.json` を持つプロジェクトを開いた時の挙動はこうなります。
 
 ```mermaid
 sequenceDiagram
     participant Nvim as Neovim
-    participant Wrap as :Tinygo ラッパー
     participant Plugin as tinygo.vim
     participant Gopls as gopls
-    Nvim->>Wrap: .tinygo.json 検出 → :Tinygo &lt;target&gt;
-    Wrap->>Plugin: :TinygoTarget &lt;target&gt;
-    Plugin->>Plugin: cmd_env 書換 + vim.lsp.enable(false → true)
-    Wrap->>Nvim: FileType 再発火
+    Nvim->>Plugin: .tinygo.json 検出 → :TinygoTarget &lt;target&gt;
+    Plugin->>Plugin: cmd_env 書換
+    Plugin->>Nvim: vim.lsp.enable(false → true)
+    Note over Nvim,Gopls: enable(false) が client:stop()<br/>enable(true) が FileType 再発火
     Nvim->>Gopls: 新 cmd_env で起動<br/>(PATH に mise の go bin)
     Note over Gopls: go env GOROOT が<br/>TinyGo overlay を返す
     Gopls-->>Nvim: TinyGo 用の補完・エラー表示が動く
