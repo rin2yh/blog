@@ -15,7 +15,7 @@
 import { createServer } from 'node:http';
 import { mkdir, writeFile, stat } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
-import { join, normalize, extname } from 'node:path';
+import { join, extname, resolve, relative, sep } from 'node:path';
 
 const PUBLIC_DIR = process.env.PUBLIC_DIR || 'public';
 const PORT = Number(process.env.PORT || 1313);
@@ -58,13 +58,18 @@ const MIME = {
 
 // public/ を配信する最小の静的サーバ。ディレクトリは index.html にフォールバックする。
 function startServer() {
-  const root = normalize(PUBLIC_DIR);
+  const root = resolve(PUBLIC_DIR);
   const server = createServer(async (req, res) => {
     try {
-      let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
-      // ディレクトリトラバーサル防止
-      let rel = normalize(urlPath).replace(/^(\.\.[/\\])+/, '');
-      let filePath = join(root, rel);
+      const urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+      // ディレクトリトラバーサル防止: 解決後のパスが root 配下にあるか検証する
+      let filePath = resolve(join(root, urlPath));
+      const rel = relative(root, filePath);
+      if (rel === '..' || rel.startsWith(`..${sep}`)) {
+        res.statusCode = 403;
+        res.end('Forbidden');
+        return;
+      }
       let st;
       try {
         st = await stat(filePath);
@@ -130,12 +135,16 @@ async function main() {
           const resp = await page.goto(target, { waitUntil: 'networkidle', timeout: 30000 });
           if (!resp || resp.status() >= 400) {
             notFound = true;
-            await page.close();
             break;
           }
           const file = `${vp.key}--${slug}.png`;
           await page.screenshot({ path: join(OUT_DIR, file), fullPage: true });
           shots.push({ ...vp, file });
+        } catch (err) {
+          // goto/screenshot の失敗 (タイムアウト等) で全体を落とさず、このURLだけスキップする
+          console.error(`Failed to capture ${target} (${vp.label}):`, err);
+          notFound = true;
+          break;
         } finally {
           await page.close().catch(() => {});
         }

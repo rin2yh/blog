@@ -16,7 +16,8 @@ set -euo pipefail
 : "${BASE_SHA:?BASE_SHA is required}"
 : "${HEAD_SHA:?HEAD_SHA is required}"
 
-git diff --name-only --diff-filter=d "${BASE_SHA}...${HEAD_SHA}" -- 'content/post/**' \
+# core.quotepath=false: 非ASCIIファイル名が 8 進数エスケープされて出力されるのを防ぐ
+git -c core.quotepath=false diff --name-only --diff-filter=d "${BASE_SHA}...${HEAD_SHA}" -- 'content/post/**' \
 | while IFS= read -r f; do
     [[ -z "$f" ]] && continue
     base="$(basename "$f")"
