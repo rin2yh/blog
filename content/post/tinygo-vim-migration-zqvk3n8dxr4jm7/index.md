@@ -170,15 +170,6 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 ```
 
-## 補足: `root_markers` に `go.mod` を追加
-
-`tinygobook` 側は `.git` を切っていなかったため、gopls の `root_markers` が効かず、
-ワークスペースルートを取り違えていました。`go.mod` も root marker に足しています。
-
-```lua
-M.root_markers = { 'go.mod' }
-```
-
 ## 終わりに
 
 補完が戻ってきてからは、Wio Terminal 向けの TinyGo コードを書くのがだいぶ楽になりました。
