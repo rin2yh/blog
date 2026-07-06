@@ -8,16 +8,15 @@ tags = ['neovim', 'tinygo', 'go']
 
 ## 概要
 
-Wio Terminal 向けに TinyGo を書き始めたところ、Neovim で gopls が `machine` パッケージを解決してくれず、
-補完もエラー表示も TinyGo 用の内容にならない状態でした。
-
-`.tinygo.json` を検出して target を切り替える構成を組んでも状況は変わらず、
+Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim の gopls で `machine` パッケージが解決できず、
+`.tinygo.json` を検出して target を切り替える構成を組んでも状況が変わりませんでした。
 原因を追ってみると 2 つの要因が絡んでいたのでそれぞれ対応した記録です。
 
 ### 手短なまとめ
 
-- mise の `go` shim が env の GOROOT を尊重せず、gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない → PATH に mise が使用する go 本体の bin を差し込んだ状態で gopls を起動
-- プラグインが LSP に流し込む `cmd_env` のカバー範囲が狭く、GOROOT だけしか反映されないと gopls の view が実際のビルド環境とずれる → GOROOT / GOOS / GOARCH / GOFLAGS を全て埋めてくれるプラグインを選ぶ
+- mise の `go` shim が env の GOROOT を尊重せず、gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない → PATH に mise が使用する go 本体の bin を差し込んだ状態で gopls を起動する
+- プラグインが LSP に流し込む `cmd_env` の対象範囲が狭く、GOROOT だけしか反映されないと gopls の view が実際のビルド環境とずれる → GOROOT / GOOS / GOARCH / GOFLAGS を全て埋めてくれるプラグインを選ぶ
+- 上記の切り替えは `.tinygo.json` を開いた時点で自動的に走ってほしい → `FileType go` の autocmd で `:TinygoTarget` を呼ぶ
 
 ### 環境
 
@@ -74,7 +73,7 @@ could not import machine (no required module provides package "machine")
 (`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。にもかかわらず、
 gopls 内部で `go env` を呼ぶと **通常の Go の GOROOT** が返ってきます。
 
-犯人は mise の shim (`~/.local/share/mise/shims/go`) で、env の GOROOT を尊重せず、mise 側で管理している値で
+原因は mise の shim (`~/.local/share/mise/shims/go`) で、env の GOROOT を尊重せず、mise 側で管理している値で
 上書きしていました。gopls は `go env GOROOT` を呼んでモジュール解決するので、
 親プロセスから渡した GOROOT は shim の内側でリセットされてしまいます。
 
@@ -117,8 +116,8 @@ gopls を再起動する実装になっており、Neovim 0.11.2 以降であれ
 
 ### `.tinygo.json` を開いた時点で `:TinygoTarget` を自動で走らせる
 
-`:TinygoTarget <target>` は明示的に呼ぶ必要があるので、プロジェクトを開くたびに実行するのは煩わしいです。
-target は `.tinygo.json` に書いてあるので、これを開いた時点で反映されて欲しいです。
+`:TinygoTarget <target>` は明示的に呼ばないと反映されないので、プロジェクトを開くたびに実行する形になります。
+target は `.tinygo.json` に書いてあるので、これを開いた時点で自動的に反映されてほしいところです。
 
 `FileType go` のタイミングで上向きに `.tinygo.json` を探し、あれば `:TinygoTarget` を呼ぶ autocmd を足しました。
 `:TinygoTarget` は毎回呼ぶと gopls を再起動して重いので、同じディレクトリ・同じ target なら
@@ -151,7 +150,8 @@ sequenceDiagram
     participant Nvim as Neovim
     participant Plugin as tinygo.vim
     participant Gopls as gopls
-    Nvim->>Plugin: .tinygo.json 検出 → :TinygoTarget &lt;target&gt;
+    Note over Nvim: FileType go の autocmd が<br/>.tinygo.json を検出
+    Nvim->>Plugin: :TinygoTarget &lt;target&gt;
     Plugin->>Plugin: cmd_env に GOROOT/GOOS/GOARCH/GOFLAGS を書換
     Plugin->>Nvim: vim.lsp.enable(false → true)
     Note over Nvim,Gopls: enable(false) が client:stop()<br/>enable(true) が FileType 再発火
@@ -163,11 +163,7 @@ sequenceDiagram
 ## 終わりに
 
 補完が戻ってきてからは、Wio Terminal 向けの TinyGo コードを快適に書けるようになりました。
-mise + TinyGo + Neovim の組み合わせで `machine` が解決できない場合、
-shim による GOROOT の上書きが典型的な引っかかりどころでした。
-`machine` の解決だけならプラグイン側の env カバレッジは狭くても通りますが、
-`_linux.go` や `//go:build` の解析まで気にするなら GOOS / GOARCH も含めて流し込めるプラグインを
-選んだほうが後で困らないと思います。
+LED を光らせる次のステップに気持ちよく進めます。
 
 読んでいただき、ありがとうございました！
 
