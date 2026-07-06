@@ -20,15 +20,7 @@ Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim の gopls 
 ### 環境
 
 - Neovim 0.12 系 (native LSP)
-- Go / TinyGo は mise で管理
-- `mise.toml`:
-
-```toml
-[tools]
-go = "1.25"
-tinygo = "0.41.1"
-```
-
+- Go 1.25 / TinyGo 0.41.1 (mise で管理)
 - ボード: Wio Terminal
 - `main.go`:
 
