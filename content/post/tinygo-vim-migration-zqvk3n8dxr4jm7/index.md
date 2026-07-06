@@ -64,9 +64,7 @@ could not import machine (no required module provides package "machine")
 当然 `machine.LED` の補完も効きません。組み込みを書くのに `machine.` の先が見えないと辛いので、
 なんとかしたいというのが出発点です。
 
-## 原因
-
-### `vim.lsp.enable(name, false)` は起動中の gopls を終了しない
+## gopls の再起動が target 切替に追従しない
 
 はじめは `pcolladosoto/tinygo.nvim` を使っていて、`.tinygo.json` を見つけて `TinyGoSetTarget <target>` を叩く導線を組んでいました。
 プラグイン本体の `applyConfigFile` は相対パスで `.tinygo.json` を探すので、
@@ -100,32 +98,15 @@ sequenceDiagram
 その後 FileType を再発火させれば直りますが、
 プラグインを monkey-patch し続けるのはプラグイン本体が更新されると壊れやすく、避けたい形です。
 
-### mise の `go` shim が GOROOT env を上書きする
+### 対応: `sago35/tinygo.vim` に乗り換える
 
-target 切替後、GOROOT が gopls に届いているかを確認したところ、
-gopls プロセスの env には正しい TinyGo overlay の GOROOT (`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。
-にもかかわらず、gopls 内部から `go env` を叩くと **素の Go の GOROOT** が返ってきます。
+monkey-patch を続ける手でも一度は動く状態にできていたのですが、どちらもプラグイン内部への手出しなので、
+プラグイン本体が更新されると壊れやすい形です。書くコード量としては乗り換え後もラッパーと自動検出 autocmd で
+似たような分量になるのですが、`sago35/tinygo.vim` を使う場合は `:TinygoTarget` という公開コマンドの上に
+薄く乗せているだけで、プラグイン内部には一切触っていません。動くかどうかだけでなく、
+後から自分で読み返したときにも意味が追いやすいのは公開 API に乗せた方だと判断して、乗り換えました。
 
-追ってみると、mise の shim (`~/.local/share/mise/shims/go`) が env の GOROOT を尊重せず、
-mise 側で管理している GOROOT で上書きしていました。
-gopls は内部で `go env GOROOT` を呼んでモジュール解決するので、
-親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
-
-## 対応
-
-### `sago35/tinygo.vim` に乗り換えて再 attach まで扱わせる
-
-原因1 は `pcolladosoto/tinygo.nvim` を monkey-patch し続ける手でも対応できて、実際に
-`applyConfigFile` の相対パス問題と、`setTarget` の LSP 再起動が中途半端な件の両方を
-プラグイン内部を書き換えることで一度は動く状態にできていました。
-
-とはいえ、どちらもプラグイン内部実装への手出しなので、プラグイン本体が更新されると壊れやすい形です。
-書くコード量としては乗り換え後もラッパーと自動検出 autocmd で似たような分量になるのですが、
-`sago35/tinygo.vim` を使う場合は `:TinygoTarget` という公開コマンドの上に薄く乗せているだけで、
-プラグイン内部には一切触っていません。動くかどうかだけでなく、後から自分で読み返したときにも
-意味が追いやすいのは公開 API に乗せた方だと判断して、乗り換えました。
-
-補足として、`sago35/tinygo.vim` には以下の利点もあります。
+`sago35/tinygo.vim` は以下を提供してくれます。
 
 - `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS を LSP config に流し込んでくれる
 - 起動中の gopls をきちんと終了させてくれる
@@ -152,7 +133,18 @@ end, {
 FileType を再発火させれば `vim.lsp.enable('gopls', true)` 側の autocmd が拾って、
 新しい設定で gopls を attach し直してくれます。
 
-### gopls を mise の shim を経由せずに起動する
+## mise の `go` shim が GOROOT env を上書きする
+
+target 切替後、GOROOT が gopls に届いているかを確認したところ、
+gopls プロセスの env には正しい TinyGo overlay の GOROOT (`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。
+にもかかわらず、gopls 内部から `go env` を叩くと **素の Go の GOROOT** が返ってきます。
+
+追ってみると、mise の shim (`~/.local/share/mise/shims/go`) が env の GOROOT を尊重せず、
+mise 側で管理している GOROOT で上書きしていました。
+gopls は内部で `go env GOROOT` を呼んでモジュール解決するので、
+親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
+
+### 対応: gopls を shim を経由させずに起動する
 
 shim を経由しない go bin を PATH 先頭に置いてから gopls を起動します。
 `mise which go` は mise が使用する go のパスを返してくれるので、そこから bin ディレクトリを求めて差し込みました。
@@ -164,7 +156,7 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 
 これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
 
-### `.tinygo.json` を開いた時点で自動で切り替える
+## `.tinygo.json` を開いた時点で自動で切り替える
 
 `sago35/tinygo.vim` は `:Tinygo <target>` で明示的にターゲットを切り替える形なので、
 プロジェクトを開いた時点で自動的に切り替わってほしい部分だけ薄く autocmd を足しました。
@@ -193,7 +185,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 ```
 
-### 対応後のフロー
+## 対応後のフロー
 
 `sago35/tinygo.vim` + `:Tinygo` ラッパー + `env PATH=...` を全部合わせると、
 `.tinygo.json` を持つプロジェクトを開いた時の挙動はこうなります。
