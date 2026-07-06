@@ -64,9 +64,9 @@ could not import machine (no required module provides package "machine")
 
 ## 対応したこと
 
-1. **shim を経由せずに gopls を起動する** — mise の shim を迂回する PATH で gopls を起動し、内部の `go env` が TinyGo overlay の GOROOT を返すようにした
-2. **`cmd_env` を GOROOT / GOOS / GOARCH / GOFLAGS まで埋めるプラグインを使う** — `pcolladosoto/tinygo.nvim` から `sago35/tinygo.vim` に差し替えて、gopls の view と実際のビルド環境を揃えた
-3. **`.tinygo.json` を開いた時点で `:TinygoTarget` を自動で走らせる** — `FileType go` の autocmd で target を反映し、手動実行を不要にした
+1. shim を経由せずに gopls を起動する
+2. `cmd_env` を GOROOT / GOOS / GOARCH / GOFLAGS まで埋めるプラグインを使う
+3. `.tinygo.json` を開いた時点で `:TinygoTarget` を自動で走らせる
 
 ### shim を経由せずに gopls を起動する
 
