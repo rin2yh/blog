@@ -55,7 +55,7 @@ func main() {
 
 ## 起きていたこと
 
-`tinygo flash -target=wioterminal` は通るのに、Neovim で開くと gopls が以下のエラーを出していました。
+Neovim で `main.go` を開くと、gopls が以下のエラーを出していました。
 
 ```
 could not import machine (no required module provides package "machine")
