@@ -84,13 +84,11 @@ Neovim 0.11 の native LSP では、`vim.lsp.enable(name, false)` は **今後 g
 
 ```mermaid
 flowchart TD
-    A[Neovim 起動] --> B[FileType go]
-    B --> C[通常 GOROOT の gopls が起動し<br/>バッファに接続]
-    D[.tinygo.json 検出] --> E[TinyGoSetTarget]
-    E --> F[次回起動用の cmd_env が<br/>書き換わる]
-    C --> G[今動いている gopls は<br/>古い GOROOT のまま]
-    F --> G
-    G --> H[machine が解決されない]
+    A[Neovim 起動] --> B[FileType go で通常 GOROOT の<br/>gopls が起動しバッファに接続]
+    B --> C[.tinygo.json が検出されて<br/>TinyGoSetTarget が走る]
+    C --> D[cmd_env は書き換わるが<br/>次回起動用で反映されない]
+    D --> E[今動いている gopls は<br/>古い GOROOT のまま]
+    E --> F[machine が解決されない]
 ```
 
 `vim.lsp.get_clients({ name = 'gopls' })` から `client:stop(true)` を叩き、
