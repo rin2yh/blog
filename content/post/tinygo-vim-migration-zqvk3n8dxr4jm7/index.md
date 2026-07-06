@@ -53,7 +53,7 @@ func main() {
 {"target": "wioterminal"}
 ```
 
-### 起きていたこと
+## 起きていたこと
 
 Neovim で `main.go` を開くと、gopls が以下のエラーを出していました。
 
