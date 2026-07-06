@@ -22,7 +22,10 @@ Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim の gopls 
 - Neovim 0.12 系 (native LSP)
 - Go 1.25 / TinyGo 0.41.1 (mise で管理)
 - ボード: Wio Terminal
-- `main.go`:
+
+## 起きていたこと
+
+以下のような `main.go` と `.tinygo.json` を用意しました。
 
 ```go
 package main
@@ -35,15 +38,11 @@ func main() {
 }
 ```
 
-- `.tinygo.json`:
-
 ```json
 {"target": "wioterminal"}
 ```
 
-## 起きていたこと
-
-Neovim で `main.go` を開くと、gopls が以下のエラーを出していました。
+Neovim で `main.go` を開くと、gopls が以下のエラーを出します。
 
 ```
 could not import machine (no required module provides package "machine")
