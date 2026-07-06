@@ -151,7 +151,7 @@ sequenceDiagram
     participant Plugin as tinygo.vim
     participant Gopls as gopls
     Note over Nvim: FileType go の autocmd が<br/>.tinygo.json を検出
-    Nvim->>Plugin: :TinygoTarget &lt;target&gt;
+    Nvim->>Plugin: :TinygoTarget wioterminal
     Plugin->>Plugin: cmd_env に GOROOT/GOOS/GOARCH/GOFLAGS を書換
     Plugin->>Nvim: vim.lsp.enable(false → true)
     Note over Nvim,Gopls: enable(false) が client:stop()<br/>enable(true) が FileType 再発火
