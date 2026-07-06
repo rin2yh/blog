@@ -64,9 +64,9 @@ could not import machine (no required module provides package "machine")
 当然 `machine.LED` の補完も効きません。組み込みを書くのに `machine.` の先が見えないと不便なので、
 これをなんとかするというのが出発点です。
 
-## 障害 1: mise の `go` shim が GOROOT env を上書きする
+## mise の `go` shim が GOROOT env を上書きする
 
-### 何が起きていたか
+### 課題: gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない
 
 `.tinygo.json` を検出して target を切り替えると、gopls プロセスの env には正しい TinyGo overlay の GOROOT
 (`~/Library/Caches/tinygo/goroot-<hash>`) が入ります。ここまでは想定通りでした。
@@ -90,9 +90,9 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 
 これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
 
-## 障害 2: プラグインが GOOS / GOARCH を LSP に流し込まない
+## プラグインが GOOS / GOARCH を LSP に流し込まない
 
-### 何が起きていたか
+### 課題: gopls の view が実際のビルド環境とずれる
 
 target 切替に使っていた `pcolladosoto/tinygo.nvim` の `TinyGoSetTarget` は、LSP config に
 `GOROOT` と `GOFLAGS` しか設定していませんでした。
@@ -128,7 +128,7 @@ Neovim 0.11.2 以降であればこの流れで `client:stop()` と `doautoall('
 
 ## `.tinygo.json` の target を開いた時点で反映させる
 
-### 課題
+### 課題: プロジェクトを開くたびに `:TinygoTarget <target>` を呼ぶ必要がある
 
 `:TinygoTarget <target>` は明示的に呼ぶ必要があるので、プロジェクトを開くたびに実行するのは煩わしいところです。
 TinyGo プロジェクトごとに target は `.tinygo.json` で決まっているので、これを開いた時点で
