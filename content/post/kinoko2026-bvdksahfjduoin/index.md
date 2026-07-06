@@ -3,7 +3,7 @@ date = '2026-06-29T22:26:52+09:00'
 draft = false
 title = 'きのこカンファレンス 2026 初参加してみて'
 categories = ['idea']
-tags = ['note', 'conference', 'career']
+tags = ['conference', 'career']
 +++
 
 ## はじめに
