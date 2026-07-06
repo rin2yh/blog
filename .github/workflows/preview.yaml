@@ -1,0 +1,112 @@
+name: Article preview
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - 'content/post/**'
+
+permissions:
+  contents: write # アセットブランチへの push
+  pull-requests: write # スティッキーコメント
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  ASSET_BRANCH: pr-preview-assets
+  TZ: Asia/Tokyo
+  PR: ${{ github.event.pull_request.number }}
+
+jobs:
+  preview:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Compute changed article URLs
+        id: urls
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          {
+            echo "urls<<EOF"
+            bash .github/preview/changed-urls.sh
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Set SHA7
+        id: sha
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: echo "sha7=${HEAD_SHA:0:7}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build site (with drafts)
+        if: steps.urls.outputs.urls != ''
+        uses: ./.github/actions/build
+        with:
+          base-url: http://localhost:1313
+          build-drafts: 'true'
+
+      - name: Setup Node
+        if: steps.urls.outputs.urls != ''
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: 22
+
+      - name: Install Playwright Chromium
+        if: steps.urls.outputs.urls != ''
+        working-directory: .github/preview
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # postinstall で全ブラウザを落とさない
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      # 変更ありならスクショ + comment.md を生成、無ければ comment.md のみ生成する
+      # (shoot.mjs は URL が空なら Playwright を読み込まない)
+      - name: Screenshot and build comment
+        env:
+          URLS: ${{ steps.urls.outputs.urls }}
+          PORT: '1313'
+          PUBLIC_DIR: public
+          OUT_DIR: ${{ runner.temp }}/shots
+          COMMENT_FILE: ${{ runner.temp }}/comment.md
+          SHA7: ${{ steps.sha.outputs.sha7 }}
+          RAW_PREFIX: https://raw.githubusercontent.com/${{ github.repository }}/${{ env.ASSET_BRANCH }}/pr-${{ env.PR }}/${{ steps.sha.outputs.sha7 }}
+        run: node .github/preview/shoot.mjs
+
+      - name: Publish screenshots to asset branch
+        if: steps.urls.outputs.urls != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA7: ${{ steps.sha.outputs.sha7 }}
+          SHOTS_DIR: ${{ runner.temp }}/shots
+        run: bash .github/preview/manage-assets.sh publish
+
+      - name: Post/update sticky comment
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
+        with:
+          header: article-preview
+          path: ${{ runner.temp }}/comment.md
+
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout scripts
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          sparse-checkout: .github/preview
+          sparse-checkout-cone-mode: false
+
+      - name: Remove PR assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/preview/manage-assets.sh cleanup
