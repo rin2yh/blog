@@ -189,6 +189,25 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 ```
 
+## 対応後のフロー
+
+`sago35/tinygo.vim` + `:Tinygo` ラッパー + `env PATH=...` を全部合わせると、
+`.tinygo.json` を持つプロジェクトを開いた時の挙動はこうなります。
+
+```mermaid
+sequenceDiagram
+    participant Nvim as Neovim
+    participant Plugin as tinygo.vim
+    participant Gopls as gopls
+    Nvim->>Plugin: .tinygo.json 検出 → :Tinygo &lt;target&gt;
+    Plugin->>Plugin: cmd_env 書換
+    Plugin->>Gopls: 停止
+    Plugin->>Nvim: FileType 再発火
+    Nvim->>Gopls: 新 cmd_env で起動<br/>(PATH に mise の go bin)
+    Note over Gopls: go env GOROOT が<br/>TinyGo overlay を返す
+    Gopls-->>Nvim: machine 解決成功
+```
+
 ## 終わりに
 
 補完が戻ってきてからは、Wio Terminal 向けの TinyGo コードを書くのがだいぶ楽になりました。
