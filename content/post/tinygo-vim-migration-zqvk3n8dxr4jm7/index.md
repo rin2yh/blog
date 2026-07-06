@@ -30,7 +30,7 @@ Wio Terminal 向けに TinyGo を書き始めたのですが、Neovim 上で gop
 ```toml
 [tools]
 go = "1.25"
-tinygo = "latest"
+tinygo = "0.41.1"
 ```
 
 - ボード: Wio Terminal
