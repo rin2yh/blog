@@ -91,7 +91,7 @@ sequenceDiagram
     Nvim->>Plugin: .tinygo.json 検出
     Plugin->>Plugin: cmd_env 書換 (次回起動用)
     Note over Gopls: 動作中は古い GOROOT のまま
-    Gopls-->>Nvim: machine 解決失敗
+    Gopls-->>Nvim: TinyGo 用の補完・エラー表示が出ない
 ```
 
 `vim.lsp.get_clients({ name = 'gopls' })` から `client:stop(true)` を叩き、
@@ -205,7 +205,7 @@ sequenceDiagram
     Plugin->>Nvim: FileType 再発火
     Nvim->>Gopls: 新 cmd_env で起動<br/>(PATH に mise の go bin)
     Note over Gopls: go env GOROOT が<br/>TinyGo overlay を返す
-    Gopls-->>Nvim: machine 解決成功
+    Gopls-->>Nvim: TinyGo 用の補完・エラー表示が動く
 ```
 
 ## 終わりに
