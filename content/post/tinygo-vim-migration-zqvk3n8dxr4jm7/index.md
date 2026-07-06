@@ -64,7 +64,7 @@ could not import machine (no required module provides package "machine")
 当然 `machine.LED` の補完も効きません。組み込みを書くのに `machine.` の先が見えないと辛いので、
 なんとかしたいというのが出発点です。
 
-## 原因1: `vim.lsp.enable(name, false)` は attach 済みを止めてくれない
+## 原因1: `vim.lsp.enable(name, false)` は起動中の gopls を終了しない
 
 はじめは `pcolladosoto/tinygo.nvim` を使っていて、`.tinygo.json` を見つけて `TinyGoSetTarget <target>` を叩く導線を組んでいました。
 プラグイン本体の `applyConfigFile` は相対パスで `.tinygo.json` を探すので、
@@ -78,13 +78,13 @@ vim.lsp.enable('gopls', false)
 vim.lsp.enable('gopls', true)
 ```
 
-Neovim 0.11 の native LSP では、`vim.lsp.enable(name, false)` が **FileType autocmd を解除するだけ** で、
-すでに attach しているクライアントを stop してはくれません。
+Neovim 0.11 の native LSP では、`vim.lsp.enable(name, false)` は **今後 gopls を起動する仕組み (FileType autocmd) を外すだけ** で、
+すでに起動してバッファに繋がっている gopls プロセスは終了させてくれません。
 つまり順を追うとこうなります。
 
-1. Neovim 起動 → `FileType go` で通常 GOROOT の gopls が attach
-2. `.tinygo.json` が検出されて `TinyGoSetTarget` が走り、`cmd_env` は書き換わる
-3. しかし attach 済みの gopls は古い GOROOT のまま動き続ける
+1. Neovim 起動 → `FileType go` で通常 GOROOT の gopls が起動して、バッファに繋がる
+2. `.tinygo.json` が検出されて `TinyGoSetTarget` が走り、次回起動時用の `cmd_env` は書き換わる
+3. しかし今動いている gopls は古い GOROOT のまま動き続ける
 4. 結果として `machine` が解決されない
 
 `vim.lsp.get_clients({ name = 'gopls' })` から `client:stop(true)` を叩き、
@@ -127,7 +127,7 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 補足として、`sago35/tinygo.vim` には以下の利点もあります。
 
 - `:TinygoTarget <target>` で GOROOT / GOOS / GOARCH / GOFLAGS を LSP config に流し込んでくれる
-- attach 済みクライアントを実際に stop してくれる
+- 起動中の gopls をきちんと終了させてくれる
 - `tinygo#TinygoTargets` でターゲット補完も提供してくれる
 
 ## 対応: `sago35/tinygo.vim` に乗り換える
