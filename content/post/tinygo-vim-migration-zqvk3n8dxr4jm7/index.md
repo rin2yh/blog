@@ -82,14 +82,20 @@ Neovim 0.11 の native LSP では、`vim.lsp.enable(name, false)` は **今後 g
 すでに起動してバッファに繋がっている gopls プロセスは終了させてくれません。
 つまり順を追うとこうなります。
 
-1. Neovim 起動 → `FileType go` で通常 GOROOT の gopls が起動して、バッファに繋がる
-2. `.tinygo.json` が検出されて `TinyGoSetTarget` が走り、次回起動時用の `cmd_env` は書き換わる
-3. しかし今動いている gopls は古い GOROOT のまま動き続ける
-4. 結果として `machine` が解決されない
+```mermaid
+flowchart TD
+    A[Neovim 起動] --> B[FileType go]
+    B --> C[通常 GOROOT の gopls が起動し<br/>バッファに接続]
+    D[.tinygo.json 検出] --> E[TinyGoSetTarget]
+    E --> F[次回起動用の cmd_env が<br/>書き換わる]
+    C --> G[今動いている gopls は<br/>古い GOROOT のまま]
+    F --> G
+    G --> H[machine が解決されない]
+```
 
 `vim.lsp.get_clients({ name = 'gopls' })` から `client:stop(true)` を叩き、
 その後 FileType を再発火させれば直りますが、
-プラグインを monkey-patch し続けるのは上流のリファクタで壊れやすくて避けたい構成です。
+プラグインを monkey-patch し続けるのはプラグイン本体が更新されると壊れやすく、避けたい形です。
 
 ## 原因2: mise の `go` shim が GOROOT env を尊重しない
 
@@ -103,7 +109,7 @@ gopls は内部で `go env GOROOT` を呼んでモジュール解決するので
 親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
 
 回避策として、gopls 起動時に shim を経由しない go bin を PATH 先頭に置きます。
-`mise which go` で直パスが取れるので、そこから bin ディレクトリを求めて差し込みました。
+`mise which go` で shim を介さない実体のパスが取れるので、そこから bin ディレクトリを求めて差し込みました。
 
 ```lua
 local go_dir = vim.fs.dirname(vim.trim(vim.fn.system('mise which go')))
@@ -118,11 +124,11 @@ M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 `applyConfigFile` の相対パス問題と、`setTarget` の LSP 再起動が中途半端な件の両方を
 プラグイン内部を書き換えることで一度は動く状態にできていました。
 
-とはいえ、どちらもプラグイン内部実装への手出しなので、上流のリファクタで壊れやすい構成です。
+とはいえ、どちらもプラグイン内部実装への手出しなので、プラグイン本体が更新されると壊れやすい形です。
 書くコード量としては乗り換え後もラッパーと自動検出 autocmd で似たような分量になるのですが、
 `sago35/tinygo.vim` を使う場合は `:TinygoTarget` という公開コマンドの上に薄く乗せているだけで、
-プラグイン内部には一切触っていません。差し当たっての動作ではなく、メンテしやすさで見たときに
-公開 API に依存する構成の方が長く付き合えると判断して乗り換えました。
+プラグイン内部には一切触っていません。動くかどうかだけでなく、後から自分で読み返したときにも
+意味が追いやすいのは公開 API に乗せた方だと判断して、乗り換えました。
 
 補足として、`sago35/tinygo.vim` には以下の利点もあります。
 
