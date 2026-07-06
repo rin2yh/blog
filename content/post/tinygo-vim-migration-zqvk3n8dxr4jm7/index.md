@@ -13,8 +13,6 @@ Wio Terminal 向けに TinyGo を書き始めたところ、Neovim で gopls が
 
 `.tinygo.json` を検出して target を切り替える構成を組んでも状況は変わらず、
 原因を追ってみると 2 つの要因が絡んでいたのでそれぞれ対応した記録です。
-使っているプラグインも途中で変えていますが、そちらは補完を効かせるための本題ではないので、
-`cmd_env` のカバー範囲の話としてまとめて触れます。
 
 ### 手短なまとめ
 
@@ -64,35 +62,29 @@ could not import machine (no required module provides package "machine")
 当然 `machine.LED` の補完も効きません。組み込みを書くのに `machine.` の先が見えないと不便なので、
 これをなんとかするというのが出発点です。
 
-## mise の `go` shim が GOROOT env を上書きする
+## 対応したこと
 
-### 課題: gopls 内部の `go env` に TinyGo overlay の GOROOT が伝わらない
+### shim を経由せずに gopls を起動する
 
-`.tinygo.json` を検出して target を切り替えると、gopls プロセスの env には正しい TinyGo overlay の GOROOT
-(`~/Library/Caches/tinygo/goroot-<hash>`) が入ります。ここまでは想定通りでした。
+`.tinygo.json` から target を切り替えると、gopls プロセスの env には正しい TinyGo overlay の GOROOT
+(`~/Library/Caches/tinygo/goroot-<hash>`) が入っていました。にもかかわらず、
+gopls 内部で `go env` を呼ぶと **通常の Go の GOROOT** が返ってきます。
 
-にもかかわらず、gopls 内部から `go env` を実行すると **通常の Go の GOROOT** が返ってきます。
+犯人は mise の shim (`~/.local/share/mise/shims/go`) で、env の GOROOT を尊重せず、mise 側で管理している値で
+上書きしていました。gopls は `go env GOROOT` を呼んでモジュール解決するので、
+親プロセスから渡した GOROOT は shim の内側でリセットされてしまいます。
 
-追ってみると、mise の shim (`~/.local/share/mise/shims/go`) が env の GOROOT を尊重せず、
-mise 側で管理している GOROOT で上書きしていました。
-gopls は内部で `go env GOROOT` を呼んでモジュール解決するので、
-親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
-
-### 対応: shim を経由せずに gopls を起動する
-
-shim を経由しない go bin を PATH 先頭に置いてから gopls を起動します。
-`mise which go` は mise が使用する go のパスを返してくれるので、そこから bin ディレクトリを求めて差し込みました。
+shim を経由しない go bin を PATH 先頭に置いてから gopls を起動する形にしました。
+`mise which go` は mise が使用する go のパスを返してくれるので、そこから bin ディレクトリを求めて差し込みます。
 
 ```lua
 local go_dir = vim.fs.dirname(vim.trim(vim.fn.system('mise which go')))
 M.cmd = { 'env', 'PATH=' .. go_dir .. ':' .. vim.env.PATH, 'gopls' }
 ```
 
-これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになりました。
+これで gopls 内部の `go env` が TinyGo overlay の GOROOT を素直に返すようになります。
 
-## プラグインが GOOS / GOARCH を LSP に流し込まない
-
-### 課題: gopls の view が実際のビルド環境とずれる
+### `cmd_env` を GOROOT / GOOS / GOARCH / GOFLAGS まで埋めるプラグインを使う
 
 target 切替に使っていた `pcolladosoto/tinygo.nvim` の `TinyGoSetTarget` は、LSP config に
 `GOROOT` と `GOFLAGS` しか設定していませんでした。
@@ -107,34 +99,22 @@ vim.lsp.config('gopls', {
 ```
 
 GOROOT が届いていれば `machine` の解決自体は通ります。ただし GOOS と GOARCH が抜けているため、
-gopls はホスト環境 (macOS / arm64) の値で view を構築し、実際のビルド環境
-(Wio Terminal は linux / arm) と食い違います。
-`_arm.go` や `_linux.go` のようなファイル名タグ、`//go:build linux` を含む分岐の解析で
-ずれが出やすい形です。
+gopls はホスト環境 (macOS / arm64) の値で view を構築し、実際のビルド環境 (Wio Terminal は linux / arm) と食い違います。
+`_arm.go` や `_linux.go` のファイル名タグ、`//go:build linux` を含む分岐の解析でずれが出やすい形です。
 
-### 対応: `cmd_env` を GOROOT / GOOS / GOARCH / GOFLAGS まで埋めるプラグインを使う
-
-`sago35/tinygo.vim` の `:TinygoTarget` は上記 4 つを全て LSP config に流し込みます
-(`autoload/tinygo.vim`)。今回はこちらに差し替えました。
-
-- `:TinygoTarget <target>` で 4 つの env を LSP config に反映
-- `tinygo#TinygoTargets` で target 補完も提供
+そこで `cmd_env` に GOROOT / GOOS / GOARCH / GOFLAGS を全部流し込んでくれる `sago35/tinygo.vim` に差し替えました
+(`autoload/tinygo.vim`)。`:TinygoTarget <target>` で 4 つの env を LSP config に反映し、
+`tinygo#TinygoTargets` で target 補完も提供してくれます。
 
 内部では `vim.lsp.enable('gopls', false)` → `sleep 100m` → `vim.lsp.enable('gopls', true)` の順で
-gopls を再起動する実装になっています。
-Neovim 0.11.2 以降であればこの流れで `client:stop()` と `doautoall('nvim.lsp.enable FileType')` が
-走って新しい `cmd_env` で再 attach してくれます
+gopls を再起動する実装になっており、Neovim 0.11.2 以降であればこの流れで `client:stop()` と
+`doautoall('nvim.lsp.enable FileType')` が走って新しい `cmd_env` で再 attach してくれます
 （0.11.2 未満では `enable(false)` が停止しないため別途ラッパーが必要でしたが、現行の 0.12 系ではそのままで動きます）。
 
-## `.tinygo.json` の target を開いた時点で反映させる
+### `.tinygo.json` を開いた時点で `:TinygoTarget` を自動で走らせる
 
-### 課題: プロジェクトを開くたびに `:TinygoTarget <target>` を呼ぶ必要がある
-
-`:TinygoTarget <target>` は明示的に呼ぶ必要があるので、プロジェクトを開くたびに実行するのは煩わしいところです。
-TinyGo プロジェクトごとに target は `.tinygo.json` で決まっているので、これを開いた時点で
-自動的に反映されて欲しいです。
-
-### 対応: `FileType go` の autocmd で自動反映する
+`:TinygoTarget <target>` は明示的に呼ぶ必要があるので、プロジェクトを開くたびに実行するのは煩わしいです。
+target は `.tinygo.json` に書いてあるので、これを開いた時点で反映されて欲しいです。
 
 `FileType go` のタイミングで上向きに `.tinygo.json` を探し、あれば `:TinygoTarget` を呼ぶ autocmd を足しました。
 `:TinygoTarget` は毎回呼ぶと gopls を再起動して重いので、同じディレクトリ・同じ target なら
