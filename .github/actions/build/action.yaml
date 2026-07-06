@@ -6,6 +6,10 @@ inputs:
     description: Optional base URL passed to hugo --baseURL (trailing slash is appended)
     required: false
     default: ''
+  build-drafts:
+    description: When 'true', build draft and future-dated content (adds --buildDrafts --buildFuture)
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -58,11 +62,15 @@ runs:
       shell: bash
       env:
         BASE_URL: ${{ inputs.base-url }}
+        BUILD_DRAFTS: ${{ inputs.build-drafts }}
         CACHE_DIR: ${{ runner.temp }}/hugo_cache
       run: |
         args=(--gc --minify --cacheDir "${CACHE_DIR}")
         if [[ -n "${BASE_URL}" ]]; then
           args+=(--baseURL "${BASE_URL}/")
+        fi
+        if [[ "${BUILD_DRAFTS}" == "true" ]]; then
+          args+=(--buildDrafts --buildFuture)
         fi
         hugo "${args[@]}"
 

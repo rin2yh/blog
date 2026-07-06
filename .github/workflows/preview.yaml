@@ -1,0 +1,127 @@
+name: Article preview
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - 'content/**'
+
+permissions:
+  contents: write # アセットブランチへの push
+  pull-requests: write # スティッキーコメント
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  ASSET_BRANCH: pr-preview-assets
+  TZ: Asia/Tokyo
+
+jobs:
+  preview:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Compute changed article URLs
+        id: urls
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          urls="$(bash .github/preview/changed-urls.sh)"
+          echo "urls<<EOF" >> "${GITHUB_OUTPUT}"
+          echo "${urls}" >> "${GITHUB_OUTPUT}"
+          echo "EOF" >> "${GITHUB_OUTPUT}"
+          if [[ -n "${urls}" ]]; then
+            echo "has_changes=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_changes=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Set SHA7
+        id: sha
+        run: echo "sha7=$(git rev-parse --short=7 '${{ github.event.pull_request.head.sha }}')" >> "${GITHUB_OUTPUT}"
+
+      - name: Build site (with drafts)
+        if: steps.urls.outputs.has_changes == 'true'
+        uses: ./.github/actions/build
+        with:
+          base-url: http://localhost:1313
+          build-drafts: 'true'
+
+      - name: Setup Node
+        if: steps.urls.outputs.has_changes == 'true'
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: 22
+
+      - name: Install Playwright Chromium
+        if: steps.urls.outputs.has_changes == 'true'
+        working-directory: .github/preview
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Take screenshots
+        if: steps.urls.outputs.has_changes == 'true'
+        env:
+          URLS: ${{ steps.urls.outputs.urls }}
+          PORT: '1313'
+          PUBLIC_DIR: public
+          OUT_DIR: ${{ runner.temp }}/shots
+          COMMENT_FILE: ${{ runner.temp }}/comment.md
+          PR: ${{ github.event.pull_request.number }}
+          SHA7: ${{ steps.sha.outputs.sha7 }}
+          RAW_PREFIX: https://raw.githubusercontent.com/${{ github.repository }}/${{ env.ASSET_BRANCH }}/pr-${{ github.event.pull_request.number }}/${{ steps.sha.outputs.sha7 }}
+        run: node .github/preview/shoot.mjs
+
+      - name: Publish screenshots to asset branch
+        if: steps.urls.outputs.has_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA7: ${{ steps.sha.outputs.sha7 }}
+          SHOTS_DIR: ${{ runner.temp }}/shots
+        run: bash .github/preview/publish-assets.sh
+
+      - name: Build "no changes" comment
+        if: steps.urls.outputs.has_changes != 'true'
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          SHA7: ${{ steps.sha.outputs.sha7 }}
+          URLS: ''
+          OUT_DIR: ${{ runner.temp }}/shots
+          COMMENT_FILE: ${{ runner.temp }}/comment.md
+          RAW_PREFIX: ''
+        run: |
+          mkdir -p "${OUT_DIR}"
+          node .github/preview/shoot.mjs
+
+      - name: Post/update sticky comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          COMMENT_FILE: ${{ runner.temp }}/comment.md
+        run: bash .github/preview/post-comment.sh
+
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout scripts
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          sparse-checkout: .github/preview
+          sparse-checkout-cone-mode: false
+
+      - name: Remove PR assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: bash .github/preview/cleanup-assets.sh

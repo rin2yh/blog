@@ -1,0 +1,10 @@
+{
+  "name": "blog-article-preview",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PR上で変更記事のスクリーンショットを撮るためのツール",
+  "dependencies": {
+    "playwright": "1.56.0"
+  }
+}
