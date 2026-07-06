@@ -22,14 +22,10 @@ git -c core.quotepath=false diff --name-only --diff-filter=d "${BASE_SHA}...${HE
     [[ -z "$f" ]] && continue
     base="$(basename "$f")"
     case "$base" in
-      _index.md|_index.*.md)
-        continue ;;                                     # セクションページ (記事一覧) はスキップ
-      index.md|index.*.md)
-        name="$(basename "$(dirname "$f")")" ;;         # リーフバンドル -> 親フォルダ名
-      *.md)
-        name="${base%.md}" ;;                           # 単一ファイル -> 拡張子除去 (単一言語サイトのため .md のみ)
-      *)
-        continue ;;                                     # バンドル内の画像等の非 Markdown はスキップ
+      _index.md) continue ;;                            # セクションページ (記事一覧) はスキップ
+      index.md)  name="$(basename "$(dirname "$f")")" ;; # リーフバンドル -> 親フォルダ名
+      *.md)      name="${base%.md}" ;;                  # 単一ファイル -> 拡張子除去 (単一言語サイト)
+      *)         continue ;;                            # バンドル内の画像等の非 Markdown はスキップ
     esac
     printf '/post/%s/\n' "$name"
   done | sort -u

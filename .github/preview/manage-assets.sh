@@ -30,13 +30,10 @@ HOST="${HOST#https://}"
 REMOTE="${ASSET_REMOTE:-https://x-access-token:${GITHUB_TOKEN}@${HOST}/${GITHUB_REPOSITORY}.git}"
 ASSET_DIR="${RUNNER_TEMP}/pr-preview-assets"
 
-# アセットブランチをクローン (無ければ: publish は orphan 作成 / cleanup は何もせず終了)
+# アセットブランチをクローン (成功時のみ 0)。無ければ: publish は orphan 作成 / cleanup は終了
 clone_asset_branch() {
   rm -rf "${ASSET_DIR}"
-  if git clone --depth 1 --branch "${ASSET_BRANCH}" "${REMOTE}" "${ASSET_DIR}" 2>/dev/null; then
-    return 0
-  fi
-  return 1
+  git clone --depth 1 --branch "${ASSET_BRANCH}" "${REMOTE}" "${ASSET_DIR}" 2>/dev/null
 }
 
 # ステージ済みの変更があるときだけ commit/push する

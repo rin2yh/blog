@@ -3,7 +3,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
     paths:
-      - 'content/**'
+      - 'content/post/**'
 
 permissions:
   contents: write # アセットブランチへの push
@@ -35,35 +35,33 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          urls="$(bash .github/preview/changed-urls.sh)"
-          echo "urls<<EOF" >> "${GITHUB_OUTPUT}"
-          echo "${urls}" >> "${GITHUB_OUTPUT}"
-          echo "EOF" >> "${GITHUB_OUTPUT}"
-          if [[ -n "${urls}" ]]; then
-            echo "has_changes=true" >> "${GITHUB_OUTPUT}"
-          else
-            echo "has_changes=false" >> "${GITHUB_OUTPUT}"
-          fi
+          {
+            echo "urls<<EOF"
+            bash .github/preview/changed-urls.sh
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
 
       - name: Set SHA7
         id: sha
-        run: echo "sha7=$(git rev-parse --short=7 '${{ github.event.pull_request.head.sha }}')" >> "${GITHUB_OUTPUT}"
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: echo "sha7=${HEAD_SHA:0:7}" >> "${GITHUB_OUTPUT}"
 
       - name: Build site (with drafts)
-        if: steps.urls.outputs.has_changes == 'true'
+        if: steps.urls.outputs.urls != ''
         uses: ./.github/actions/build
         with:
           base-url: http://localhost:1313
           build-drafts: 'true'
 
       - name: Setup Node
-        if: steps.urls.outputs.has_changes == 'true'
+        if: steps.urls.outputs.urls != ''
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: 22
 
       - name: Install Playwright Chromium
-        if: steps.urls.outputs.has_changes == 'true'
+        if: steps.urls.outputs.urls != ''
         working-directory: .github/preview
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # postinstall で全ブラウザを落とさない
@@ -85,7 +83,7 @@ jobs:
         run: node .github/preview/shoot.mjs
 
       - name: Publish screenshots to asset branch
-        if: steps.urls.outputs.has_changes == 'true'
+        if: steps.urls.outputs.urls != ''
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHA7: ${{ steps.sha.outputs.sha7 }}
