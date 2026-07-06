@@ -16,6 +16,7 @@ concurrency:
 env:
   ASSET_BRANCH: pr-preview-assets
   TZ: Asia/Tokyo
+  PR: ${{ github.event.pull_request.number }}
 
 jobs:
   preview:
@@ -64,51 +65,38 @@ jobs:
       - name: Install Playwright Chromium
         if: steps.urls.outputs.has_changes == 'true'
         working-directory: .github/preview
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # postinstall で全ブラウザを落とさない
         run: |
           npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
 
-      - name: Take screenshots
-        if: steps.urls.outputs.has_changes == 'true'
+      # 変更ありならスクショ + comment.md を生成、無ければ comment.md のみ生成する
+      # (shoot.mjs は URL が空なら Playwright を読み込まない)
+      - name: Screenshot and build comment
         env:
           URLS: ${{ steps.urls.outputs.urls }}
           PORT: '1313'
           PUBLIC_DIR: public
           OUT_DIR: ${{ runner.temp }}/shots
           COMMENT_FILE: ${{ runner.temp }}/comment.md
-          PR: ${{ github.event.pull_request.number }}
           SHA7: ${{ steps.sha.outputs.sha7 }}
-          RAW_PREFIX: https://raw.githubusercontent.com/${{ github.repository }}/${{ env.ASSET_BRANCH }}/pr-${{ github.event.pull_request.number }}/${{ steps.sha.outputs.sha7 }}
+          RAW_PREFIX: https://raw.githubusercontent.com/${{ github.repository }}/${{ env.ASSET_BRANCH }}/pr-${{ env.PR }}/${{ steps.sha.outputs.sha7 }}
         run: node .github/preview/shoot.mjs
 
       - name: Publish screenshots to asset branch
         if: steps.urls.outputs.has_changes == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ github.event.pull_request.number }}
           SHA7: ${{ steps.sha.outputs.sha7 }}
           SHOTS_DIR: ${{ runner.temp }}/shots
-        run: bash .github/preview/publish-assets.sh
-
-      - name: Build "no changes" comment
-        if: steps.urls.outputs.has_changes != 'true'
-        env:
-          PR: ${{ github.event.pull_request.number }}
-          SHA7: ${{ steps.sha.outputs.sha7 }}
-          URLS: ''
-          OUT_DIR: ${{ runner.temp }}/shots
-          COMMENT_FILE: ${{ runner.temp }}/comment.md
-          RAW_PREFIX: ''
-        run: |
-          mkdir -p "${OUT_DIR}"
-          node .github/preview/shoot.mjs
+        run: bash .github/preview/manage-assets.sh publish
 
       - name: Post/update sticky comment
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ github.event.pull_request.number }}
-          COMMENT_FILE: ${{ runner.temp }}/comment.md
-        run: bash .github/preview/post-comment.sh
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
+        with:
+          header: article-preview
+          path: ${{ runner.temp }}/comment.md
 
   cleanup:
     if: github.event.action == 'closed'
@@ -123,5 +111,4 @@ jobs:
       - name: Remove PR assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR: ${{ github.event.pull_request.number }}
-        run: bash .github/preview/cleanup-assets.sh
+        run: bash .github/preview/manage-assets.sh cleanup

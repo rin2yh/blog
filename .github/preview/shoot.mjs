@@ -111,7 +111,7 @@ async function main() {
   await mkdir(OUT_DIR, { recursive: true });
 
   if (urls.length === 0) {
-    await writeFile(COMMENT_FILE, noChangesBody());
+    await writeFile(COMMENT_FILE, body(['変更された記事ページはありません。']));
     console.log('No article URLs to shoot.');
     return;
   }
@@ -132,7 +132,7 @@ async function main() {
       for (const vp of VIEWPORTS) {
         const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
         try {
-          const resp = await page.goto(target, { waitUntil: 'networkidle', timeout: 30000 });
+          const resp = await page.goto(target, { waitUntil: 'load', timeout: 30000 });
           if (!resp || resp.status() >= 400) {
             notFound = true;
             break;
@@ -182,10 +182,6 @@ function footer() {
 
 function body(sections) {
   return `${header()}\n${sections.join('\n\n')}\n${footer()}`;
-}
-
-function noChangesBody() {
-  return `${header()}\n変更された記事ページはありません。\n${footer()}`;
 }
 
 main().catch((e) => {
