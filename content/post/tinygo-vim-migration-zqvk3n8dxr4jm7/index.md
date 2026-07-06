@@ -109,7 +109,7 @@ gopls は内部で `go env GOROOT` を呼んでモジュール解決するので
 親プロセスから GOROOT を渡しても shim の内側でリセットされてしまいます。
 
 回避策として、gopls 起動時に shim を経由しない go bin を PATH 先頭に置きます。
-`mise which go` で shim を介さない実体のパスが取れるので、そこから bin ディレクトリを求めて差し込みました。
+`mise which go` は mise が今使っている go のパスを返してくれるので、そこから bin ディレクトリを求めて差し込みました。
 
 ```lua
 local go_dir = vim.fs.dirname(vim.trim(vim.fn.system('mise which go')))
