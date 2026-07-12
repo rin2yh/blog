@@ -1,0 +1,37 @@
+{{- /*
+  Markdown image render hook.
+
+  ページバンドル内の画像を WebP に変換・縮小して配信する。
+  - 幅 1600px を上限に縮小(Retina 2x 相当)し、800px 幅の srcset も生成
+  - width/height を出力してレイアウトシフト(CLS)を防ぐ
+  - loading="lazy" / decoding="async" で初期表示をブロックしない
+  - SVG / GIF / リモート画像 / バンドル外の画像は変換せずそのまま出力
+*/ -}}
+{{- $dest := .Destination -}}
+{{- $alt := .PlainText -}}
+{{- $title := .Title -}}
+{{- $img := "" -}}
+{{- $isRemote := or (hasPrefix $dest "http://") (hasPrefix $dest "https://") (hasPrefix $dest "//") -}}
+{{- if not $isRemote -}}
+  {{- with .Page.Resources.Get (strings.TrimPrefix "./" $dest) -}}
+    {{- $img = . -}}
+  {{- end -}}
+{{- end -}}
+{{- $processable := false -}}
+{{- if $img -}}
+  {{- $processable = in (slice "jpeg" "png" "webp" "tiff" "bmp") $img.MediaType.SubType -}}
+{{- end -}}
+{{- if $processable -}}
+  {{- $full := $img -}}
+  {{- if gt $img.Width 1600 -}}
+    {{- $full = $img.Resize "1600x webp q80" -}}
+  {{- else if ne $img.MediaType.SubType "webp" -}}
+    {{- $full = $img.Resize (printf "%dx webp q80" $img.Width) -}}
+  {{- end -}}
+  <img src="{{ $full.RelPermalink }}"
+    {{- if gt $img.Width 800 -}}
+      {{- $small := $img.Resize "800x webp q80" }} srcset="{{ $small.RelPermalink }} 800w, {{ $full.RelPermalink }} {{ $full.Width }}w" sizes="(min-width: 1025px) 800px, 100vw"
+    {{- end }} width="{{ $full.Width }}" height="{{ $full.Height }}" loading="lazy" decoding="async" alt="{{ $alt }}"{{ with $title }} title="{{ . }}"{{ end }}>
+{{- else -}}
+  <img src="{{ $dest | safeURL }}" loading="lazy" decoding="async" alt="{{ $alt }}"{{ with $title }} title="{{ . }}"{{ end }}>
+{{- end -}}
