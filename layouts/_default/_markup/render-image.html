@@ -11,9 +11,11 @@
 {{- $alt := .PlainText -}}
 {{- $title := .Title -}}
 {{- $img := "" -}}
-{{- $isRemote := or (hasPrefix $dest "http://") (hasPrefix $dest "https://") (hasPrefix $dest "//") -}}
+{{- $u := urls.Parse $dest -}}
+{{- $isRemote := or (ne $u.Scheme "") (ne $u.Host "") -}}
 {{- if not $isRemote -}}
-  {{- with .Page.Resources.Get (strings.TrimPrefix "./" $dest) -}}
+  {{- /* .Path はクエリ・フラグメントを除いたデコード済みパス */ -}}
+  {{- with .Page.Resources.Get (strings.TrimPrefix "./" $u.Path) -}}
     {{- $img = . -}}
   {{- end -}}
 {{- end -}}
