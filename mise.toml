@@ -15,6 +15,10 @@ run = 'go run ./cmd/post {{ arg(i=0) }}'
 description = '外部記事用のテンプレートで新しい記事を作成する'
 run = 'go run ./cmd/post {{ arg(i=0) }} external'
 
+[tasks.conf]
+description = 'カンファレンスレポート用のテンプレートで新しい記事を作成する'
+run = 'go run ./cmd/post {{ arg(i=0) }} conference'
+
 [tasks.serve]
 description = 'Hugoでサーバを起動する'
 run = 'hugo server'
