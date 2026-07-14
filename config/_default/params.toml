@@ -5,6 +5,12 @@ googleAnalytics = "G-M2XSPTPQFB"
 # Icon shown on the article share buttons (sidebar widget + mobile floating action).
 # References assets/icons/brand-twitter.svg (the X logo already bundled for the social link).
 shareIcon = "brand-twitter"
+# OGP画像にサイト名（.Site.Title = りんりんのメモ帳）を描画する。
+# テーマ 0.5.0 の新機能。siteNameSince 以降の日付の記事だけに描画され、
+# それより前／日付なしの記事は既存の生成画像のまま変わらない。
+[ogp]
+siteName = true
+siteNameSince = "2026-07-14"
 [footer]
 since = 2026
 customText = ""
