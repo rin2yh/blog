@@ -2,19 +2,38 @@
   サイト側フォント読み込み（テーマ 0.6 以降の head/custom.html フック用）。
   テーマ本体は Web フォントを一切読み込まないため、必要なフォントはここで持ち込む。
 
-  軽量版：Italiana（見出し・ブランド）/ DM Sans（UI）/ JetBrains Mono（コード）
-  のみを読み込む。重量級の Noto Sans JP（約89KiB）は意図的に外し、本文は
-  --font-body スタックのシステム日本語フォント（BIZ UDPGothic / Hiragino Sans /
-  Yu Gothic 等）にフォールバックさせる。これにより PageSpeed の「未使用の CSS
-  （Google Fonts）」を解消し、モバイルのフォント転送量を最小化する。
+  方式：Google Fonts への外部リクエストをやめ、必要な欧文フォントだけを
+  self-host（同一オリジン配信）する。以前は fonts.googleapis.com / fonts.gstatic.com
+  へ接続し、CSS→フォントの依存チェーン（第三者オリジン2つ）を辿っていたが、
+  self-host により次を実現する：
+    - 第三者オリジンへの preconnect / DNS / TLS を全廃（モバイルの往復遅延を削減）
+    - PageSpeed の「第三者リソース」「使用していない CSS（Google Fonts）」を解消
+    - 配信サブセットを latin / latin-ext に限定（Google 版は Cyrillic / Greek /
+      Vietnamese も同梱していた）。可変フォント（DM Sans・JetBrains Mono）は
+      1ファイルで全ウェイトを賄う。
 
-  Noto Sans JP を戻して元のタイポグラフィにするには、$href の family リストに
-  "&family=Noto+Sans+JP:wght@400;500;700" を追加する。
+  対象は Italiana（見出し・ブランド）/ DM Sans（UI）/ JetBrains Mono（コード）
+  のみ。重量級の Noto Sans JP は従来どおり読み込まず、本文は --font-body スタックの
+  システム日本語フォント（BIZ UDPGothic / Hiragino Sans / Yu Gothic 等）にフォール
+  バックさせる。LCP となるブランド文字（日本語）はシステムフォントで即描画されるため、
+  欧文フォントの preload は不要（クリティカルパスに載らない）。
 
-  media="print" → onload の切り替えで非同期に読み込み、初回描画をブロックしない。
+  font-display: swap によりフォント到着前もフォールバックで即描画し、描画をブロック
+  しない。unicode-range により latin-ext はその字が実際に現れたページでのみ取得される。
+
+  woff2 は static/fonts/ に配置。サブセット定義は Google Fonts の css2 出力に準拠。
 */ -}}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-{{- $href := "https://fonts.googleapis.com/css2?family=Italiana&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;600&display=swap" -}}
-<link rel="stylesheet" href="{{ $href }}" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="{{ $href }}"></noscript>
+{{- $latin := "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD" -}}
+{{- $latinExt := "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF" -}}
+{{- $italiana := "fonts/italiana-latin.woff2" | relURL -}}
+{{- $dmLatin := "fonts/dm-sans-latin.woff2" | relURL -}}
+{{- $dmLatinExt := "fonts/dm-sans-latin-ext.woff2" | relURL -}}
+{{- $jbLatin := "fonts/jetbrains-mono-latin.woff2" | relURL -}}
+{{- $jbLatinExt := "fonts/jetbrains-mono-latin-ext.woff2" | relURL -}}
+<style>
+@font-face{font-family:'Italiana';font-style:normal;font-weight:400;font-display:swap;src:url({{ $italiana }}) format('woff2');unicode-range:{{ $latin }}}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400 500;font-display:swap;src:url({{ $dmLatin }}) format('woff2');unicode-range:{{ $latin }}}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400 500;font-display:swap;src:url({{ $dmLatinExt }}) format('woff2');unicode-range:{{ $latinExt }}}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url({{ $jbLatin }}) format('woff2');unicode-range:{{ $latin }}}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url({{ $jbLatinExt }}) format('woff2');unicode-range:{{ $latinExt }}}
+</style>
