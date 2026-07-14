@@ -1,0 +1,43 @@
+{{- /*
+  gtag（Google Analytics）を遅延読み込みする。
+  テーマ同梱版は <script async> で初期表示と同時に gtag.js（約155KiB）を取得するため、
+  PageSpeed Insights で「使用していない JavaScript」として指摘される。
+  最初のユーザー操作、またはブラウザのアイドル時（最大5秒後）まで読み込みを遅らせることで、
+  gtag.js をクリティカルパスから外しつつ計測は維持する。
+*/ -}}
+{{- with .Site.Params.googleAnalytics -}}
+<script>
+  (function () {
+    var GA_ID = '{{ . }}';
+    // dataLayer / gtag は即時初期化しておき、gtag.js の読み込み前に
+    // gtag() が呼ばれても ReferenceError にならず dataLayer にキューされるようにする。
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+
+    var started = false;
+    var events = ['scroll', 'mousemove', 'touchstart', 'keydown', 'click'];
+    function loadGA() {
+      if (started) return;
+      started = true;
+      // 発火しなかった分も含め全リスナーを解除する（once では発火分しか外れない）。
+      events.forEach(function (evt) {
+        window.removeEventListener(evt, loadGA);
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+    }
+    events.forEach(function (evt) {
+      window.addEventListener(evt, loadGA, { passive: true });
+    });
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadGA, { timeout: 5000 });
+    } else {
+      setTimeout(loadGA, 5000);
+    }
+  })();
+</script>
+{{- end -}}

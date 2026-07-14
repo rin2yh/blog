@@ -1,0 +1,20 @@
+{{- /*
+  サイト側フォント読み込み（テーマ 0.6 以降の head/custom.html フック用）。
+  テーマ本体は Web フォントを一切読み込まないため、必要なフォントはここで持ち込む。
+
+  軽量版：Italiana（見出し・ブランド）/ DM Sans（UI）/ JetBrains Mono（コード）
+  のみを読み込む。重量級の Noto Sans JP（約89KiB）は意図的に外し、本文は
+  --font-body スタックのシステム日本語フォント（BIZ UDPGothic / Hiragino Sans /
+  Yu Gothic 等）にフォールバックさせる。これにより PageSpeed の「未使用の CSS
+  （Google Fonts）」を解消し、モバイルのフォント転送量を最小化する。
+
+  Noto Sans JP を戻して元のタイポグラフィにするには、$href の family リストに
+  "&family=Noto+Sans+JP:wght@400;500;700" を追加する。
+
+  media="print" → onload の切り替えで非同期に読み込み、初回描画をブロックしない。
+*/ -}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{- $href := "https://fonts.googleapis.com/css2?family=Italiana&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;600&display=swap" -}}
+<link rel="stylesheet" href="{{ $href }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ $href }}"></noscript>
