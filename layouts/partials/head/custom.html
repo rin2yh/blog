@@ -29,15 +29,19 @@
 */ -}}
 {{- $latin := "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD" -}}
 {{- $latinExt := "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF" -}}
-{{- $italiana := (resources.Get "fonts/italiana-latin.woff2" | resources.Fingerprint "sha256").RelPermalink -}}
-{{- $dmLatin := (resources.Get "fonts/dm-sans-latin.woff2" | resources.Fingerprint "sha256").RelPermalink -}}
-{{- $dmLatinExt := (resources.Get "fonts/dm-sans-latin-ext.woff2" | resources.Fingerprint "sha256").RelPermalink -}}
-{{- $jbLatin := (resources.Get "fonts/jetbrains-mono-latin.woff2" | resources.Fingerprint "sha256").RelPermalink -}}
-{{- $jbLatinExt := (resources.Get "fonts/jetbrains-mono-latin-ext.woff2" | resources.Fingerprint "sha256").RelPermalink -}}
+{{- /* フォント定義（family / weight / ファイル / サブセット）を1行1フェイスの
+       データとして持ち、range で @font-face を生成する。テーマ本体の head.html が
+       CSS/JS を slice + range で束ねるのと同じ書き方に揃える。 */ -}}
+{{- $fonts := slice
+  (dict "family" "Italiana"       "weight" "400"     "file" "fonts/italiana-latin.woff2"          "unicodeRange" $latin)
+  (dict "family" "DM Sans"        "weight" "400 500" "file" "fonts/dm-sans-latin.woff2"            "unicodeRange" $latin)
+  (dict "family" "DM Sans"        "weight" "400 500" "file" "fonts/dm-sans-latin-ext.woff2"        "unicodeRange" $latinExt)
+  (dict "family" "JetBrains Mono" "weight" "400 600" "file" "fonts/jetbrains-mono-latin.woff2"     "unicodeRange" $latin)
+  (dict "family" "JetBrains Mono" "weight" "400 600" "file" "fonts/jetbrains-mono-latin-ext.woff2" "unicodeRange" $latinExt)
+-}}
 <style>
-@font-face{font-family:'Italiana';font-style:normal;font-weight:400;font-display:swap;src:url('{{ $italiana }}') format('woff2');unicode-range:{{ $latin }};}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:400 500;font-display:swap;src:url('{{ $dmLatin }}') format('woff2');unicode-range:{{ $latin }};}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:400 500;font-display:swap;src:url('{{ $dmLatinExt }}') format('woff2');unicode-range:{{ $latinExt }};}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url('{{ $jbLatin }}') format('woff2');unicode-range:{{ $latin }};}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url('{{ $jbLatinExt }}') format('woff2');unicode-range:{{ $latinExt }};}
+{{- range $fonts }}
+{{- $url := (resources.Get .file | resources.Fingerprint "sha256").RelPermalink }}
+@font-face{font-family:'{{ .family }}';font-style:normal;font-weight:{{ .weight }};font-display:swap;src:url('{{ $url }}') format('woff2');unicode-range:{{ .unicodeRange }};}
+{{- end }}
 </style>
