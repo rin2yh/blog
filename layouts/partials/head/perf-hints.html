@@ -1,0 +1,29 @@
+{{- /*
+  モバイル描画コスト削減のためのサイト側 CSS ヒント。
+  テーマ本体（submodule）は編集せず、head/custom.html 経由でスタイルシートの
+  後に読み込むことで上書きする。
+
+  背景：.glass 要素は backdrop-filter: blur() を持ち、背景のぼかしブロブ
+  （blur(80px)）を要素ごとに再サンプリングするため、モバイル GPU では 1 枚あたりの
+  合成コストが高い。トップページだけでも .glass は 18 枚あり、初期表示では画面外の
+  ぶんまで一度にラスタライズされて Speed Index / TBT（描画・操作応答）を押し上げていた。
+
+  content-visibility: auto により、ビューポート外の要素はスクロールで近づくまで
+  内部描画（backdrop-filter を含む）をスキップする。見た目は変わらず、初期ペイント
+  対象を「実際に見えている要素」だけに絞れる。
+
+  対象は画面外に多数積み上がる 2 種類：
+    - .article-item … トップ／一覧／タクソノミー／アーカイブに縦に 10 件並ぶ記事カード
+    - .widget       … サイドバーのウィジェット（検索・アーカイブ・カテゴリ・タグ等）。
+                      モバイルでは本文の下に回り込み、初期表示では全て画面外になる。
+                      ※ sticky なのは親ラッパ（.layout-grid__sidebar, PC 幅のみ）で
+                        あり .widget 自体ではないため、sticky と競合しない。
+
+  contain-intrinsic-size: auto <n>px は未描画要素の想定高さを与え、スクロールバー長の
+  推定やレイアウトのがたつき（CLS）を防ぐ。auto キーワードにより一度描画した実寸を
+  ブラウザが記憶し、再スクロール時は実寸で領域を確保する。
+*/ -}}
+<style>
+.article-item{content-visibility:auto;contain-intrinsic-size:auto 200px;}
+.widget{content-visibility:auto;contain-intrinsic-size:auto 240px;}
+</style>
