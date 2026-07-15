@@ -22,8 +22,14 @@
   contain-intrinsic-size: auto <n>px は未描画要素の想定高さを与え、スクロールバー長の
   推定やレイアウトのがたつき（CLS）を防ぐ。auto キーワードにより一度描画した実寸を
   ブラウザが記憶し、再スクロール時は実寸で領域を確保する。
+
+  @media screen で画面表示に限定する。印刷時（@media print）は全要素がビューポート外
+  扱いになり、content-visibility: auto だと画面外コンテンツが描画されず欠落しうるため、
+  印刷にはこのヒントを適用しない。
 */ -}}
 <style>
-.article-item{content-visibility:auto;contain-intrinsic-size:auto 200px;}
-.widget{content-visibility:auto;contain-intrinsic-size:auto 240px;}
+@media screen {
+  .article-item{content-visibility:auto;contain-intrinsic-size:auto 200px;}
+  .widget{content-visibility:auto;contain-intrinsic-size:auto 240px;}
+}
 </style>
