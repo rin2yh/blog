@@ -1,4 +1,4 @@
-baseURL = 'https://rin2yh.github.io/blog/'
+baseURL = 'https://rin2yh.com/'
 languageCode = 'ja'
 title = 'りんりんのメモ帳'
 theme = 'stack-liquid-glass'
