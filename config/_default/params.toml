@@ -1,6 +1,9 @@
 # Pages placed under these sections will be shown on homepage and archive page.
 mainSections = ["post"]
 rssFullContent = true
+# トップページや一覧ページの og:description に使う既定の説明文。
+# 記事ページは各記事の description / 本文サマリが優先される。
+description = "エンジニアのりんりんが、技術やイベント参加の記録を綴るブログです。"
 googleAnalytics = "G-M2XSPTPQFB"
 # Icon shown on the article share buttons (sidebar widget + mobile floating action).
 # References assets/icons/brand-twitter.svg (the X logo already bundled for the social link).
@@ -46,6 +49,11 @@ type = "toc"
 site = "rin2yh"
 card = "summary_large_image"
 
+# og:image を持たないページ（トップ・カテゴリ／タグ一覧・アーカイブなど）の
+# 既定 OGP 画像。以前は assets 配下の "image/avatar.webp" を指していたが、この
+# パスは Hugo Pipes でフィンガープリント付きに変換され実体は /image/avatar.webp に
+# 公開されないため、共有時にサムネイルが 404 になっていた。static/ogp/home.png
+# （テーマの base.png にサイト名を載せた 1200x630 のカード）に差し替える。
 [defaultImage.opengraph]
 enabled = true
-src = "image/avatar.webp"
+src = "ogp/home.png"
