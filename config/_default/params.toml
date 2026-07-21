@@ -50,13 +50,12 @@ site = "rin2yh"
 card = "summary_large_image"
 
 # og:image を持たないページ（トップ・カテゴリ／タグ一覧・アーカイブなど）の
-# 既定 OGP 画像。以前は assets 配下の "image/avatar.webp" を指していたが、この
-# パスは Hugo Pipes でフィンガープリント付きに変換され実体は /image/avatar.webp に
-# 公開されないため、共有時にサムネイルが 404 になっていた。static/ogp/home.png
-# （テーマの base.png にアバターを円形で載せた 1200x630 のカード）に差し替える。
-# 正方形アバターをそのまま使うと summary_large_image（1.91:1）で上下が切れるため、
-# 横長カードに合成している。テーマの opengraph.html は defaultImage に local を
-# 見ず絶対URL化するだけなので、static 配信の実在パスを指す必要がある。
+# 既定 OGP 画像。以前は "image/avatar.webp" を指していたが、assets 配下は Hugo Pipes
+# でフィンガープリント付きに変換され /image/avatar.webp では公開されないため、共有時に
+# サムネイルが 404 になっていた（テーマの opengraph.html は src を絶対URL化するだけ）。
+# static 配信の実在パス static/ogp/home.jpg（base.png にアバターを円形で載せた
+# 1200x630 の横長カード）に差し替える。カードは base.png + avatar.webp から生成した
+# 静的ファイルなので、どちらかを更新したら作り直すこと。
 [defaultImage.opengraph]
 enabled = true
-src = "ogp/home.png"
+src = "ogp/home.jpg"
