@@ -53,7 +53,10 @@ card = "summary_large_image"
 # 既定 OGP 画像。以前は assets 配下の "image/avatar.webp" を指していたが、この
 # パスは Hugo Pipes でフィンガープリント付きに変換され実体は /image/avatar.webp に
 # 公開されないため、共有時にサムネイルが 404 になっていた。static/ogp/home.png
-# （テーマの base.png にサイト名を載せた 1200x630 のカード）に差し替える。
+# （テーマの base.png にアバターを円形で載せた 1200x630 のカード）に差し替える。
+# 正方形アバターをそのまま使うと summary_large_image（1.91:1）で上下が切れるため、
+# 横長カードに合成している。テーマの opengraph.html は defaultImage に local を
+# 見ず絶対URL化するだけなので、static 配信の実在パスを指す必要がある。
 [defaultImage.opengraph]
 enabled = true
 src = "ogp/home.png"
