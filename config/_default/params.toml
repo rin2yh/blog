@@ -3,7 +3,7 @@ mainSections = ["post"]
 rssFullContent = true
 # トップページや一覧ページの og:description に使う既定の説明文。
 # 記事ページは各記事の description / 本文サマリが優先される。
-description = "エンジニアのりんりんが、技術やイベント参加の記録を綴るブログです。"
+description = "技術やイベント参加の記録を綴るブログです。"
 googleAnalytics = "G-M2XSPTPQFB"
 # Icon shown on the article share buttons (sidebar widget + mobile floating action).
 # References assets/icons/brand-twitter.svg (the X logo already bundled for the social link).
