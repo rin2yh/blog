@@ -56,6 +56,10 @@ card = "summary_large_image"
 # static 配信の実在パス static/ogp/home.jpg（base.png にアバターを円形で載せた
 # 1200x630 の横長カード）に差し替える。カードは base.png + avatar.webp から生成した
 # 静的ファイルなので、どちらかを更新したら作り直すこと。
+# 注意: JPEG は必ず baseline（ベースライン）で書き出すこと。progressive JPEG だと
+# X（Twitter）のカード画像パイプラインが描画に失敗し、Xでだけカードが出なくなる
+# （Facebook / LINE / Slack 等は progressive でも表示される）。Go 標準の image/jpeg は
+# 常に baseline を出力するので、それで再エンコードすれば安全。
 [defaultImage.opengraph]
 enabled = true
 src = "ogp/home.jpg"
