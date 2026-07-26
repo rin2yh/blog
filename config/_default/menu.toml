@@ -45,9 +45,10 @@ icon = "zenn-logo"
 
 
 [[social]]
-identifier = "speaker-deck"
-name = "Speaker Deck"
-url = "https://speakerdeck.com/rin2yh"
+identifier = "slides"
+name = "Slides"
+url = "https://slides.rin2yh.com"
 weight = 5
 [social.params]
-icon = "speakerdeck"
+icon = "presentation"
+
