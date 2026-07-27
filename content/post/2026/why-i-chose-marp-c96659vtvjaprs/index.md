@@ -1,7 +1,7 @@
 +++
 date = '2026-07-27T12:00:00+09:00'
 draft = true
-title = 'スライド基盤にMarpを選んだ話'
+title = 'スライド作成にMarpを選んだ話'
 slug = 'why-i-chose-marp'
 categories = ['tech']
 tags = ['marp', 'slidev', 'slide']
