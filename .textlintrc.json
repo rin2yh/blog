@@ -21,6 +21,9 @@
       "no-doubled-conjunction": false,
       "no-dropping-the-ra": false
     },
-    "preset-ja-spacing": false
+    "preset-ja-spacing": false,
+    "prh": {
+      "rulePaths": ["prh.yml"]
+    }
   }
 }
