@@ -27,31 +27,9 @@ run = 'hugo server'
 TEXTLINT_PKGS = '-p textlint@14.4.2 -p textlint-rule-preset-ja-technical-writing@12.0.2 -p textlint-rule-preset-ja-spacing@2.4.3 -p textlint-filter-rule-comments@1.2.2 -p textlint-rule-prh@6.1.0'
 
 [tasks.lint]
-description = 'textlintで記事を検査する（過去記事は検出のみでCIを落とさない）'
-run = '''
-set -eu
-legacy=$(grep -v '^#' .textlint-legacy.txt | grep -v '^$')
-all=$(git ls-files 'content/**/*.md' 'content/*.md')
-current=$(printf '%s\n' "$all" | grep -vxF "$legacy" || true)
-
-# 過去記事は直さない方針なので、検出だけして終了コードは無視する
-printf '%s\n' "$legacy" | xargs npx --yes $TEXTLINT_PKGS -- textlint || true
-
-# 今後書く記事はエラーとして扱う
-if [ -n "$current" ]; then
-  printf '%s\n' "$current" | xargs npx --yes $TEXTLINT_PKGS -- textlint
-fi
-'''
+description = 'textlintで記事を検査する（過去記事は.textlintignoreで除外）'
+run = 'npx --yes $TEXTLINT_PKGS -- textlint {{arg(name="files", var=true, default="content/**/*.md")}}'
 
 [tasks."lint:fix"]
-description = 'textlintで自動修正可能な問題を修正する（過去記事は対象外）'
-run = '''
-set -eu
-legacy=$(grep -v '^#' .textlint-legacy.txt | grep -v '^$')
-all=$(git ls-files 'content/**/*.md' 'content/*.md')
-current=$(printf '%s\n' "$all" | grep -vxF "$legacy" || true)
-
-if [ -n "$current" ]; then
-  printf '%s\n' "$current" | xargs npx --yes $TEXTLINT_PKGS -- textlint --fix
-fi
-'''
+description = 'textlintで自動修正可能な問題を修正する'
+run = 'npx --yes $TEXTLINT_PKGS -- textlint --fix {{arg(name="files", var=true, default="content/**/*.md")}}'

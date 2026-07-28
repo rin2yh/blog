@@ -1,4 +1,5 @@
-# ここに並ぶ過去記事は修正しない。textlintの検査はするが、CIは落とさない（mise run lint を参照）。
+# 過去記事は検査対象外にする。今後書く記事だけ textlint の対象にする。
+# 新しい記事はここに追加しないこと。
 content/categories/external/_index.md
 content/categories/idea/_index.md
 content/categories/tech/_index.md

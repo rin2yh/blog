@@ -6,7 +6,7 @@ on:
       - '.textlintrc.json'
       - 'prh.yml'
       - 'prh-strict.yml'
-      - '.textlint-legacy.txt'
+      - '.textlintignore'
       - 'mise.toml'
       - '.github/workflows/textlint.yaml'
 
