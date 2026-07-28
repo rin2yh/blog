@@ -11,7 +11,8 @@
     "preset-ja-technical-writing": {
       "no-exclamation-question-mark": false,
       "max-ten": {
-        "max": 1
+        "max": 1,
+        "isStrict": true
       }
     },
     "preset-ja-spacing": true,

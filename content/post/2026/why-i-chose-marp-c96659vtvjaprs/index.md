@@ -7,8 +7,8 @@ tags = ['marp', 'slidev', 'slide']
 +++
 
 ## はじめに
-結論、スライド作成ツールを見直して、Claude DesignからMarpに移行しました。
-Markdown記法で書きたいので、候補はSlidevとMarpの2つで検討しました。
+結論、スライド作成ツールを見直してClaude DesignからMarpに移行しました。
+Markdown記法を使用できると嬉しいので、候補はSlidevとMarpの2つで検討しました。
 色々と試行錯誤したので、個人のADR的に残しておきます。
 
 ## きっかけ
