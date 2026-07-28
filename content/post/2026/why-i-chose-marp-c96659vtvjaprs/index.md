@@ -1,6 +1,6 @@
 +++
 date = '2026-07-27T12:00:00+09:00'
-draft = true
+draft = false
 title = 'スライド作成にMarpを選んだ話'
 categories = ['tech']
 tags = ['marp', 'slidev', 'slide']
