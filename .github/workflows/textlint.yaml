@@ -5,7 +5,6 @@ on:
       - 'content/**/*.md'
       - '.textlintrc.json'
       - 'prh.yml'
-      - 'prh-strict.yml'
       - '.textlintignore'
       - 'mise.toml'
       - '.github/workflows/textlint.yaml'

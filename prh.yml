@@ -2,7 +2,9 @@ version: 1
 
 # レビューで「この用法は使わないでほしい」と判断した表現をここに集約する。
 # expected に言い換え先を書くと `mise run lint:fix` で自動置換できる。
+# 過去記事は .textlintignore で検査対象外にしているので、ここは今後書く記事にだけ効く。
 rules:
+  # 口語的すぎる表現
   - expected: 好ましくありませんでした
     patterns:
       - 萎えました
@@ -17,3 +19,30 @@ rules:
     patterns:
       - 萎えた
     prh: 口語的すぎるので、評価を述べる表現に置き換える
+
+  # 「できる」の省略表現（〜ける、〜れる）は使わない
+  - expected: 書くことができる
+    patterns:
+      - 書ける
+    prh: 「できる」の省略表現は使わない
+
+  - expected: 作ることができる
+    patterns:
+      - 作れる
+    prh: 「できる」の省略表現は使わない
+
+  - expected: 使うことができる
+    patterns:
+      - 使える
+    prh: 「できる」の省略表現は使わない
+
+  # 「効く」は使わない
+  - expected: 決め手になった
+    patterns:
+      - 効いた
+    prh: 「効く」は使わない
+
+  - expected: 決め手になる
+    patterns:
+      - 効く
+    prh: 「効く」は使わない

@@ -26,8 +26,7 @@
     "preset-ja-spacing": false,
     "prh": {
       "rulePaths": [
-        "prh.yml",
-        "prh-strict.yml"
+        "prh.yml"
       ]
     }
   }
