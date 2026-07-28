@@ -83,7 +83,7 @@ Vueによる拡張性の高さは魅力でしたが、CLIのシングルバイ�
 最後まで読んでいただき、ありがとうございました！
 
 ## 参考文献
-- Marp: https://marp.app/
-- marp-team/marp-cli: https://github.com/marp-team/marp-cli
-- Slidev: https://sli.dev/
-- nwiizo/marp.nvim: https://github.com/nwiizo/marp.nvim
+- [Marp](https://marp.app/)
+- [marp-team/marp-cli](https://github.com/marp-team/marp-cli)
+- [Slidev](https://sli.dev/)
+- [nwiizo/marp.nvim](https://github.com/nwiizo/marp.nvim)
