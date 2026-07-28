@@ -49,17 +49,17 @@ Markdown以外の独自記法を今後も覚えておく自信がありません
 ## Marpにしてみた
 そこで、他の候補であるMarpを試してみました。
 
-色々削りに削って、結果としてシンプルになりました。
+Slidevで引っかかった2点は、どちらもそのまま解消しました。
+CLIはシングルバイナリで配布されているので、Nodeが不要になります。
+記法もMarkdownの範囲に収まるため、新しく覚えることがありません。
+
 OGPもMarpの方が作りやすく、スライド生成時のコードも減りました。
-CLIはシングルバイナリで済んだので、Nodeが不要になりました。
-依存も圧倒的に減っています。
+色々削りに削って、運用そのものがシンプルになっています。
 
-シンプルなMarkdownとシンプルな運用でスライドを作ることができるので、しっくりきました。
-Markdownと最小限の依存でスライドを組み上げていく感じに、個人的に好きなUNIXの思想と似たものを感じています。
-
+Markdownと最小限の依存でスライドを組み上げていく感じは、個人的に好きなUNIXの思想に似ています。
 Markdownを書くだけでよいので、QiitaやZennで記事を書いてきた経験とも相性が良いです。
 
-さらに、[nwiizo/marp.nvim](https://github.com/nwiizo/marp.nvim)でプレビューをNeovimから離れずにできてサクサクです。
+プレビューも[nwiizo/marp.nvim](https://github.com/nwiizo/marp.nvim)を使えばNeovimから離れずに済み、サクサク進みます。
 
 ## おわりに
 Marpを選んだ理由は以下の2点です。
@@ -68,7 +68,15 @@ Marpを選んだ理由は以下の2点です。
 1. 依存が少ない
 
 Vueによる拡張性の高さは魅力でしたし、Nodeを外すことはできないかと粘ってもみました。
-それでも、アウトローな部分をMarkdownでも表現できると分かった時点でMarpへ傾いています。
+それでも、アウトローな部分はMarkdownでも表現できます。
+そう分かった時点でMarpに傾きました。
 
 結果としてClaude Designは使わなくてよくなりました。
 生成AIの出番は画像や図を生成するときくらいで、依存はかなり弱まっています。
+しばらくはこの構成でスライドを作っていきます。
+
+## 参考文献
+- Marp: https://marp.app/
+- marp-team/marp-cli: https://github.com/marp-team/marp-cli
+- Slidev: https://sli.dev/
+- nwiizo/marp.nvim: https://github.com/nwiizo/marp.nvim
