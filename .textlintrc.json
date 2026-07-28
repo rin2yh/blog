@@ -1,28 +1,21 @@
 {
   "filters": {
-    "comments": true
+    "comments": true,
+    "allowlist": {
+      "allow": [
+        "/^\\+\\+\\+$[\\s\\S]*?^\\+\\+\\+$/m"
+      ]
+    }
   },
   "rules": {
     "preset-ja-technical-writing": {
+      "arabic-kanji-numbers": false,
       "no-exclamation-question-mark": false,
-      "ja-no-mixed-period": false,
-      "sentence-length": false,
-      "max-comma": false,
       "max-ten": {
         "max": 1
-      },
-      "max-kanji-continuous-len": false,
-      "arabic-kanji-numbers": false,
-      "no-mix-dearu-desumasu": false,
-      "ja-no-weak-phrase": false,
-      "ja-no-successive-word": false,
-      "ja-no-redundant-expression": false,
-      "ja-unnatural-alphabet": false,
-      "no-unmatched-pair": false,
-      "no-doubled-conjunction": false,
-      "no-dropping-the-ra": false
+      }
     },
-    "preset-ja-spacing": false,
+    "preset-ja-spacing": true,
     "prh": {
       "rulePaths": [
         "prh.yml"
