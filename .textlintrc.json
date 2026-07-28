@@ -8,7 +8,9 @@
       "ja-no-mixed-period": false,
       "sentence-length": false,
       "max-comma": false,
-      "max-ten": false,
+      "max-ten": {
+        "max": 1
+      },
       "max-kanji-continuous-len": false,
       "arabic-kanji-numbers": false,
       "no-mix-dearu-desumasu": false,
@@ -23,7 +25,10 @@
     },
     "preset-ja-spacing": false,
     "prh": {
-      "rulePaths": ["prh.yml"]
+      "rulePaths": [
+        "prh.yml",
+        "prh-strict.yml"
+      ]
     }
   }
 }

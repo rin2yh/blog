@@ -1,0 +1,31 @@
+version: 1
+
+# 今後書く記事にだけ適用する辞書。
+# 過去記事は .textlintrc.json の overrides で除外している（legacy リスト）。
+rules:
+  # 「できる」の省略表現（〜ける、〜れる）は使わない
+  - expected: 書くことができる
+    patterns:
+      - 書ける
+    prh: 「できる」の省略表現は使わない
+
+  - expected: 作ることができる
+    patterns:
+      - 作れる
+    prh: 「できる」の省略表現は使わない
+
+  - expected: 使うことができる
+    patterns:
+      - 使える
+    prh: 「できる」の省略表現は使わない
+
+  # 「効く」は使わない
+  - expected: 決め手になった
+    patterns:
+      - 効いた
+    prh: 「効く」は使わない
+
+  - expected: 決め手になる
+    patterns:
+      - 効く
+    prh: 「効く」は使わない
