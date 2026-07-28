@@ -27,12 +27,6 @@
       "rulePaths": [
         "prh.yml"
       ]
-    },
-    "ng-word": {
-      "words": [
-        "するのも",
-        "するのは"
-      ]
     }
   }
 }
