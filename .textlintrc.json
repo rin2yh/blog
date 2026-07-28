@@ -12,7 +12,8 @@
       "no-exclamation-question-mark": false,
       "max-ten": {
         "max": 1
-      }
+      },
+      "ja-no-weak-phrase": false
     },
     "preset-ja-spacing": true,
     "prh": {
