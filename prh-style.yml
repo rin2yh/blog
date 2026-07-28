@@ -1,0 +1,31 @@
+version: 1
+
+# 好みで使わないと決めた語。文章として間違いではないが、この blog では避ける。
+# expected に言い換え先を書くと `mise run lint:fix` で自動置換できる。
+rules:
+  # 口語的すぎるので使わない
+  - expected: 好ましくありませんでした
+    patterns:
+      - 萎えました
+    prh: 口語的すぎるので、評価を述べる表現に置き換える
+
+  - expected: 好ましくない
+    patterns:
+      - 萎える
+    prh: 口語的すぎるので、評価を述べる表現に置き換える
+
+  - expected: 好ましくなかった
+    patterns:
+      - 萎えた
+    prh: 口語的すぎるので、評価を述べる表現に置き換える
+
+  # 「効く」は使わない
+  - expected: 決め手になった
+    patterns:
+      - 効いた
+    prh: 「効く」は使わない
+
+  - expected: 決め手になる
+    patterns:
+      - 効く
+    prh: 「効く」は使わない

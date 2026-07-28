@@ -91,3 +91,5 @@ Vueによる拡張性の高さは魅力でしたが、CLIのシングルバイ�
 - [marp-team/marp-cli](https://github.com/marp-team/marp-cli)
 - [Slidev](https://sli.dev/)
 - [nwiizo/marp.nvim](https://github.com/nwiizo/marp.nvim)
+- [Neovim](https://neovim.io/)
+- [Claude](https://claude.ai/)
