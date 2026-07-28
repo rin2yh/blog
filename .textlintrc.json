@@ -2,8 +2,8 @@
   "filters": {
     "comments": true,
     "allowlist": {
-      "allow": [
-        "/^\\+\\+\\+$[\\s\\S]*?^\\+\\+\\+$/m"
+      "allowlistConfigPaths": [
+        "textlint-allowlist.yml"
       ]
     }
   },
