@@ -9,7 +9,6 @@
   },
   "rules": {
     "preset-ja-technical-writing": {
-      "arabic-kanji-numbers": false,
       "no-exclamation-question-mark": false,
       "max-ten": {
         "max": 1
