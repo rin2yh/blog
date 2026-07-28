@@ -19,7 +19,6 @@
       "ja-no-redundant-expression": false,
       "ja-unnatural-alphabet": false,
       "no-unmatched-pair": false,
-      "no-doubled-joshi": false,
       "no-doubled-conjunction": false,
       "no-dropping-the-ra": false
     },
