@@ -24,7 +24,7 @@ description = 'Hugoでサーバを起動する'
 run = 'hugo server'
 
 [env]
-TEXTLINT_PKGS = '-p textlint@14.4.2 -p textlint-rule-preset-ja-technical-writing@12.0.2 -p textlint-rule-preset-ja-spacing@2.4.3 -p textlint-filter-rule-comments@1.2.2 -p textlint-rule-prh@6.1.0'
+TEXTLINT_PKGS = '-p textlint@14.4.2 -p textlint-rule-preset-ja-technical-writing@12.0.2 -p textlint-rule-preset-ja-spacing@2.4.3 -p textlint-filter-rule-comments@1.2.2 -p textlint-rule-prh@6.1.0 -p textlint-rule-ng-word@1.0.0'
 
 [tasks.lint]
 description = 'textlintで記事を検査する（過去記事は.textlintignoreで除外）'
