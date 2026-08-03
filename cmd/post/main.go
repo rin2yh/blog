@@ -1,17 +1,14 @@
 package main
 
 import (
-	"crypto/rand"
 	"fmt"
 	"os"
 	"os/exec"
+
+	"blog/internal/slug"
 )
 
-const (
-	slugLength = 14
-	charset    = "abcdefghijklmnopqrstuvwxyz0123456789"
-	contentDir = "content/post"
-)
+const contentDir = "content/post"
 
 func buildHugoArgs(title, kind string) []string {
 	args := []string{"new"}
@@ -20,17 +17,6 @@ func buildHugoArgs(title, kind string) []string {
 	}
 	args = append(args, fmt.Sprintf("post/%s/index.md", title))
 	return args
-}
-
-func generateSlug() (string, error) {
-	b := make([]byte, slugLength)
-	if _, err := rand.Read(b); err != nil {
-		return "", err
-	}
-	for i := range b {
-		b[i] = charset[int(b[i])%len(charset)]
-	}
-	return string(b), nil
 }
 
 func main() {
@@ -47,7 +33,7 @@ func main() {
 		kind = os.Args[2]
 	}
 
-	slug, err := generateSlug()
+	s, err := slug.Generate()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error generating slug: %v\n", err)
 		os.Exit(1)
@@ -64,7 +50,7 @@ func main() {
 	}
 
 	oldPath := fmt.Sprintf("%s/%s", contentDir, title)
-	newFilename := fmt.Sprintf("%s-%s", title, slug)
+	newFilename := fmt.Sprintf("%s-%s", title, s)
 	newPath := fmt.Sprintf("%s/%s", contentDir, newFilename)
 
 	if err := os.Rename(oldPath, newPath); err != nil {

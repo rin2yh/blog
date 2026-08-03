@@ -1,0 +1,85 @@
+name: Sync slides
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # 毎週月曜 09:00 JST (00:00 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write # 同期ブランチへの push
+  pull-requests: write # PR の作成
+
+concurrency:
+  group: sync-slides
+  cancel-in-progress: false
+
+env:
+  TZ: Asia/Tokyo
+  SLIDES_REPO: https://github.com/rin2yh/slides.git
+  SYNC_BRANCH: automation/sync-slides
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # slides は public なのでクロスリポジトリのトークンは要らない
+      - name: Clone slides
+        run: git clone --depth 1 "${SLIDES_REPO}" "${RUNNER_TEMP}/slides"
+
+      # Go はランナー同梱のものを使う。go.mod の toolchain 指定で必要なら自動で揃う
+      - name: Generate posts for new decks
+        run: go run ./cmd/slidesync "${RUNNER_TEMP}/slides" | tee "${RUNNER_TEMP}/created.txt"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changed=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "changed=false" >> "${GITHUB_OUTPUT}"
+            echo "記事が無いデッキはありません"
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --force-create "${SYNC_BRANCH}"
+          git add content/post
+          git commit --message "docs(post): 登壇スライドの記事を追加する"
+          git push --force origin "${SYNC_BRANCH}"
+
+      - name: Open pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 既に開いている PR があれば push で更新済みなので、新しくは作らない
+          if [[ -n "$(gh pr list --head "${SYNC_BRANCH}" --state open --json number --jq '.[].number')" ]]; then
+            echo "既存の PR を更新しました"
+            exit 0
+          fi
+
+          {
+            echo "@rin2yh"
+            echo
+            echo "[rin2yh/slides](https://github.com/rin2yh/slides) に、blog へ未掲載のデッキがありました。"
+            echo
+            grep '^Created: ' "${RUNNER_TEMP}/created.txt" | sed 's/^Created: /- /'
+            echo
+            echo "タグや \`draft\` はマージ前に必要なら直してください。"
+            echo
+            echo "> [!NOTE]"
+            echo "> \`GITHUB_TOKEN\` で作った PR なので、他の workflow は起動しません。"
+            echo "> 生成されるのは本文が空のリンク記事なので textlint の対象はありません。"
+          } > "${RUNNER_TEMP}/pr-body.md"
+
+          gh pr create \
+            --base main \
+            --head "${SYNC_BRANCH}" \
+            --title "docs(post): 登壇スライドの記事を追加する" \
+            --body-file "${RUNNER_TEMP}/pr-body.md"

@@ -19,6 +19,10 @@ run = 'go run ./cmd/post {{ arg(i=0) }} external'
 description = 'カンファレンスレポート用のテンプレートで新しい記事を作成する'
 run = 'go run ./cmd/post {{ arg(i=0) }} conference'
 
+[tasks.slidesync]
+description = 'slidesリポジトリのデッキから未掲載の登壇記事を生成する'
+run = 'go run ./cmd/slidesync {{ arg(i=0) }}'
+
 [tasks.serve]
 description = 'Hugoでサーバを起動する'
 run = 'hugo server'
