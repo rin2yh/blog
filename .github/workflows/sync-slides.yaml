@@ -30,11 +30,16 @@ jobs:
       - name: Clone slides
         run: git clone --depth 1 "${SLIDES_REPO}.git" "${RUNNER_TEMP}/slides"
 
-      # 前回の PR が未マージなら、その続きから積む。main から作り直すと
-      # 生成済みの記事が毎回別の slug で作り直されて PR が荒れる
+      # 未マージの PR があるならその続きから積む。main から作り直すと生成済みの
+      # 記事が毎回別の slug で作り直されて PR が荒れる。逆に PR が無いなら、
+      # 残っているブランチは却下されたか取り込み済みなので main から作り直す
       - name: Switch to the sync branch
+        id: branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git ls-remote --exit-code --heads origin "${SYNC_BRANCH}" > /dev/null; then
+          if [[ -n "$(gh pr list --head "${SYNC_BRANCH}" --state open --json number --jq '.[].number')" ]]; then
+            echo "reused=true" >> "${GITHUB_OUTPUT}"
             git fetch --depth 1 origin "${SYNC_BRANCH}"
             git switch --force-create "${SYNC_BRANCH}" FETCH_HEAD
           else
@@ -55,21 +60,16 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/post
+          git add -A
           git commit --message "docs(post): 登壇スライドの記事を追加する"
-          git push origin "${SYNC_BRANCH}"
+          git push --force origin "${SYNC_BRANCH}"
 
+      # 開いている PR があるなら、上の push で更新済み
       - name: Open pull request
-        if: steps.generate.outputs.created == 'true'
+        if: steps.generate.outputs.created == 'true' && steps.branch.outputs.reused != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 既に開いている PR があれば push で更新済みなので、新しくは作らない
-          if [[ -n "$(gh pr list --head "${SYNC_BRANCH}" --state open --json number --jq '.[].number')" ]]; then
-            echo "既存の PR を更新しました"
-            exit 0
-          fi
-
           gh pr create \
             --base main \
             --head "${SYNC_BRANCH}" \

@@ -1,8 +1,8 @@
 // slidesync は rin2yh/slides のデッキを走査し、blogにまだ記事が無いものを
 // externalUrl付きの記事として生成する。
 //
-// 作った記事はmarkdownの箇条書きで標準出力に出す。人間向けのメッセージは
-// 標準エラーに出すので、呼び出し側は標準出力だけを見ればよい。
+// 作った記事はmarkdownの箇条書きで標準出力に出す。何も作らなければ標準出力は空。
+// 人間向けのメッセージは標準エラーに出すので、呼び出し側は標準出力だけを見ればよい。
 //
 //	go run ./cmd/slidesync <slides-repo-path>
 package main
@@ -60,7 +60,7 @@ func main() {
 }
 
 func run(slidesRepo, baseURL, contentDir string, out io.Writer) error {
-	paths, err := filepath.Glob(filepath.Join(slidesRepo, filepath.FromSlash(deckGlob)))
+	paths, err := filepath.Glob(filepath.Join(slidesRepo, deckGlob))
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func run(slidesRepo, baseURL, contentDir string, out io.Writer) error {
 			return fmt.Errorf("%s: %w", p, err)
 		}
 
-		url := deckURL(baseURL, d.name)
+		url := strings.TrimSuffix(baseURL, "/") + "/" + d.name + "/"
 		if published[strings.TrimSuffix(url, "/")] {
 			continue
 		}
@@ -106,9 +106,9 @@ func run(slidesRepo, baseURL, contentDir string, out io.Writer) error {
 		fmt.Fprintf(out, "- [%s](%s) (%s)\n", d.title, url, d.date)
 	}
 
-	if created == 0 {
-		fmt.Fprintln(os.Stderr, "記事が無いデッキはありません")
-	}
+	// 件数はPRをレビューするときの手掛かりになる。URLの組み立て方が
+	// slides側と食い違うと、ここが急に全デッキ分に跳ねる
+	fmt.Fprintf(os.Stderr, "デッキ%d件のうち%d件の記事を作りました\n", len(paths), created)
 	return nil
 }
 
@@ -195,10 +195,6 @@ func collectExternalURLs(contentDir string) (map[string]bool, error) {
 		return nil, err
 	}
 	return urls, nil
-}
-
-func deckURL(baseURL, name string) string {
-	return strings.TrimSuffix(baseURL, "/") + "/" + name + "/"
 }
 
 // renderPost の出力は既存のexternal記事に合わせてある。archetypes/external.md とは

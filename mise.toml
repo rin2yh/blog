@@ -20,7 +20,7 @@ description = 'カンファレンスレポート用のテンプレートで新�
 run = 'go run ./cmd/post {{ arg(i=0) }} conference'
 
 [tasks.slidesync]
-description = 'slidesリポジトリのデッキから未掲載の登壇記事を生成する'
+description = 'slidesリポジトリのデッキから未掲載の登壇記事を生成する（手元確認用。CIはsync-slidesで走る）'
 run = 'go run ./cmd/slidesync {{ arg(i=0) }}'
 
 [tasks.serve]

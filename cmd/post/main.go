@@ -14,7 +14,7 @@ func buildHugoArgs(title, kind string) []string {
 	if kind != "" {
 		args = append(args, "--kind", kind)
 	}
-	args = append(args, fmt.Sprintf("post/%s/index.md", title))
+	args = append(args, fmt.Sprintf("%s/%s/index.md", post.Section, title))
 	return args
 }
 
@@ -38,8 +38,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	args := buildHugoArgs(title, kind)
-	cmd := exec.Command("hugo", args...)
+	cmd := exec.Command("hugo", buildHugoArgs(title, kind)...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -57,5 +56,5 @@ func main() {
 	}
 
 	fmt.Printf("Created: %s\n", newPath)
-	fmt.Printf("URL: /post/%s/\n", newFilename)
+	fmt.Printf("URL: /%s/%s/\n", post.Section, newFilename)
 }
