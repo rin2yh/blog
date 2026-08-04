@@ -2,7 +2,7 @@
 title: 自己紹介
 description: 過去の経歴などをまとめています。
 date: 2026-01-30
-lastmod: 2026-01-30
+lastmod: 2026-08-04
 readingTime: false
 menu:
   main:
@@ -43,6 +43,14 @@ menu:
     - マーケティングチーム　リーダー（2021.01 - 2021.03）
     - オンラインAIコース　兼任（2021.01 - 2023.07）
 {{< /details >}}
+
+
+## 作ったもの
+
+- [ゲーム集](https://games.rin2yh.com/)
+    - 個人開発で作ったゲームを置いているサイト
+- [スライド置き場](https://slides.rin2yh.com/)
+    - 登壇資料をまとめているサイト
 
 
 ## 趣味
