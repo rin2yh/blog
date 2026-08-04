@@ -1,0 +1,89 @@
+name: Sync slides
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # 毎週月曜 09:00 JST (00:00 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write # 同期ブランチへの push
+  pull-requests: write # PR の作成
+
+concurrency:
+  group: sync-slides
+  cancel-in-progress: false
+
+env:
+  TZ: Asia/Tokyo
+  SLIDES_REPO: https://github.com/rin2yh/slides
+  SYNC_BRANCH: automation/sync-slides
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # サイトはビルドしないので、submodule も全履歴も要らない
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # slides は public なのでクロスリポジトリのトークンは要らない
+      - name: Clone slides
+        run: git clone --depth 1 "${SLIDES_REPO}.git" "${RUNNER_TEMP}/slides"
+
+      # 未マージの PR があるならその続きから積む。main から作り直すと生成済みの
+      # 記事が毎回別の slug で作り直されて PR が荒れる。逆に PR が無いなら、
+      # 残っているブランチは却下されたか取り込み済みなので main から作り直す
+      - name: Switch to the sync branch
+        id: branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ -n "$(gh pr list --head "${SYNC_BRANCH}" --state open --json number --jq '.[].number')" ]]; then
+            echo "reused=true" >> "${GITHUB_OUTPUT}"
+            git fetch --depth 1 origin "${SYNC_BRANCH}"
+            git switch --force-create "${SYNC_BRANCH}" FETCH_HEAD
+          else
+            git switch --force-create "${SYNC_BRANCH}"
+          fi
+
+      # Go はランナー同梱のものを使う。go.mod の toolchain 指定で必要なら自動で揃う
+      - name: Generate posts for new decks
+        id: generate
+        run: |
+          go run ./cmd/slidesync --out "${RUNNER_TEMP}/created.md" "${RUNNER_TEMP}/slides"
+          if [[ -s "${RUNNER_TEMP}/created.md" ]]; then
+            echo "created=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Commit and push
+        if: steps.generate.outputs.created == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit --message "docs(post): 登壇スライドの記事を追加する"
+          git push --force origin "${SYNC_BRANCH}"
+
+      # 開いている PR があるなら、上の push で更新済み
+      - name: Open pull request
+        if: steps.generate.outputs.created == 'true' && steps.branch.outputs.reused != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "${SYNC_BRANCH}" \
+            --title "docs(post): 登壇スライドの記事を追加する" \
+            --body-file - <<EOF
+          @rin2yh
+
+          [rin2yh/slides](${SLIDES_REPO}) に、blog へ未掲載のデッキがありました。
+
+          $(cat "${RUNNER_TEMP}/created.md")
+
+          タグや \`draft\` はマージ前に必要なら直してください。
+
+          > [!NOTE]
+          > \`GITHUB_TOKEN\` で作った PR なので、他の workflow は起動しません。
+          > 生成されるのは本文が空のリンク記事なので textlint の対象はありません。
+          EOF
