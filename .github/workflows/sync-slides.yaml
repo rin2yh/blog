@@ -15,46 +15,52 @@ concurrency:
 
 env:
   TZ: Asia/Tokyo
-  SLIDES_REPO: https://github.com/rin2yh/slides.git
+  SLIDES_REPO: https://github.com/rin2yh/slides
   SYNC_BRANCH: automation/sync-slides
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # サイトはビルドしないので、submodule も全履歴も要らない
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # slides は public なのでクロスリポジトリのトークンは要らない
       - name: Clone slides
-        run: git clone --depth 1 "${SLIDES_REPO}" "${RUNNER_TEMP}/slides"
+        run: git clone --depth 1 "${SLIDES_REPO}.git" "${RUNNER_TEMP}/slides"
+
+      # 前回の PR が未マージなら、その続きから積む。main から作り直すと
+      # 生成済みの記事が毎回別の slug で作り直されて PR が荒れる
+      - name: Switch to the sync branch
+        run: |
+          if git ls-remote --exit-code --heads origin "${SYNC_BRANCH}" > /dev/null; then
+            git fetch --depth 1 origin "${SYNC_BRANCH}"
+            git switch --force-create "${SYNC_BRANCH}" FETCH_HEAD
+          else
+            git switch --force-create "${SYNC_BRANCH}"
+          fi
 
       # Go はランナー同梱のものを使う。go.mod の toolchain 指定で必要なら自動で揃う
       - name: Generate posts for new decks
-        run: go run ./cmd/slidesync "${RUNNER_TEMP}/slides" | tee "${RUNNER_TEMP}/created.txt"
-
-      - name: Check for changes
-        id: changes
+        id: generate
         run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            echo "changed=true" >> "${GITHUB_OUTPUT}"
-          else
-            echo "changed=false" >> "${GITHUB_OUTPUT}"
-            echo "記事が無いデッキはありません"
+          go run ./cmd/slidesync --summary "${RUNNER_TEMP}/summary.md" "${RUNNER_TEMP}/slides"
+          if [[ -s "${RUNNER_TEMP}/summary.md" ]]; then
+            echo "created=true" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Commit and push
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.generate.outputs.created == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch --force-create "${SYNC_BRANCH}"
           git add content/post
           git commit --message "docs(post): 登壇スライドの記事を追加する"
-          git push --force origin "${SYNC_BRANCH}"
+          git push origin "${SYNC_BRANCH}"
 
       - name: Open pull request
-        if: steps.changes.outputs.changed == 'true'
+        if: steps.generate.outputs.created == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -64,22 +70,20 @@ jobs:
             exit 0
           fi
 
-          {
-            echo "@rin2yh"
-            echo
-            echo "[rin2yh/slides](https://github.com/rin2yh/slides) に、blog へ未掲載のデッキがありました。"
-            echo
-            grep '^Created: ' "${RUNNER_TEMP}/created.txt" | sed 's/^Created: /- /'
-            echo
-            echo "タグや \`draft\` はマージ前に必要なら直してください。"
-            echo
-            echo "> [!NOTE]"
-            echo "> \`GITHUB_TOKEN\` で作った PR なので、他の workflow は起動しません。"
-            echo "> 生成されるのは本文が空のリンク記事なので textlint の対象はありません。"
-          } > "${RUNNER_TEMP}/pr-body.md"
-
           gh pr create \
             --base main \
             --head "${SYNC_BRANCH}" \
             --title "docs(post): 登壇スライドの記事を追加する" \
-            --body-file "${RUNNER_TEMP}/pr-body.md"
+            --body-file - <<EOF
+          @rin2yh
+
+          [rin2yh/slides](${SLIDES_REPO}) に、blog へ未掲載のデッキがありました。
+
+          $(cat "${RUNNER_TEMP}/summary.md")
+
+          タグや \`draft\` はマージ前に必要なら直してください。
+
+          > [!NOTE]
+          > \`GITHUB_TOKEN\` で作った PR なので、他の workflow は起動しません。
+          > 生成されるのは本文が空のリンク記事なので textlint の対象はありません。
+          EOF

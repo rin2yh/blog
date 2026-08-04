@@ -15,14 +15,14 @@ import (
 	"strings"
 	"time"
 
-	"blog/internal/slug"
+	"blog/internal/post"
 )
 
 const (
-	defaultBaseURL    = "https://slides.rin2yh.com"
-	defaultContentDir = "content/post"
-	deckGlob          = "slides/*.md"
-	dateLayout        = "2006-01-02"
+	// スライドの公開URL。config/_default/menu.toml のSlidesリンクと対になる。
+	defaultBaseURL = "https://slides.rin2yh.com"
+	deckGlob       = "slides/*.md"
+	dateLayout     = "2006-01-02"
 	// 発表日は日付までしか持たないので、JSTの0時に固定する。
 	timeSuffix = "T00:00:00+09:00"
 )
@@ -35,11 +35,13 @@ type deck struct {
 }
 
 // externalURLRe は記事のfrontmatterからexternalUrlの値を取り出す。
+// content/post の記事はすべてTOML frontmatterなので、その形だけを見る。
 var externalURLRe = regexp.MustCompile(`(?m)^\s*externalUrl\s*=\s*['"]([^'"]+)['"]`)
 
 func main() {
 	baseURL := flag.String("base", defaultBaseURL, "スライドの公開URLのベース")
-	contentDir := flag.String("content", defaultContentDir, "記事を探して生成するディレクトリ")
+	contentDir := flag.String("content", post.Dir, "記事を探して生成するディレクトリ")
+	summaryPath := flag.String("summary", "", "生成した記事の一覧をmarkdownの箇条書きで書き出す先")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: go run ./cmd/slidesync [flags] <slides-repo-path>")
 		flag.PrintDefaults()
@@ -51,13 +53,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := run(flag.Arg(0), *baseURL, *contentDir); err != nil {
+	if err := run(flag.Arg(0), *baseURL, *contentDir, *summaryPath); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func run(slidesRepo, baseURL, contentDir string) error {
+func run(slidesRepo, baseURL, contentDir, summaryPath string) error {
 	decks, err := readDecks(slidesRepo)
 	if err != nil {
 		return err
@@ -71,20 +73,28 @@ func run(slidesRepo, baseURL, contentDir string) error {
 	missing := missingDecks(decks, published, baseURL)
 	if len(missing) == 0 {
 		fmt.Println("記事が無いデッキはありません")
-		return nil
 	}
 
+	var summary strings.Builder
 	for _, d := range missing {
-		path, err := writePost(contentDir, d, deckURL(baseURL, d.name))
+		url := deckURL(baseURL, d.name)
+		path, err := writePost(contentDir, d, url)
 		if err != nil {
 			return err
 		}
 		fmt.Printf("Created: %s (%s)\n", path, d.title)
+		fmt.Fprintf(&summary, "- [%s](%s) (%s)\n", d.title, url, d.date)
+	}
+
+	// 生成が無ければ空ファイルを書く。呼び出し側はこのファイルの中身だけを見れば済む。
+	if summaryPath != "" {
+		return os.WriteFile(summaryPath, []byte(summary.String()), 0o644)
 	}
 	return nil
 }
 
 // readDecks は slides リポジトリのデッキを読み、発表日の新しい順に返す。
+// この順序が生成順、ひいてはPR本文の並び順になる。
 func readDecks(slidesRepo string) ([]deck, error) {
 	paths, err := filepath.Glob(filepath.Join(slidesRepo, filepath.FromSlash(deckGlob)))
 	if err != nil {
@@ -107,6 +117,7 @@ func readDecks(slidesRepo string) ([]deck, error) {
 		decks = append(decks, d)
 	}
 
+	// sort.Sliceは安定ではないので、同じ日付はnameで決める。
 	sort.Slice(decks, func(i, j int) bool {
 		if decks[i].date != decks[j].date {
 			return decks[i].date > decks[j].date
@@ -145,24 +156,13 @@ func parseDeck(filename, content string) (deck, error) {
 // frontmatter は先頭の --- で挟まれたブロックをkey/valueとして読む。
 // Marpのfrontmatterはフラットなので、ネストは扱わない。
 func frontmatter(content string) (map[string]string, error) {
-	lines := strings.Split(strings.ReplaceAll(content, "\r\n", "\n"), "\n")
-
-	start := -1
-	for i, l := range lines {
-		if strings.TrimSpace(l) == "" {
-			continue
-		}
-		if strings.TrimSpace(l) == "---" {
-			start = i
-		}
-		break
-	}
-	if start < 0 {
+	body, ok := strings.CutPrefix(strings.ReplaceAll(content, "\r\n", "\n"), "---\n")
+	if !ok {
 		return nil, fmt.Errorf("frontmatterがありません")
 	}
 
 	fm := map[string]string{}
-	for _, l := range lines[start+1:] {
+	for _, l := range strings.Split(body, "\n") {
 		if strings.TrimSpace(l) == "---" {
 			return fm, nil
 		}
@@ -180,6 +180,8 @@ func frontmatter(content string) (map[string]string, error) {
 }
 
 // unquote は前後を囲む同じ引用符を1組だけ外す。
+// strings.Trimは両端から何個でも外してしまい、strconv.Unquoteはシングルクォートを
+// rune リテラルとして扱うので、どちらも使えない。
 func unquote(s string) string {
 	if len(s) < 2 {
 		return s
@@ -241,12 +243,12 @@ func normalizeURL(u string) string {
 
 // writePost は既存のexternal記事と同じfrontmatterを持つ記事を作る。本文は空。
 func writePost(contentDir string, d deck, url string) (string, error) {
-	s, err := slug.Generate()
+	name, err := post.DirName(d.name)
 	if err != nil {
 		return "", err
 	}
 
-	dir := filepath.Join(contentDir, fmt.Sprintf("%s-%s", d.name, s))
+	dir := filepath.Join(contentDir, name)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return "", err
 	}
@@ -259,18 +261,18 @@ func writePost(contentDir string, d deck, url string) (string, error) {
 }
 
 // renderPost は記事のfrontmatterを組み立てる。
-// キーの順序は既存のexternal記事に合わせる。
+// キーの順序と値は既存のexternal記事に合わせてある。archetypes/external.md とは
+// draft と categories と tags が違うので、片方を直すときはもう片方も見ること。
 func renderPost(d deck, url string) string {
-	var b strings.Builder
-	b.WriteString("+++\n")
-	fmt.Fprintf(&b, "date = %s\n", tomlString(d.date+timeSuffix))
-	b.WriteString("draft = false\n")
-	fmt.Fprintf(&b, "title = %s\n", tomlString(d.title))
-	b.WriteString("categories = ['tech', 'external']\n")
-	b.WriteString("tags = ['slide']\n")
-	fmt.Fprintf(&b, "externalUrl = %s\n", tomlString(url))
-	b.WriteString("+++\n")
-	return b.String()
+	return fmt.Sprintf(`+++
+date = %s
+draft = false
+title = %s
+categories = ['tech', 'external']
+tags = ['slide']
+externalUrl = %s
++++
+`, tomlString(d.date+timeSuffix), tomlString(d.title), tomlString(url))
 }
 
 // tomlString は既存記事に合わせてシングルクォートのリテラル文字列にする。

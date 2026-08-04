@@ -174,6 +174,8 @@ func TestTOMLString_Apostrophe(t *testing.T) {
 	}
 }
 
+// 2回目以降は何も作らないこと、そのときサマリが空になることを確かめる。
+// workflow はサマリの中身だけを見てコミットするかどうかを決める。
 func TestRun_Idempotent(t *testing.T) {
 	repo := t.TempDir()
 	slidesDir := filepath.Join(repo, "slides")
@@ -189,26 +191,43 @@ func TestRun_Idempotent(t *testing.T) {
 	if err := os.MkdirAll(contentDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
+	summaryPath := filepath.Join(t.TempDir(), "summary.md")
 
-	if err := run(repo, defaultBaseURL, contentDir); err != nil {
+	countPosts := func() int {
+		t.Helper()
+		entries, err := os.ReadDir(contentDir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return len(entries)
+	}
+	readSummary := func() string {
+		t.Helper()
+		b, err := os.ReadFile(summaryPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(b)
+	}
+
+	if err := run(repo, defaultBaseURL, contentDir, summaryPath); err != nil {
 		t.Fatalf("run() returned error: %v", err)
 	}
-	after1, err := os.ReadDir(contentDir)
-	if err != nil {
-		t.Fatal(err)
+	if got := countPosts(); got != 1 {
+		t.Fatalf("run() created %d posts, want 1", got)
 	}
-	if len(after1) != 1 {
-		t.Fatalf("run() created %d posts, want 1", len(after1))
+	want := "- [テスト発表](https://slides.rin2yh.com/pumlv-go/) (2026-07-29)\n"
+	if got := readSummary(); got != want {
+		t.Errorf("run() summary = %q, want %q", got, want)
 	}
 
-	if err := run(repo, defaultBaseURL, contentDir); err != nil {
+	if err := run(repo, defaultBaseURL, contentDir, summaryPath); err != nil {
 		t.Fatalf("second run() returned error: %v", err)
 	}
-	after2, err := os.ReadDir(contentDir)
-	if err != nil {
-		t.Fatal(err)
+	if got := countPosts(); got != 1 {
+		t.Errorf("second run() created %d posts in total, want 1", got)
 	}
-	if len(after2) != 1 {
-		t.Errorf("second run() created %d posts in total, want 1", len(after2))
+	if got := readSummary(); got != "" {
+		t.Errorf("second run() summary = %q, want it to be empty", got)
 	}
 }

@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 
-	"blog/internal/slug"
+	"blog/internal/post"
 )
-
-const contentDir = "content/post"
 
 func buildHugoArgs(title, kind string) []string {
 	args := []string{"new"}
@@ -33,7 +32,7 @@ func main() {
 		kind = os.Args[2]
 	}
 
-	s, err := slug.Generate()
+	newFilename, err := post.DirName(title)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error generating slug: %v\n", err)
 		os.Exit(1)
@@ -49,9 +48,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	oldPath := fmt.Sprintf("%s/%s", contentDir, title)
-	newFilename := fmt.Sprintf("%s-%s", title, s)
-	newPath := fmt.Sprintf("%s/%s", contentDir, newFilename)
+	oldPath := filepath.Join(post.Dir, title)
+	newPath := filepath.Join(post.Dir, newFilename)
 
 	if err := os.Rename(oldPath, newPath); err != nil {
 		fmt.Fprintf(os.Stderr, "Error renaming file: %v\n", err)
