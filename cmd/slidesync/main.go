@@ -11,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
@@ -27,14 +26,12 @@ const (
 	timeSuffix = "T00:00:00+09:00"
 )
 
-// deck は slides リポジトリのデッキ1枚分。
 type deck struct {
 	name  string // ファイル名のstem。URLの末尾になる
 	title string
 	date  string // YYYY-MM-DD
 }
 
-// externalURLRe は記事のfrontmatterからexternalUrlの値を取り出す。
 // content/post の記事はすべてTOML frontmatterなので、その形だけを見る。
 var externalURLRe = regexp.MustCompile(`(?m)^\s*externalUrl\s*=\s*['"]([^'"]+)['"]`)
 
@@ -70,14 +67,12 @@ func run(slidesRepo, baseURL, contentDir, summaryPath string) error {
 		return err
 	}
 
-	missing := missingDecks(decks, published, baseURL)
-	if len(missing) == 0 {
-		fmt.Println("記事が無いデッキはありません")
-	}
-
 	var summary strings.Builder
-	for _, d := range missing {
+	for _, d := range decks {
 		url := deckURL(baseURL, d.name)
+		if published[strings.TrimSuffix(url, "/")] {
+			continue
+		}
 		path, err := writePost(contentDir, d, url)
 		if err != nil {
 			return err
@@ -86,15 +81,16 @@ func run(slidesRepo, baseURL, contentDir, summaryPath string) error {
 		fmt.Fprintf(&summary, "- [%s](%s) (%s)\n", d.title, url, d.date)
 	}
 
-	// 生成が無ければ空ファイルを書く。呼び出し側はこのファイルの中身だけを見れば済む。
+	if summary.Len() == 0 {
+		fmt.Println("記事が無いデッキはありません")
+	}
+	// 生成が無ければ空ファイルを書く。workflowはこのファイルの中身だけを見る。
 	if summaryPath != "" {
 		return os.WriteFile(summaryPath, []byte(summary.String()), 0o644)
 	}
 	return nil
 }
 
-// readDecks は slides リポジトリのデッキを読み、発表日の新しい順に返す。
-// この順序が生成順、ひいてはPR本文の並び順になる。
 func readDecks(slidesRepo string) ([]deck, error) {
 	paths, err := filepath.Glob(filepath.Join(slidesRepo, filepath.FromSlash(deckGlob)))
 	if err != nil {
@@ -116,22 +112,11 @@ func readDecks(slidesRepo string) ([]deck, error) {
 		}
 		decks = append(decks, d)
 	}
-
-	// sort.Sliceは安定ではないので、同じ日付はnameで決める。
-	sort.Slice(decks, func(i, j int) bool {
-		if decks[i].date != decks[j].date {
-			return decks[i].date > decks[j].date
-		}
-		return decks[i].name < decks[j].name
-	})
 	return decks, nil
 }
 
-// parseDeck はデッキのfrontmatterからtitleとdateを取り出す。
-// どちらかが欠けていたり日付の形式が違えばエラーにする。黙って一覧から落とさないため。
+// parseDeck はtitleとdateを取り出す。欠けていたらエラーにする。黙って一覧から落とさないため。
 func parseDeck(filename, content string) (deck, error) {
-	name := strings.TrimSuffix(filename, filepath.Ext(filename))
-
 	fm, err := frontmatter(content)
 	if err != nil {
 		return deck{}, err
@@ -150,11 +135,11 @@ func parseDeck(filename, content string) (deck, error) {
 		return deck{}, fmt.Errorf("dateが%s形式ではありません: %q", dateLayout, date)
 	}
 
+	name := strings.TrimSuffix(filename, filepath.Ext(filename))
 	return deck{name: name, title: title, date: date}, nil
 }
 
-// frontmatter は先頭の --- で挟まれたブロックをkey/valueとして読む。
-// Marpのfrontmatterはフラットなので、ネストは扱わない。
+// frontmatter は先頭の --- で挟まれたブロックを読む。Marpのfrontmatterはフラット。
 func frontmatter(content string) (map[string]string, error) {
 	body, ok := strings.CutPrefix(strings.ReplaceAll(content, "\r\n", "\n"), "---\n")
 	if !ok {
@@ -167,21 +152,16 @@ func frontmatter(content string) (map[string]string, error) {
 			return fm, nil
 		}
 		key, value, ok := strings.Cut(l, ":")
-		if !ok {
+		if !ok || strings.TrimSpace(key) == "" {
 			continue
 		}
-		key = strings.TrimSpace(key)
-		if key == "" {
-			continue
-		}
-		fm[key] = unquote(strings.TrimSpace(value))
+		fm[strings.TrimSpace(key)] = unquote(strings.TrimSpace(value))
 	}
 	return nil, fmt.Errorf("frontmatterが閉じていません")
 }
 
-// unquote は前後を囲む同じ引用符を1組だけ外す。
-// strings.Trimは両端から何個でも外してしまい、strconv.Unquoteはシングルクォートを
-// rune リテラルとして扱うので、どちらも使えない。
+// unquote は囲みの引用符を1組だけ外す。strings.Trimは両端から何個でも外してしまい、
+// strconv.Unquoteはシングルクォートをruneリテラル扱いするので、どちらも使えない。
 func unquote(s string) string {
 	if len(s) < 2 {
 		return s
@@ -193,8 +173,8 @@ func unquote(s string) string {
 	return s
 }
 
-// collectExternalURLs は記事ディレクトリ配下のexternalUrlを集める。
-// 記事のパスやファイル名ではなくURLで突き合わせるので、記事を移動しても壊れない。
+// collectExternalURLs は掲載済みのURLを集める。パスやファイル名ではなくURLで
+// 突き合わせるので、記事を移動しても壊れない。
 func collectExternalURLs(contentDir string) (map[string]bool, error) {
 	urls := map[string]bool{}
 
@@ -210,7 +190,7 @@ func collectExternalURLs(contentDir string) (map[string]bool, error) {
 			return err
 		}
 		for _, m := range externalURLRe.FindAllStringSubmatch(string(b), -1) {
-			urls[normalizeURL(m[1])] = true
+			urls[strings.TrimSuffix(m[1], "/")] = true
 		}
 		return nil
 	})
@@ -220,28 +200,10 @@ func collectExternalURLs(contentDir string) (map[string]bool, error) {
 	return urls, nil
 }
 
-// missingDecks は記事がまだ無いデッキだけを返す。
-func missingDecks(decks []deck, published map[string]bool, baseURL string) []deck {
-	var missing []deck
-	for _, d := range decks {
-		if published[normalizeURL(deckURL(baseURL, d.name))] {
-			continue
-		}
-		missing = append(missing, d)
-	}
-	return missing
-}
-
 func deckURL(baseURL, name string) string {
 	return strings.TrimSuffix(baseURL, "/") + "/" + name + "/"
 }
 
-// normalizeURL は末尾のスラッシュの有無を吸収する。
-func normalizeURL(u string) string {
-	return strings.TrimSuffix(u, "/")
-}
-
-// writePost は既存のexternal記事と同じfrontmatterを持つ記事を作る。本文は空。
 func writePost(contentDir string, d deck, url string) (string, error) {
 	name, err := post.DirName(d.name)
 	if err != nil {
@@ -260,8 +222,7 @@ func writePost(contentDir string, d deck, url string) (string, error) {
 	return path, nil
 }
 
-// renderPost は記事のfrontmatterを組み立てる。
-// キーの順序と値は既存のexternal記事に合わせてある。archetypes/external.md とは
+// renderPost の出力は既存のexternal記事に合わせてある。archetypes/external.md とは
 // draft と categories と tags が違うので、片方を直すときはもう片方も見ること。
 func renderPost(d deck, url string) string {
 	return fmt.Sprintf(`+++

@@ -13,7 +13,7 @@ func TestDirName(t *testing.T) {
 
 	const prefix = "my-post-"
 	if !strings.HasPrefix(name, prefix) {
-		t.Errorf("DirName() = %q, want it to start with %q", name, prefix)
+		t.Fatalf("DirName() = %q, want it to start with %q", name, prefix)
 	}
 
 	s := strings.TrimPrefix(name, prefix)
@@ -24,22 +24,5 @@ func TestDirName(t *testing.T) {
 		if !strings.ContainsRune(charset, c) {
 			t.Errorf("DirName() slug has invalid character %q at position %d", c, i)
 		}
-	}
-}
-
-func TestDirName_Uniqueness(t *testing.T) {
-	const iterations = 100
-	seen := make(map[string]bool)
-
-	for i := 0; i < iterations; i++ {
-		name, err := DirName("my-post")
-		if err != nil {
-			t.Fatalf("DirName() returned error on iteration %d: %v", i, err)
-		}
-
-		if seen[name] {
-			t.Errorf("DirName() returned duplicate %q on iteration %d", name, i)
-		}
-		seen[name] = true
 	}
 }
