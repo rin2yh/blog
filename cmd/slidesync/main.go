@@ -1,8 +1,8 @@
 // slidesync は rin2yh/slides のデッキを走査し、blogにまだ記事が無いものを
 // externalUrl付きの記事として生成する。
 //
-// 作った記事はmarkdownの箇条書きで標準出力に出す。何も作らなければ標準出力は空。
-// 人間向けのメッセージは標準エラーに出すので、呼び出し側は標準出力だけを見ればよい。
+// 作った記事はmarkdownの箇条書きで -out に書き出す。何も作らなければ空になる。
+// 進捗は標準出力、異常は標準エラーに出す。
 //
 //	go run ./cmd/slidesync <slides-repo-path>
 package main
@@ -42,6 +42,7 @@ var externalURLRe = regexp.MustCompile(`(?m)^\s*externalUrl\s*=\s*['"]([^'"]+)['
 func main() {
 	baseURL := flag.String("base", defaultBaseURL, "スライドの公開URLのベース")
 	contentDir := flag.String("content", post.Dir, "記事を探して生成するディレクトリ")
+	outPath := flag.String("out", "", "作った記事の一覧をmarkdownの箇条書きで書き出す先")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: go run ./cmd/slidesync [flags] <slides-repo-path>")
 		flag.PrintDefaults()
@@ -53,13 +54,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := run(flag.Arg(0), *baseURL, *contentDir, os.Stdout); err != nil {
+	// 一覧を使わないなら捨てる。標準出力は進捗を出すために空けておく
+	list := io.Discard
+	if *outPath != "" {
+		f, err := os.Create(*outPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		list = f
+	}
+
+	if err := run(flag.Arg(0), *baseURL, *contentDir, list); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func run(slidesRepo, baseURL, contentDir string, out io.Writer) error {
+// run は記事を作り、作った分をmarkdownの箇条書きで list に書く。
+func run(slidesRepo, baseURL, contentDir string, list io.Writer) error {
 	paths, err := filepath.Glob(filepath.Join(slidesRepo, deckGlob))
 	if err != nil {
 		return err
@@ -102,13 +116,13 @@ func run(slidesRepo, baseURL, contentDir string, out io.Writer) error {
 		}
 
 		created++
-		fmt.Fprintf(os.Stderr, "Created: %s\n", dir)
-		fmt.Fprintf(out, "- [%s](%s) (%s)\n", d.title, url, d.date)
+		fmt.Printf("Created: %s\n", dir)
+		fmt.Fprintf(list, "- [%s](%s) (%s)\n", d.title, url, d.date)
 	}
 
 	// 件数はPRをレビューするときの手掛かりになる。URLの組み立て方が
 	// slides側と食い違うと、ここが急に全デッキ分に跳ねる
-	fmt.Fprintf(os.Stderr, "デッキ%d件のうち%d件の記事を作りました\n", len(paths), created)
+	fmt.Printf("デッキ%d件のうち%d件の記事を作りました\n", len(paths), created)
 	return nil
 }
 
