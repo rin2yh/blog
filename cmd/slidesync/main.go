@@ -2,7 +2,6 @@
 // externalUrl付きの記事として生成する。
 //
 // 作った記事はmarkdownの箇条書きで -out に書き出す。何も作らなければ空になる。
-// 進捗は標準出力、異常は標準エラーに出す。
 //
 //	go run ./cmd/slidesync <slides-repo-path>
 package main
