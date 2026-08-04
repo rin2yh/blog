@@ -4,10 +4,7 @@
 // .github/preview/changed-urls.sh が依存しているので、ここを唯一の定義とする。
 package post
 
-import (
-	"crypto/rand"
-	"fmt"
-)
+import "crypto/rand"
 
 // Dir は記事を置くディレクトリ。
 const Dir = "content/post"
@@ -19,14 +16,6 @@ const (
 
 // DirName は <name>-<ランダムなslug> という記事ディレクトリ名を返す。
 func DirName(name string) (string, error) {
-	s, err := generateSlug()
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%s-%s", name, s), nil
-}
-
-func generateSlug() (string, error) {
 	b := make([]byte, slugLength)
 	if _, err := rand.Read(b); err != nil {
 		return "", err
@@ -34,5 +23,5 @@ func generateSlug() (string, error) {
 	for i := range b {
 		b[i] = charset[int(b[i])%len(charset)]
 	}
-	return string(b), nil
+	return name + "-" + string(b), nil
 }

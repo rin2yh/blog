@@ -1,12 +1,16 @@
 // slidesync は rin2yh/slides のデッキを走査し、blogにまだ記事が無いものを
 // externalUrl付きの記事として生成する。
 //
+// 作った記事はmarkdownの箇条書きで標準出力に出す。人間向けのメッセージは
+// 標準エラーに出すので、呼び出し側は標準出力だけを見ればよい。
+//
 //	go run ./cmd/slidesync <slides-repo-path>
 package main
 
 import (
 	"flag"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -38,7 +42,6 @@ var externalURLRe = regexp.MustCompile(`(?m)^\s*externalUrl\s*=\s*['"]([^'"]+)['
 func main() {
 	baseURL := flag.String("base", defaultBaseURL, "スライドの公開URLのベース")
 	contentDir := flag.String("content", post.Dir, "記事を探して生成するディレクトリ")
-	summaryPath := flag.String("summary", "", "生成した記事の一覧をmarkdownの箇条書きで書き出す先")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: go run ./cmd/slidesync [flags] <slides-repo-path>")
 		flag.PrintDefaults()
@@ -50,16 +53,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := run(flag.Arg(0), *baseURL, *contentDir, *summaryPath); err != nil {
+	if err := run(flag.Arg(0), *baseURL, *contentDir, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func run(slidesRepo, baseURL, contentDir, summaryPath string) error {
-	decks, err := readDecks(slidesRepo)
+func run(slidesRepo, baseURL, contentDir string, out io.Writer) error {
+	paths, err := filepath.Glob(filepath.Join(slidesRepo, filepath.FromSlash(deckGlob)))
 	if err != nil {
 		return err
+	}
+	if len(paths) == 0 {
+		return fmt.Errorf("デッキが見つかりません: %s", filepath.Join(slidesRepo, deckGlob))
 	}
 
 	published, err := collectExternalURLs(contentDir)
@@ -67,52 +73,43 @@ func run(slidesRepo, baseURL, contentDir, summaryPath string) error {
 		return err
 	}
 
-	var summary strings.Builder
-	for _, d := range decks {
+	created := 0
+	for _, p := range paths {
+		b, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		d, err := parseDeck(filepath.Base(p), string(b))
+		if err != nil {
+			return fmt.Errorf("%s: %w", p, err)
+		}
+
 		url := deckURL(baseURL, d.name)
 		if published[strings.TrimSuffix(url, "/")] {
 			continue
 		}
-		path, err := writePost(contentDir, d, url)
+
+		name, err := post.DirName(d.name)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Created: %s (%s)\n", path, d.title)
-		fmt.Fprintf(&summary, "- [%s](%s) (%s)\n", d.title, url, d.date)
+		dir := filepath.Join(contentDir, name)
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(filepath.Join(dir, "index.md"), []byte(renderPost(d, url)), 0o644); err != nil {
+			return err
+		}
+
+		created++
+		fmt.Fprintf(os.Stderr, "Created: %s\n", dir)
+		fmt.Fprintf(out, "- [%s](%s) (%s)\n", d.title, url, d.date)
 	}
 
-	if summary.Len() == 0 {
-		fmt.Println("記事が無いデッキはありません")
-	}
-	// 生成が無ければ空ファイルを書く。workflowはこのファイルの中身だけを見る。
-	if summaryPath != "" {
-		return os.WriteFile(summaryPath, []byte(summary.String()), 0o644)
+	if created == 0 {
+		fmt.Fprintln(os.Stderr, "記事が無いデッキはありません")
 	}
 	return nil
-}
-
-func readDecks(slidesRepo string) ([]deck, error) {
-	paths, err := filepath.Glob(filepath.Join(slidesRepo, filepath.FromSlash(deckGlob)))
-	if err != nil {
-		return nil, err
-	}
-	if len(paths) == 0 {
-		return nil, fmt.Errorf("デッキが見つかりません: %s", filepath.Join(slidesRepo, deckGlob))
-	}
-
-	decks := make([]deck, 0, len(paths))
-	for _, p := range paths {
-		b, err := os.ReadFile(p)
-		if err != nil {
-			return nil, err
-		}
-		d, err := parseDeck(filepath.Base(p), string(b))
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", p, err)
-		}
-		decks = append(decks, d)
-	}
-	return decks, nil
 }
 
 // parseDeck はtitleとdateを取り出す。欠けていたらエラーにする。黙って一覧から落とさないため。
@@ -202,24 +199,6 @@ func collectExternalURLs(contentDir string) (map[string]bool, error) {
 
 func deckURL(baseURL, name string) string {
 	return strings.TrimSuffix(baseURL, "/") + "/" + name + "/"
-}
-
-func writePost(contentDir string, d deck, url string) (string, error) {
-	name, err := post.DirName(d.name)
-	if err != nil {
-		return "", err
-	}
-
-	dir := filepath.Join(contentDir, name)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return "", err
-	}
-
-	path := filepath.Join(dir, "index.md")
-	if err := os.WriteFile(path, []byte(renderPost(d, url)), 0o644); err != nil {
-		return "", err
-	}
-	return path, nil
 }
 
 // renderPost の出力は既存のexternal記事に合わせてある。archetypes/external.md とは

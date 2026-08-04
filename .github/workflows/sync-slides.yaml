@@ -45,8 +45,8 @@ jobs:
       - name: Generate posts for new decks
         id: generate
         run: |
-          go run ./cmd/slidesync --summary "${RUNNER_TEMP}/summary.md" "${RUNNER_TEMP}/slides"
-          if [[ -s "${RUNNER_TEMP}/summary.md" ]]; then
+          go run ./cmd/slidesync "${RUNNER_TEMP}/slides" > "${RUNNER_TEMP}/created.md"
+          if [[ -s "${RUNNER_TEMP}/created.md" ]]; then
             echo "created=true" >> "${GITHUB_OUTPUT}"
           fi
 
@@ -79,7 +79,7 @@ jobs:
 
           [rin2yh/slides](${SLIDES_REPO}) に、blog へ未掲載のデッキがありました。
 
-          $(cat "${RUNNER_TEMP}/summary.md")
+          $(cat "${RUNNER_TEMP}/created.md")
 
           タグや \`draft\` はマージ前に必要なら直してください。
 
