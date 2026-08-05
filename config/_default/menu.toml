@@ -10,14 +10,17 @@ icon = 'home'
 # content/page/about/index.md w=2
 # content/page/search/index.md w=3
 # content/page/archives/index.md w=4
+# content/page/qr/index.md    w=5
 
-[[social]]
-identifier = "rss"
-name = "RSS"
-url = "/index.xml"
-weight = 1
-[social.params]
-icon = "rss"
+# RSSはSNSアカウントではなく購読用の機能リンクなので、socialの並びではなく
+# メインメニュー側に置いている。socialを5個に保ち折り返しを防ぐ意図もある。
+[[main]]
+identifier = 'rss'
+name = 'RSS'
+weight = 6
+url = '/index.xml'
+[main.params]
+icon = 'rss'
 
 [[social]]
 identifier = "github"
@@ -52,11 +55,11 @@ weight = 5
 [social.params]
 icon = "presentation"
 
-[[main]]
-identifier = 'games'
-name = 'ゲーム'
+[[social]]
+identifier = "games"
+name = "Games"
+url = "https://games.rin2yh.com"
 weight = 6
-url = 'https://games.rin2yh.com'
-[main.params]
-icon = 'device-gamepad'
+[social.params]
+icon = "device-gamepad"
 
