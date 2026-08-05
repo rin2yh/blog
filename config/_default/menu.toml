@@ -52,3 +52,11 @@ weight = 5
 [social.params]
 icon = "presentation"
 
+[[main]]
+identifier = 'games'
+name = 'ゲーム'
+weight = 6
+url = 'https://games.rin2yh.com'
+[main.params]
+icon = 'device-gamepad'
+
