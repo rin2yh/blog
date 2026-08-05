@@ -37,7 +37,6 @@ weight = 3
 icon = "brand-twitter"
 
 # Zennは記事側からキュレーション的に参照しているため、socialの並びからは外している。
-# アイコン（assets/icons/zenn-logo.svg）は復活させる可能性を考えて残す。
 
 [[social]]
 identifier = "slides"
