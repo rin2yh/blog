@@ -10,6 +10,7 @@ icon = 'home'
 # content/page/about/index.md w=2
 # content/page/search/index.md w=3
 # content/page/archives/index.md w=4
+# content/page/qr/index.md w=5
 
 [[social]]
 identifier = "rss"
@@ -36,19 +37,18 @@ weight = 3
 icon = "brand-twitter"
 
 [[social]]
-identifier = "zenn"
-name = "Zenn"
-url = "https://zenn.dev/rinrin_yuuki"
-weight = 4
-[social.params]
-icon = "zenn-logo"
-
-
-[[social]]
 identifier = "slides"
 name = "Slides"
 url = "https://slides.rin2yh.com"
 weight = 5
 [social.params]
 icon = "presentation"
+
+[[social]]
+identifier = "games"
+name = "Games"
+url = "https://games.rin2yh.com"
+weight = 6
+[social.params]
+icon = "device-gamepad"
 
