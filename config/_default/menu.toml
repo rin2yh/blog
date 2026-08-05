@@ -10,7 +10,7 @@ icon = 'home'
 # content/page/about/index.md w=2
 # content/page/search/index.md w=3
 # content/page/archives/index.md w=4
-# content/page/qr/index.md    w=5
+# content/page/qr/index.md w=5
 
 [[social]]
 identifier = "rss"
@@ -35,8 +35,6 @@ url = "https://x.com/rin2yh"
 weight = 3
 [social.params]
 icon = "brand-twitter"
-
-# Zennは記事側からキュレーション的に参照しているため、socialの並びからは外している。
 
 [[social]]
 identifier = "slides"
