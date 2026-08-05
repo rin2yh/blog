@@ -12,15 +12,13 @@ icon = 'home'
 # content/page/archives/index.md w=4
 # content/page/qr/index.md    w=5
 
-# RSSはSNSアカウントではなく購読用の機能リンクなので、socialの並びではなく
-# メインメニュー側に置いている。socialを5個に保ち折り返しを防ぐ意図もある。
-[[main]]
-identifier = 'rss'
-name = 'RSS'
-weight = 6
-url = '/index.xml'
-[main.params]
-icon = 'rss'
+[[social]]
+identifier = "rss"
+name = "RSS"
+url = "/index.xml"
+weight = 1
+[social.params]
+icon = "rss"
 
 [[social]]
 identifier = "github"
@@ -38,14 +36,8 @@ weight = 3
 [social.params]
 icon = "brand-twitter"
 
-[[social]]
-identifier = "zenn"
-name = "Zenn"
-url = "https://zenn.dev/rinrin_yuuki"
-weight = 4
-[social.params]
-icon = "zenn-logo"
-
+# Zennは記事側からキュレーション的に参照しているため、socialの並びからは外している。
+# アイコン（assets/icons/zenn-logo.svg）は復活させる可能性を考えて残す。
 
 [[social]]
 identifier = "slides"
