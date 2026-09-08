@@ -3,8 +3,8 @@
 // PR コメント本文 Markdown を COMMENT_FILE に書き出す。
 //
 // 環境変数:
-//   URLS               任意  改行区切りの /post/<slug>/ パス一覧 (スクリーンショット生成時)
-//   URLS_JSON          任意  上記パス一覧の JSON 配列 (コメント生成時)
+//   URL                必須  /post/<slug>/ パス (スクリーンショット生成時)
+//   URLS_JSON          必須  上記パス一覧の JSON 配列 (コメント生成時)
 //   PUBLIC_DIR         任意  配信するディレクトリ (既定: public)
 //   PORT               任意  ローカルサーバのポート (既定: 1313)
 //   OUT_DIR            任意  PNG 出力先ディレクトリ (指定時はスクリーンショットを生成)
@@ -19,24 +19,11 @@ import { join } from 'node:path';
 
 const PUBLIC_DIR = process.env.PUBLIC_DIR || 'public';
 const PORT = Number(process.env.PORT || 1313);
-const OUT_DIR = process.env.OUT_DIR || '';
-const COMMENT_FILE = process.env.COMMENT_FILE || '';
-const ARTIFACT_URLS_FILE = process.env.ARTIFACT_URLS_FILE || '';
+const OUT_DIR = process.env.OUT_DIR;
+const COMMENT_FILE = process.env.COMMENT_FILE;
+const ARTIFACT_URLS_FILE = process.env.ARTIFACT_URLS_FILE;
 const PR = process.env.PR || '';
 const SHA7 = (process.env.SHA7 || '').slice(0, 7);
-
-if (!OUT_DIR && !COMMENT_FILE) {
-  console.error('OUT_DIR or COMMENT_FILE is required');
-  process.exit(1);
-}
-if (COMMENT_FILE && !ARTIFACT_URLS_FILE) {
-  console.error('ARTIFACT_URLS_FILE is required when COMMENT_FILE is set');
-  process.exit(1);
-}
-
-const urls = process.env.URLS_JSON
-  ? JSON.parse(process.env.URLS_JSON).filter(Boolean)
-  : (process.env.URLS || '').split('\n').map((s) => s.trim()).filter(Boolean);
 
 // sirv で public/ を配信する (MIME 判定・index フォールバック・トラバーサル対策を内包)。
 async function startServer() {
@@ -63,51 +50,39 @@ const VIEWPORTS = [
 
 async function captureScreenshots() {
   await mkdir(OUT_DIR, { recursive: true });
-  if (urls.length === 0) {
-    console.log('No article URLs to shoot.');
-    return;
-  }
-
   const { chromium } = await import('playwright');
   const server = await startServer();
   const browser = await chromium.launch();
+  const url = process.env.URL;
+  const slug = slugFromUrl(url);
+  const target = `http://127.0.0.1:${PORT}${url}`;
 
   try {
-    for (const u of urls) {
-      const slug = slugFromUrl(u);
-      const target = `http://127.0.0.1:${PORT}${u}`;
-
-      for (const vp of VIEWPORTS) {
-        const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
-        try {
-          const resp = await page.goto(target, { waitUntil: 'load', timeout: 30000 });
-          if (!resp || resp.status() >= 400) {
-            console.warn(`Not found: ${target} (${vp.label})`);
-            continue;
-          }
-
-          const file = `${vp.key}--${slug}.png`;
-          const path = join(OUT_DIR, file);
-          await page.screenshot({ path, fullPage: true });
-          if (process.env.GITHUB_OUTPUT) {
-            await appendFile(process.env.GITHUB_OUTPUT, `${vp.key}=${path}\n`);
-          }
-          console.log(`Shot: ${target} (${vp.label})`);
-        } catch (err) {
-          // goto/screenshot の失敗 (タイムアウト等) で全体を落とさず、この viewport だけスキップする
-          console.error(`Failed to capture ${target} (${vp.label}):`, err);
-        } finally {
-          await page.close().catch(() => {});
+    for (const vp of VIEWPORTS) {
+      const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
+      try {
+        const resp = await page.goto(target, { waitUntil: 'load', timeout: 30000 });
+        if (!resp?.ok()) {
+          throw new Error(`Failed to load ${target}: ${resp?.status()}`);
         }
+
+        const file = `${vp.key}--${slug}.png`;
+        const path = join(OUT_DIR, file);
+        await page.screenshot({ path, fullPage: true });
+        await appendFile(process.env.GITHUB_OUTPUT, `${vp.key}=${path}\n`);
+        console.log(`Shot: ${target} (${vp.label})`);
+      } finally {
+        await page.close();
       }
     }
   } finally {
-    await browser.close().catch(() => {});
+    await browser.close();
     server.close();
   }
 }
 
 async function buildComment() {
+  const urls = JSON.parse(process.env.URLS_JSON).filter(Boolean);
   const artifactUrls = JSON.parse(await readFile(ARTIFACT_URLS_FILE, 'utf8'));
   const rows = urls.map((u) => {
     const slug = slugFromUrl(u);
@@ -138,13 +113,9 @@ function body(content) {
 async function main() {
   if (OUT_DIR) {
     await captureScreenshots();
-  }
-  if (COMMENT_FILE) {
+  } else {
     await buildComment();
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+await main();

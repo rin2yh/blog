@@ -82,7 +82,7 @@ jobs:
         if: matrix.url != ''
         id: shoot
         env:
-          URLS: ${{ matrix.url }}
+          URL: ${{ matrix.url }}
           PORT: '1313'
           PUBLIC_DIR: public
           OUT_DIR: ${{ runner.temp }}/shots
