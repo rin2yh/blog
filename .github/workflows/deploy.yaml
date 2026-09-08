@@ -33,7 +33,7 @@ jobs:
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Build
-        uses: ./.github/actions/build # zizmor: ignore[self-repository] actionlint 1.7.12 does not support $/ references
+        uses: ./.github/actions/build
         with:
           base-url: ${{ steps.pages.outputs.base_url }}
 
