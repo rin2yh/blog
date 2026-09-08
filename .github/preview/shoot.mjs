@@ -29,7 +29,7 @@ async function startServer() {
   return new Promise((ready) => server.listen(PORT, '127.0.0.1', () => ready(server)));
 }
 
-function slugFromUrl(u) {
+function getSlugFromUrl(u) {
   // /post/foo/ -> foo
   return u.split('/').filter(Boolean).at(-1) || 'index';
 }
@@ -61,7 +61,7 @@ await mkdir(OUT_DIR, { recursive: true });
 const { chromium } = await import('playwright');
 const server = await startServer();
 const browser = await chromium.launch();
-const slug = slugFromUrl(URL);
+const slug = getSlugFromUrl(URL);
 const target = `http://127.0.0.1:${PORT}${URL}`;
 
 try {
