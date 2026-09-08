@@ -1,12 +1,13 @@
 name: Article preview
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
     paths:
       - 'content/post/**'
 
 permissions:
-  contents: write # アセットブランチへの push
+  actions: read # Artifact URL の取得
+  contents: read
   pull-requests: write # スティッキーコメント
 
 concurrency:
@@ -14,14 +15,16 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ASSET_BRANCH: pr-preview-assets
   TZ: Asia/Tokyo
   PR: ${{ github.event.pull_request.number }}
 
 jobs:
-  preview:
-    if: github.event.action != 'closed'
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      urls: ${{ steps.urls.outputs.urls }}
+      matrix: ${{ steps.urls.outputs.matrix }}
+      sha7: ${{ steps.sha.outputs.sha7 }}
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -35,11 +38,20 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          urls="$(bash .github/preview/changed-urls.sh)"
           {
             echo "urls<<EOF"
-            bash .github/preview/changed-urls.sh
+            echo "${urls}"
             echo "EOF"
           } >> "${GITHUB_OUTPUT}"
+
+          # 空配列では matrix job を作れないため、変更なしの場合は空 URL の job を1つ作る。
+          jq -cn --arg urls "${urls}" '
+            $urls
+            | split("\n")
+            | map(select(length > 0))
+            | if length == 0 then {include: [{url: ""}]} else {include: map({url: .})} end
+          ' | sed 's/^/matrix=/' >> "${GITHUB_OUTPUT}"
 
       - name: Set SHA7
         id: sha
@@ -47,21 +59,35 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: echo "sha7=${HEAD_SHA:0:7}" >> "${GITHUB_OUTPUT}"
 
+  preview:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        if: matrix.url != ''
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: recursive
+
       - name: Build site (with drafts)
-        if: steps.urls.outputs.urls != ''
+        if: matrix.url != ''
         uses: ./.github/actions/build
         with:
           base-url: http://localhost:1313
           build-drafts: 'true'
 
       - name: Setup Node
-        if: steps.urls.outputs.urls != ''
+        if: matrix.url != ''
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: 22
 
       - name: Install Playwright Chromium
-        if: steps.urls.outputs.urls != ''
+        if: matrix.url != ''
         working-directory: .github/preview
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # postinstall で全ブラウザを落とさない
@@ -69,44 +95,72 @@ jobs:
           npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
 
-      # 変更ありならスクショ + comment.md を生成、無ければ comment.md のみ生成する
-      # (shoot.mjs は URL が空なら Playwright を読み込まない)
-      - name: Screenshot and build comment
+      - name: Screenshot article
+        if: matrix.url != ''
+        id: shoot
         env:
-          URLS: ${{ steps.urls.outputs.urls }}
+          URLS: ${{ matrix.url }}
           PORT: '1313'
           PUBLIC_DIR: public
           OUT_DIR: ${{ runner.temp }}/shots
-          COMMENT_FILE: ${{ runner.temp }}/comment.md
-          SHA7: ${{ steps.sha.outputs.sha7 }}
-          RAW_PREFIX: https://raw.githubusercontent.com/${{ github.repository }}/${{ env.ASSET_BRANCH }}/pr-${{ env.PR }}/${{ steps.sha.outputs.sha7 }}
         run: node .github/preview/shoot.mjs
 
-      - name: Publish screenshots to asset branch
-        if: steps.urls.outputs.urls != ''
+      - name: Upload Desktop screenshot
+        if: steps.shoot.outputs.desktop != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          path: ${{ steps.shoot.outputs.desktop }}
+          archive: false
+          if-no-files-found: error
+
+      - name: Upload Mobile screenshot
+        if: steps.shoot.outputs.mobile != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          path: ${{ steps.shoot.outputs.mobile }}
+          archive: false
+          if-no-files-found: error
+
+  comment:
+    if: always() && needs.prepare.result == 'success'
+    needs: [prepare, preview]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout comment script
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          sparse-checkout: .github/preview/shoot.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Collect Artifact URLs
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHA7: ${{ steps.sha.outputs.sha7 }}
-          SHOTS_DIR: ${{ runner.temp }}/shots
-        run: bash .github/preview/manage-assets.sh publish
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          ARTIFACT_URLS_FILE: ${{ runner.temp }}/artifact-urls.json
+        run: |
+          gh api --paginate "repos/${REPOSITORY}/actions/runs/${RUN_ID}/artifacts?per_page=100" \
+            | jq -s --arg repository "${REPOSITORY}" --arg run_id "${RUN_ID}" '
+                [.[].artifacts[]
+                  | select(.expired == false)
+                  | {
+                      key: .name,
+                      value: ("https://github.com/" + $repository + "/actions/runs/" + $run_id + "/artifacts/" + (.id | tostring))
+                    }
+                ]
+                | from_entries
+              ' > "${ARTIFACT_URLS_FILE}"
+
+      - name: Build comment
+        env:
+          URLS: ${{ needs.prepare.outputs.urls }}
+          COMMENT_FILE: ${{ runner.temp }}/comment.md
+          ARTIFACT_URLS_FILE: ${{ runner.temp }}/artifact-urls.json
+          SHA7: ${{ needs.prepare.outputs.sha7 }}
+        run: node .github/preview/shoot.mjs
 
       - name: Post/update sticky comment
         uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
         with:
           header: article-preview
           path: ${{ runner.temp }}/comment.md
-
-  cleanup:
-    if: github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout scripts
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          sparse-checkout: .github/preview
-          sparse-checkout-cone-mode: false
-
-      - name: Remove PR assets
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash .github/preview/manage-assets.sh cleanup
