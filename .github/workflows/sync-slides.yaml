@@ -5,9 +5,7 @@ on:
     - cron: '0 0 * * 1' # 毎週月曜 09:00 JST (00:00 UTC)
   workflow_dispatch:
 
-permissions:
-  contents: write # 同期ブランチへの push
-  pull-requests: write # PR の作成
+permissions: {}
 
 concurrency:
   group: sync-slides
@@ -21,10 +19,16 @@ env:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # 同期ブランチへの push
+      pull-requests: write # PR の作成
     steps:
       # サイトはビルドしないので、submodule も全履歴も要らない
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       # slides は public なのでクロスリポジトリのトークンは要らない
       - name: Clone slides
@@ -57,11 +61,14 @@ jobs:
 
       - name: Commit and push
         if: steps.generate.outputs.created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit --message "docs(post): 登壇スライドの記事を追加する"
+          gh auth setup-git
           git push --force origin "${SYNC_BRANCH}"
 
       # 開いている PR があるなら、上の push で更新済み

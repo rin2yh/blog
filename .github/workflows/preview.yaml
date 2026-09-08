@@ -61,7 +61,7 @@ jobs:
           persist-credentials: false
 
       - name: Build site (with drafts)
-        uses: $/.github/actions/build
+        uses: ./.github/actions/build
         with:
           base-url: http://localhost:1313
           build-drafts: 'true'

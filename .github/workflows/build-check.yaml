@@ -2,9 +2,14 @@ name: Build
 on:
   pull_request:
 
+permissions: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     env:
       TZ: Asia/Tokyo
     steps:
@@ -13,6 +18,7 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Build
         uses: ./.github/actions/build
