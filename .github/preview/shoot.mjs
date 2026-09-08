@@ -3,7 +3,8 @@
 // PR コメント本文 Markdown を COMMENT_FILE に書き出す。
 //
 // 環境変数:
-//   URLS               必須  改行区切りの /post/<slug>/ パス一覧 (changed-urls.sh の出力)
+//   URLS               任意  改行区切りの /post/<slug>/ パス一覧 (スクリーンショット生成時)
+//   URLS_JSON          任意  上記パス一覧の JSON 配列 (コメント生成時)
 //   PUBLIC_DIR         任意  配信するディレクトリ (既定: public)
 //   PORT               任意  ローカルサーバのポート (既定: 1313)
 //   OUT_DIR            任意  PNG 出力先ディレクトリ (指定時はスクリーンショットを生成)
@@ -22,7 +23,7 @@ const OUT_DIR = process.env.OUT_DIR || '';
 const COMMENT_FILE = process.env.COMMENT_FILE || '';
 const ARTIFACT_URLS_FILE = process.env.ARTIFACT_URLS_FILE || '';
 const PR = process.env.PR || '';
-const SHA7 = process.env.SHA7 || '';
+const SHA7 = (process.env.SHA7 || '').slice(0, 7);
 
 if (!OUT_DIR && !COMMENT_FILE) {
   console.error('OUT_DIR or COMMENT_FILE is required');
@@ -33,10 +34,9 @@ if (COMMENT_FILE && !ARTIFACT_URLS_FILE) {
   process.exit(1);
 }
 
-const urls = (process.env.URLS || '')
-  .split('\n')
-  .map((s) => s.trim())
-  .filter(Boolean);
+const urls = process.env.URLS_JSON
+  ? JSON.parse(process.env.URLS_JSON).filter(Boolean)
+  : (process.env.URLS || '').split('\n').map((s) => s.trim()).filter(Boolean);
 
 // sirv で public/ を配信する (MIME 判定・index フォールバック・トラバーサル対策を内包)。
 async function startServer() {

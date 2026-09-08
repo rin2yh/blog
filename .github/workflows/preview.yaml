@@ -23,8 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       urls: ${{ steps.urls.outputs.urls }}
-      matrix: ${{ steps.urls.outputs.matrix }}
-      sha7: ${{ steps.sha.outputs.sha7 }}
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -38,26 +36,10 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          urls="$(bash .github/preview/changed-urls.sh)"
-          {
-            echo "urls<<EOF"
-            echo "${urls}"
-            echo "EOF"
-          } >> "${GITHUB_OUTPUT}"
-
-          # 空配列では matrix job を作れないため、変更なしの場合は空 URL の job を1つ作る。
-          jq -cn --arg urls "${urls}" '
-            $urls
-            | split("\n")
-            | map(select(length > 0))
-            | if length == 0 then {include: [{url: ""}]} else {include: map({url: .})} end
-          ' | sed 's/^/matrix=/' >> "${GITHUB_OUTPUT}"
-
-      - name: Set SHA7
-        id: sha
-        env:
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: echo "sha7=${HEAD_SHA:0:7}" >> "${GITHUB_OUTPUT}"
+          # 空配列では matrix job を作れないため、変更なしの場合は空 URL を1つ入れる。
+          bash .github/preview/changed-urls.sh \
+            | jq -Rsc 'split("\n") | map(select(length > 0)) | if length == 0 then [""] else . end' \
+            | sed 's/^/urls=/' >> "${GITHUB_OUTPUT}"
 
   preview:
     needs: prepare
@@ -65,7 +47,8 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 2
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      matrix:
+        url: ${{ fromJSON(needs.prepare.outputs.urls) }}
     steps:
       - name: Checkout
         if: matrix.url != ''
@@ -153,10 +136,10 @@ jobs:
 
       - name: Build comment
         env:
-          URLS: ${{ needs.prepare.outputs.urls }}
+          URLS_JSON: ${{ needs.prepare.outputs.urls }}
           COMMENT_FILE: ${{ runner.temp }}/comment.md
           ARTIFACT_URLS_FILE: ${{ runner.temp }}/artifact-urls.json
-          SHA7: ${{ needs.prepare.outputs.sha7 }}
+          SHA7: ${{ github.event.pull_request.head.sha }}
         run: node .github/preview/shoot.mjs
 
       - name: Post/update sticky comment
