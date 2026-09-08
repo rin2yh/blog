@@ -109,31 +109,28 @@ async function captureScreenshots() {
 
 async function buildComment() {
   const artifactUrls = JSON.parse(await readFile(ARTIFACT_URLS_FILE, 'utf8'));
-  const sections = urls.map((u) => {
+  const rows = urls.map((u) => {
     const slug = slugFromUrl(u);
     const links = VIEWPORTS.map((vp) => {
       const file = `${vp.key}--${slug}.png`;
       const url = artifactUrls[file];
-      const preview = url
-        ? `[プレビューを開く](${url})`
-        : '> ⚠️ スクリーンショットを生成できませんでした。';
-      return `**${vp.label}**\n\n${preview}`;
-    }).join('\n\n');
-    return `<details open><summary><code>${u}</code></summary>\n\n${links}\n\n</details>`;
+      return url ? `[開く](${url})` : '⚠️ 生成失敗';
+    });
+    return `| \`${u}\` | ${links.join(' | ')} |`;
   });
 
-  if (sections.length === 0) {
-    sections.push('変更された記事ページはありません。');
-  }
-  await writeFile(COMMENT_FILE, body(sections));
+  const content = rows.length === 0
+    ? '変更された記事ページはありません。'
+    : ['| 記事 | Desktop | Mobile |', '| --- | --- | --- |', ...rows].join('\n');
+  await writeFile(COMMENT_FILE, body(content));
 }
 
-function body(sections) {
+function body(content) {
   const pr = PR ? ` (PR #${PR})` : '';
   const sha = SHA7 ? ` \`${SHA7}\`` : '';
   return (
     `<!-- article-preview -->\n## 📝 記事プレビュー${pr}\n\n` +
-    `${sections.join('\n\n')}\n\n` +
+    `${content}\n\n` +
     `<sub>下書き・未来日付の記事も含めてビルドしています。コミット${sha} 時点のプレビューです。</sub>\n`
   );
 }
