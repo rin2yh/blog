@@ -21,4 +21,5 @@ jobs:
           persist-credentials: false
 
       - name: Build
+        # zizmor: ignore[self-repository] actionlint 1.7.12 does not support $/ references
         uses: ./.github/actions/build
