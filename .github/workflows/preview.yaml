@@ -61,8 +61,7 @@ jobs:
           persist-credentials: false
 
       - name: Build site (with drafts)
-        # zizmor: ignore[self-repository] actionlint 1.7.12 does not support $/ references
-        uses: ./.github/actions/build
+        uses: ./.github/actions/build # zizmor: ignore[self-repository] actionlint 1.7.12 does not support $/ references
         with:
           base-url: http://localhost:1313
           build-drafts: 'true'
