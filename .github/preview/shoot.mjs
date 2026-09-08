@@ -39,36 +39,36 @@ const VIEWPORTS = [
   { key: 'mobile', label: 'Mobile', width: 390, height: 844 },
 ];
 
-async function captureScreenshots() {
-  await mkdir(OUT_DIR, { recursive: true });
-  const { chromium } = await import('playwright');
-  const server = await startServer();
-  const browser = await chromium.launch();
-  const slug = slugFromUrl(URL);
-  const target = `http://127.0.0.1:${PORT}${URL}`;
-
+async function captureScreenshot(browser, target, slug, viewport) {
+  const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
   try {
-    for (const vp of VIEWPORTS) {
-      const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
-      try {
-        const resp = await page.goto(target, { waitUntil: 'load', timeout: 30000 });
-        if (!resp?.ok()) {
-          throw new Error(`Failed to load ${target}: ${resp?.status()}`);
-        }
-
-        const file = `${vp.key}--${slug}.png`;
-        const path = join(OUT_DIR, file);
-        await page.screenshot({ path, fullPage: true });
-        await appendFile(process.env.GITHUB_OUTPUT, `${vp.key}=${path}\n`);
-        console.log(`Shot: ${target} (${vp.label})`);
-      } finally {
-        await page.close();
-      }
+    const resp = await page.goto(target, { waitUntil: 'load', timeout: 30000 });
+    if (!resp?.ok()) {
+      throw new Error(`Failed to load ${target}: ${resp?.status()}`);
     }
+
+    const file = `${viewport.key}--${slug}.png`;
+    const path = join(OUT_DIR, file);
+    await page.screenshot({ path, fullPage: true });
+    await appendFile(process.env.GITHUB_OUTPUT, `${viewport.key}=${path}\n`);
+    console.log(`Shot: ${target} (${viewport.label})`);
   } finally {
-    await browser.close();
-    server.close();
+    await page.close();
   }
 }
 
-await captureScreenshots();
+await mkdir(OUT_DIR, { recursive: true });
+const { chromium } = await import('playwright');
+const server = await startServer();
+const browser = await chromium.launch();
+const slug = slugFromUrl(URL);
+const target = `http://127.0.0.1:${PORT}${URL}`;
+
+try {
+  for (const viewport of VIEWPORTS) {
+    await captureScreenshot(browser, target, slug, viewport);
+  }
+} finally {
+  await browser.close();
+  server.close();
+}
