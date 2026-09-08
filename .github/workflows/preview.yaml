@@ -148,8 +148,8 @@ jobs:
               while IFS= read -r url; do
                 slug="${url%/}"
                 slug="${slug##*/}"
-                desktop_url="$(jq -r --arg key "desktop--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
-                mobile_url="$(jq -r --arg key "mobile--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
+                desktop_url="$(jq -er --arg key "desktop--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
+                mobile_url="$(jq -er --arg key "mobile--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
                 printf '| `%s` | [開く](%s) | [開く](%s) |\n' "${url}" "${desktop_url}" "${mobile_url}"
               done <<< "${urls}"
             fi
