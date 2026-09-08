@@ -36,13 +36,13 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          # 空配列では matrix job を作れないため、変更なしの場合は空 URL を1つ入れる。
           bash .github/preview/changed-urls.sh \
-            | jq -Rsc 'split("\n") | map(select(length > 0)) | if length == 0 then [""] else . end' \
+            | jq -Rsc 'split("\n") | map(select(length > 0))' \
             | sed 's/^/urls=/' >> "${GITHUB_OUTPUT}"
 
   preview:
     needs: prepare
+    if: needs.prepare.outputs.urls != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -51,26 +51,22 @@ jobs:
         url: ${{ fromJSON(needs.prepare.outputs.urls) }}
     steps:
       - name: Checkout
-        if: matrix.url != ''
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: recursive
 
       - name: Build site (with drafts)
-        if: matrix.url != ''
         uses: ./.github/actions/build
         with:
           base-url: http://localhost:1313
           build-drafts: 'true'
 
       - name: Setup Node
-        if: matrix.url != ''
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: 22
 
       - name: Install Playwright Chromium
-        if: matrix.url != ''
         working-directory: .github/preview
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # postinstall で全ブラウザを落とさない
@@ -79,7 +75,6 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Screenshot article
-        if: matrix.url != ''
         id: shoot
         env:
           URL: ${{ matrix.url }}
@@ -106,6 +101,7 @@ jobs:
 
   comment:
     needs: [prepare, preview]
+    if: needs.prepare.outputs.urls != '[]'
     runs-on: ubuntu-latest
     steps:
       - name: Collect Artifact URLs
@@ -139,20 +135,16 @@ jobs:
             echo "## 📝 記事プレビュー (PR #${PR})"
             echo
 
-            urls="$(jq -r '.[] | select(length > 0)' <<< "${URLS_JSON}")"
-            if [[ -z "${urls}" ]]; then
-              echo '変更された記事ページはありません。'
-            else
-              echo '| 記事 | Desktop | Mobile |'
-              echo '| --- | --- | --- |'
-              while IFS= read -r url; do
-                slug="${url%/}"
-                slug="${slug##*/}"
-                desktop_url="$(jq -er --arg key "desktop--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
-                mobile_url="$(jq -er --arg key "mobile--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
-                printf '| `%s` | [開く](%s) | [開く](%s) |\n' "${url}" "${desktop_url}" "${mobile_url}"
-              done <<< "${urls}"
-            fi
+            urls="$(jq -r '.[]' <<< "${URLS_JSON}")"
+            echo '| 記事 | Desktop | Mobile |'
+            echo '| --- | --- | --- |'
+            while IFS= read -r url; do
+              slug="${url%/}"
+              slug="${slug##*/}"
+              desktop_url="$(jq -er --arg key "desktop--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
+              mobile_url="$(jq -er --arg key "mobile--${slug}.png" '.[$key]' "${ARTIFACT_URLS_FILE}")"
+              printf '| `%s` | [開く](%s) | [開く](%s) |\n' "${url}" "${desktop_url}" "${mobile_url}"
+            done <<< "${urls}"
 
             echo
             echo "<sub>下書き・未来日付の記事も含めてビルドしています。コミット \`${HEAD_SHA:0:7}\` 時点のプレビューです。</sub>"
