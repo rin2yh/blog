@@ -1,29 +1,20 @@
-// public/ をローカル配信し、変更された各記事ページを Playwright(Chromium) でスクショする。
-// デスクトップ/モバイル幅の PNG を OUT_DIR に書き出すか、Artifact へのリンクを含む
-// PR コメント本文 Markdown を COMMENT_FILE に書き出す。
+// public/ をローカル配信し、変更された記事ページを Playwright (Chromium) でスクショする。
+// デスクトップ/モバイル幅の PNG を OUT_DIR に書き出す。
 //
 // 環境変数:
-//   URL                必須  /post/<slug>/ パス (スクリーンショット生成時)
-//   URLS_JSON          必須  上記パス一覧の JSON 配列 (コメント生成時)
+//   URL                必須  /post/<slug>/ パス
 //   PUBLIC_DIR         任意  配信するディレクトリ (既定: public)
 //   PORT               任意  ローカルサーバのポート (既定: 1313)
-//   OUT_DIR            任意  PNG 出力先ディレクトリ (指定時はスクリーンショットを生成)
-//   COMMENT_FILE       任意  コメント Markdown の出力先 (指定時はコメントを生成)
-//   ARTIFACT_URLS_FILE 必須  ファイル名を Artifact URL に対応させた JSON (コメント生成時)
-//   PR                 任意  PR 番号 (見出し表示用)
-//   SHA7               任意  短縮 SHA (脚注表示用)
+//   OUT_DIR            必須  PNG 出力先ディレクトリ
 
 import { createServer } from 'node:http';
-import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const PUBLIC_DIR = process.env.PUBLIC_DIR || 'public';
 const PORT = Number(process.env.PORT || 1313);
 const OUT_DIR = process.env.OUT_DIR;
-const COMMENT_FILE = process.env.COMMENT_FILE;
-const ARTIFACT_URLS_FILE = process.env.ARTIFACT_URLS_FILE;
-const PR = process.env.PR || '';
-const SHA7 = (process.env.SHA7 || '').slice(0, 7);
+const URL = process.env.URL;
 
 // sirv で public/ を配信する (MIME 判定・index フォールバック・トラバーサル対策を内包)。
 async function startServer() {
@@ -53,9 +44,8 @@ async function captureScreenshots() {
   const { chromium } = await import('playwright');
   const server = await startServer();
   const browser = await chromium.launch();
-  const url = process.env.URL;
-  const slug = slugFromUrl(url);
-  const target = `http://127.0.0.1:${PORT}${url}`;
+  const slug = slugFromUrl(URL);
+  const target = `http://127.0.0.1:${PORT}${URL}`;
 
   try {
     for (const vp of VIEWPORTS) {
@@ -81,41 +71,4 @@ async function captureScreenshots() {
   }
 }
 
-async function buildComment() {
-  const urls = JSON.parse(process.env.URLS_JSON).filter(Boolean);
-  const artifactUrls = JSON.parse(await readFile(ARTIFACT_URLS_FILE, 'utf8'));
-  const rows = urls.map((u) => {
-    const slug = slugFromUrl(u);
-    const links = VIEWPORTS.map((vp) => {
-      const file = `${vp.key}--${slug}.png`;
-      const url = artifactUrls[file];
-      return url ? `[開く](${url})` : '⚠️ 生成失敗';
-    });
-    return `| \`${u}\` | ${links.join(' | ')} |`;
-  });
-
-  const content = rows.length === 0
-    ? '変更された記事ページはありません。'
-    : ['| 記事 | Desktop | Mobile |', '| --- | --- | --- |', ...rows].join('\n');
-  await writeFile(COMMENT_FILE, body(content));
-}
-
-function body(content) {
-  const pr = PR ? ` (PR #${PR})` : '';
-  const sha = SHA7 ? ` \`${SHA7}\`` : '';
-  return (
-    `<!-- article-preview -->\n## 📝 記事プレビュー${pr}\n\n` +
-    `${content}\n\n` +
-    `<sub>下書き・未来日付の記事も含めてビルドしています。コミット${sha} 時点のプレビューです。</sub>\n`
-  );
-}
-
-async function main() {
-  if (OUT_DIR) {
-    await captureScreenshots();
-  } else {
-    await buildComment();
-  }
-}
-
-await main();
+await captureScreenshots();
