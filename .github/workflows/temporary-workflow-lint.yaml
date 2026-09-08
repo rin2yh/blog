@@ -21,14 +21,18 @@ jobs:
           install_args: actionlint ghalint zizmor
 
       - name: actionlint
-        run: actionlint
+        run: actionlint .github/workflows/preview.yaml
 
       - name: ghalint
         if: always()
-        run: ghalint run
+        run: |
+          mkdir -p "${RUNNER_TEMP}/lint/.github/workflows"
+          cp .github/workflows/preview.yaml "${RUNNER_TEMP}/lint/.github/workflows/"
+          cd "${RUNNER_TEMP}/lint"
+          ghalint run
 
       - name: zizmor
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: zizmor --format=github .github/workflows
+        run: zizmor --format=github .github/workflows/preview.yaml

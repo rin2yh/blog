@@ -5,10 +5,7 @@ on:
     paths:
       - 'content/post/**'
 
-permissions:
-  actions: read # Artifact URL の取得
-  contents: read
-  pull-requests: write # スティッキーコメント
+permissions: {}
 
 concurrency:
   group: preview-${{ github.event.pull_request.number }}
@@ -21,6 +18,9 @@ env:
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
     outputs:
       urls: ${{ steps.urls.outputs.urls }}
     steps:
@@ -29,6 +29,7 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Compute changed article URLs
         id: urls
@@ -44,6 +45,9 @@ jobs:
     needs: prepare
     if: needs.prepare.outputs.urls != '[]'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -54,9 +58,10 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           submodules: recursive
+          persist-credentials: false
 
       - name: Build site (with drafts)
-        uses: ./.github/actions/build
+        uses: $/.github/actions/build
         with:
           base-url: http://localhost:1313
           build-drafts: 'true'
@@ -85,7 +90,7 @@ jobs:
 
       - name: Upload Desktop screenshot
         if: steps.shoot.outputs.desktop != ''
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.shoot.outputs.desktop }}
           archive: false
@@ -93,7 +98,7 @@ jobs:
 
       - name: Upload Mobile screenshot
         if: steps.shoot.outputs.mobile != ''
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           path: ${{ steps.shoot.outputs.mobile }}
           archive: false
@@ -103,6 +108,10 @@ jobs:
     needs: [prepare, preview]
     if: needs.prepare.outputs.urls != '[]'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      pull-requests: write
     steps:
       - name: Collect Artifact URLs
         env:
@@ -130,6 +139,7 @@ jobs:
           ARTIFACT_URLS_FILE: ${{ runner.temp }}/artifact-urls.json
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          # shellcheck disable=SC2016
           {
             echo '<!-- article-preview -->'
             echo "## 📝 記事プレビュー (PR #${PR})"
