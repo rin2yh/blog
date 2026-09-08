@@ -1,20 +1,15 @@
 // public/ をローカル配信し、変更された記事ページを Playwright (Chromium) でスクショする。
 // デスクトップ/モバイル幅の PNG を OUT_DIR に書き出す。
-//
-// 環境変数:
-//   URL                必須  /post/<slug>/ パス
-//   PUBLIC_DIR         任意  配信するディレクトリ (既定: public)
-//   PORT               任意  ローカルサーバのポート (既定: 1313)
-//   OUT_DIR            必須  PNG 出力先ディレクトリ
 
 import { createServer } from 'node:http';
 import { appendFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
+const URL = process.env.URL;
 const PUBLIC_DIR = process.env.PUBLIC_DIR || 'public';
 const PORT = Number(process.env.PORT || 1313);
 const OUT_DIR = process.env.OUT_DIR;
-const URL = process.env.URL;
+const GITHUB_OUTPUT = process.env.GITHUB_OUTPUT;
 
 // sirv で public/ を配信する (MIME 判定・index フォールバック・トラバーサル対策を内包)。
 async function startServer() {
@@ -50,7 +45,7 @@ async function captureScreenshot(browser, target, slug, viewport) {
     const file = `${viewport.key}--${slug}.png`;
     const path = join(OUT_DIR, file);
     await page.screenshot({ path, fullPage: true });
-    await appendFile(process.env.GITHUB_OUTPUT, `${viewport.key}=${path}\n`);
+    await appendFile(GITHUB_OUTPUT, `${viewport.key}=${path}\n`);
     console.log(`Shot: ${target} (${viewport.label})`);
   } finally {
     await page.close();
