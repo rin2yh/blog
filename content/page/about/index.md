@@ -21,14 +21,14 @@ menu:
 - 福岡大学　工学部電子情報工学科 （2020.04 - 2024.03）
 
 ### コミュニティ活動
+- GoConference スタッフ (2026.02 - )
+- GopherCon Japan Co-chair (2026.07 - )
+- TinyGo Conference 2025 スタッフ (2025.10.12)
 - エンジニアニメ (2025.07 - )
     - [【劇場版】アニメから得た学びを発表会 2025](https://engineers-anime-2025-lp.pages.dev/)　スタッフ（2025.08.10）
     - 「[エンジニアニメ Anthology Tech Book 2nd Season](https://techbookfest.org/product/v0MeXEsV6CZyFMmgDj7yFV?productVariantID=1FXpr2iLmhKrgCHvsAs9gk)」 執筆　題：「ダンダダン」から学ぶスピードの大切さ
     - [【劇場版】アニメから得た学びを発表会 2026](https://engineers-anime.connpass.com/event/375981/) スタッフ (2026.04.11)
-- TinyGo Conference 2025 スタッフ (2025.10.12)
 - ReactTokyo Fes 2026 スタッフ (2026.02.28)
-- GoConference スタッフ (2026.02 - )
-- GopherCon Japan Co-chair (2026.07 - )
 
 {{< details summary="インターン" >}}
 
