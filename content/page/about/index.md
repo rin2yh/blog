@@ -23,8 +23,7 @@ menu:
 ### コミュニティ活動
 - GoConference スタッフ (2026.02 - )
 - GopherCon Japan Co-chair (2026.07 - )
-- TinyGo Conference 2025 スタッフ (2025.10.12)
-- TinyGo Conference 2026 スタッフ
+- TinyGo Conference スタッフ (2025.10.12、2026)
 - エンジニアニメ (2025.07 - )
     - [【劇場版】アニメから得た学びを発表会 2025](https://engineers-anime-2025-lp.pages.dev/)　スタッフ（2025.08.10）
     - 「[エンジニアニメ Anthology Tech Book 2nd Season](https://techbookfest.org/product/v0MeXEsV6CZyFMmgDj7yFV?productVariantID=1FXpr2iLmhKrgCHvsAs9gk)」 執筆　題：「ダンダダン」から学ぶスピードの大切さ
