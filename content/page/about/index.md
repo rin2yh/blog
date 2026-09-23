@@ -27,6 +27,8 @@ menu:
     - [【劇場版】アニメから得た学びを発表会 2026](https://engineers-anime.connpass.com/event/375981/) スタッフ (2026.04.11)
 - TinyGo Conference 2025 スタッフ (2025.10.12)
 - ReactTokyo Fes 2026 スタッフ (2026.02.28)
+- GoConference スタッフ (2026.02 - )
+- GopherCon Japan Co-chair (2026.07 - )
 
 {{< details summary="インターン" >}}
 
