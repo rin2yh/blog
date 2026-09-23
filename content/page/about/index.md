@@ -21,8 +21,8 @@ menu:
 - 福岡大学　工学部電子情報工学科 （2020.04 - 2024.03）
 
 ### コミュニティ活動
-- GoConference スタッフ (2026.02 - )
 - GopherCon Japan Co-chair (2026.07 - )
+- GoConference スタッフ (2026.02 - )
 - TinyGo Conference スタッフ (2025.10.12、2026)
 - エンジニアニメ (2025.07 - )
     - [【劇場版】アニメから得た学びを発表会 2025](https://engineers-anime-2025-lp.pages.dev/)　スタッフ（2025.08.10）
