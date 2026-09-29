@@ -4,6 +4,7 @@ draft = false
 title = '7days Hacking Day2'
 categories = ["tech"]
 tags = ["memo", "security"]
+ogpSiteName = false
 +++
 
 https://www.seshop.com/product/detail/26456?srsltid=AfmBOopr_-WJwEPXdy0dGw5oVG1yDJe9FnfaULTQgR2VN4MG_DGFl2XR

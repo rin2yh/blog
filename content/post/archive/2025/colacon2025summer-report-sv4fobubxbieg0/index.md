@@ -5,4 +5,5 @@ title = 'CoLab Conf（コラコン） 参加レポート'
 categories = ['external', 'idea']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/ffd0fbbb5f0ab3'
+ogpSiteName = false
 +++

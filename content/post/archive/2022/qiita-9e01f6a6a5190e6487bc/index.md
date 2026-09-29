@@ -5,4 +5,5 @@ title = 'Slackのカスタムレスポンス動かんぞ？？'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/9e01f6a6a5190e6487bc'
+ogpSiteName = false
 +++

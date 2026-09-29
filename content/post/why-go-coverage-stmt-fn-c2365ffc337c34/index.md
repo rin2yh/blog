@@ -5,4 +5,5 @@ title = 'なぜGoのカバレッジはstmtとfnなのか'
 categories = ['tech', 'external']
 tags = ['slide', 'go']
 externalUrl = 'https://www.docswell.com/s/rin2yh/K277VM-why-does-Go-use-statements-and-functions-for-coverage'
+ogpSiteName = false
 +++

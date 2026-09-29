@@ -5,4 +5,5 @@ title = 'VSCodeの拡張機能を自動インストールするバッチファ�
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/8b392fb4567d29728c33'
+ogpSiteName = false
 +++

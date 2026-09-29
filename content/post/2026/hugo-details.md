@@ -4,6 +4,7 @@ draft = false
 title = 'Hugoでdetailsタグを使う方法'
 categories = ["tech"]
 tags = ["Hugo", "blog"]
+ogpSiteName = false
 +++
 
 ## 概要

@@ -5,4 +5,5 @@ title = 'tenten.go 静的解析ナイト【メモ】'
 categories = ['tech', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/b491f2b24b0105'
+ogpSiteName = false
 +++

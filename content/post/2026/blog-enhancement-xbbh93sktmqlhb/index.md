@@ -5,6 +5,7 @@ title = 'ブログ改善ログ'
 slug = 'blog-enhancement'
 categories = ['tech']
 tags = ['Hugo', 'blog']
+ogpSiteName = false
 +++
 
 ## はじめに

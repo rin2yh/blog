@@ -5,4 +5,5 @@ title = 'Go における「継承的」機能：構造体の埋め込み（備�
 categories = ['tech', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/966adb01132248'
+ogpSiteName = false
 +++

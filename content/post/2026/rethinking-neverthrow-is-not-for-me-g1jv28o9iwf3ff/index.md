@@ -5,4 +5,5 @@ title = 'Rethinking neverthrow is not for me'
 categories = ['tech', 'external']
 tags = ['slide']
 externalUrl = 'https://www.docswell.com/s/rin2yh/Z4N4NW-rethinking-neverthrow-is-not-for-me'
+ogpSiteName = false
 +++

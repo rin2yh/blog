@@ -4,6 +4,7 @@ draft = false
 title = 'クラウドネイティブ会議　Day1メモ'
 categories = ['idea']
 tags = ['memo']
+ogpSiteName = false
 +++
 
 # クラウドネイティブ会議Day1メモ

@@ -4,6 +4,7 @@ draft = false
 title = '関数型まつりDay2に参加しました！'
 categories = ['idea']
 tags = ['conference', 'fp']
+ogpSiteName = false
 +++
 
 ## はじめに

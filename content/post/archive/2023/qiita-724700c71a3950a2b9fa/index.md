@@ -5,4 +5,5 @@ title = '【備忘録】React-Calendar導入'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/724700c71a3950a2b9fa'
+ogpSiteName = false
 +++

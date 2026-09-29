@@ -5,4 +5,5 @@ title = 'React Router×TypeScriptで内部リンクを型で制限する'
 categories = ['external', 'tech']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/3c91a43b50fc87'
+ogpSiteName = false
 +++

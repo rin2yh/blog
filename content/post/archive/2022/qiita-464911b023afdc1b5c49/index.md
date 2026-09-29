@@ -5,4 +5,5 @@ title = 'Stable Diffusion　転移学習'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/464911b023afdc1b5c49'
+ogpSiteName = false
 +++

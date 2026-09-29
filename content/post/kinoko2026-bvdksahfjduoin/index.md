@@ -4,6 +4,7 @@ draft = false
 title = 'きのこカンファレンス 2026 初参加してみて'
 categories = ['idea']
 tags = ['conference', 'career']
+ogpSiteName = false
 +++
 
 ## はじめに

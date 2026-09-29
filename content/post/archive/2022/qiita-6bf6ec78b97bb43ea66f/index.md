@@ -5,4 +5,5 @@ title = 'RailsをRenderでデプロイ　ヘルプ集【備忘録】'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/6bf6ec78b97bb43ea66f'
+ogpSiteName = false
 +++

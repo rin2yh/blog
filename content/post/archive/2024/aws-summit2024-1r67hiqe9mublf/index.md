@@ -4,6 +4,7 @@ draft = false
 title = 'AWS Summit 2024'
 categories = ['idea']
 tags = ['conference', 'memo']
+ogpSiteName = false
 +++
 
 AWS Summit 2024の参加メモ。

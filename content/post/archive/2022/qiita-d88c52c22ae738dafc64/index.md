@@ -5,4 +5,5 @@ title = 'Rails 検索機能　数値'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/d88c52c22ae738dafc64'
+ogpSiteName = false
 +++

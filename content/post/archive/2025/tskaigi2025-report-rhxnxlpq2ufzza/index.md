@@ -5,4 +5,5 @@ title = 'TSKaigi2025個人的参加レポート/メモ'
 categories = ['idea', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/8c7b1b32e55624'
+ogpSiteName = false
 +++

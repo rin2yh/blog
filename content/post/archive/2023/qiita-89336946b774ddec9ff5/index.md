@@ -5,4 +5,5 @@ title = "VSCode gopls client: couldn't create connection to server.の解決法"
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/89336946b774ddec9ff5'
+ogpSiteName = false
 +++

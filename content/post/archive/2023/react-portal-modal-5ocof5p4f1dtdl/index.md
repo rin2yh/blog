@@ -5,4 +5,5 @@ title = 'Portalを利用したModal'
 categories = ['tech', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/388d6efd472858'
+ogpSiteName = false
 +++

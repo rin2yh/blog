@@ -4,6 +4,7 @@ draft = true
 title = 'Keyboard Note'
 categories = ['tech']
 tags = ['keyboard']
+ogpSiteName = false
 +++
 
 ## キーボードを体系化する

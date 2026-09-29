@@ -5,4 +5,5 @@ title = 'Firebase 認証情報をFirestoreに保存する方法'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/fc7d6eab4797524411ae'
+ogpSiteName = false
 +++

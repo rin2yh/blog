@@ -4,6 +4,7 @@ draft = false
 title = '開発環境の変遷 2025'
 categories = ["tech"]
 tags = []
+ogpSiteName = false
 +++
 
 # 概要

@@ -5,4 +5,5 @@ title = 'GuiguiとGhosttyを組み合わせてターミナルGUIを作ってみ�
 categories = ['tech', 'external']
 tags = ['ebitengine', 'go', 'guigui', 'zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/448d45e7df01ee'
+ogpSiteName = false
 +++

@@ -4,6 +4,7 @@ draft = false
 title = '7days Hacking Day3'
 categories = ["tech"]
 tags = ["memo", "security"]
+ogpSiteName = false
 +++
 
 7日間でハッキングを始める本 day3

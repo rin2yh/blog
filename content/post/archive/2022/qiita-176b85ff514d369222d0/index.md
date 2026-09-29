@@ -5,4 +5,5 @@ title = 'useMediaQuery React Hydration Error【備忘録】'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/176b85ff514d369222d0'
+ogpSiteName = false
 +++

@@ -5,4 +5,5 @@ title = 'Rails iframeでサクッと作る地図機能'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/59176f67e29939aeb103'
+ogpSiteName = false
 +++

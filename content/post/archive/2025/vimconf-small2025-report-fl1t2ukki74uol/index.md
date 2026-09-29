@@ -5,4 +5,5 @@ title = 'VimConf 2025 Small参加レポート'
 categories = ['external', 'idea']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/5ff92a86249060'
+ogpSiteName = false
 +++

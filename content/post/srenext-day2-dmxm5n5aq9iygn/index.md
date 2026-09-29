@@ -4,6 +4,7 @@ draft = false
 title = 'SRE Next Day2に参加しました！'
 categories = ['idea']
 tags = ['conference', 'sre']
+ogpSiteName = false
 +++
 
 

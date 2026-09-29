@@ -5,4 +5,5 @@ title = "FutureBuilder A value of type 'Object?' can't be assigned to a variable
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/aa7d5f9390c973e18d71'
+ogpSiteName = false
 +++

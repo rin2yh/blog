@@ -5,4 +5,5 @@ title = 'OSC 2024 参加レポート'
 categories = ['idea', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/8de0072f4d904e'
+ogpSiteName = false
 +++

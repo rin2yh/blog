@@ -5,4 +5,5 @@ title = 'Rails 一覧画面でコメント機能'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/0da422e0a81dd28974c3'
+ogpSiteName = false
 +++

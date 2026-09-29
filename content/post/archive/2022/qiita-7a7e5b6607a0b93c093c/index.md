@@ -5,4 +5,5 @@ title = 'Rails 非同期いいね　エラー解決集'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/7a7e5b6607a0b93c093c'
+ogpSiteName = false
 +++

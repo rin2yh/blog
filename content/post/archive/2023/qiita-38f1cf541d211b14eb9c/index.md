@@ -5,4 +5,5 @@ title = 'Yahoo APIでの商品検索'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/38f1cf541d211b14eb9c'
+ogpSiteName = false
 +++

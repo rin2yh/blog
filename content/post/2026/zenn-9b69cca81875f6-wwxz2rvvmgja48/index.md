@@ -5,4 +5,5 @@ title = 'Javaなしで安全に使えるPlantUMLビューア「pumlv」'
 categories = ['tech', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/9b69cca81875f6'
+ogpSiteName = false
 +++

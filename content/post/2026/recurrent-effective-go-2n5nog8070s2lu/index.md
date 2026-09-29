@@ -4,6 +4,7 @@ draft = true
 title = 'Recurrent Effective Go'
 categories = []
 tags = []
+ogpSiteName = false
 +++
 
 構成(5m)
