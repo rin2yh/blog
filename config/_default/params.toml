@@ -9,11 +9,16 @@ googleAnalytics = "G-M2XSPTPQFB"
 # References assets/icons/brand-twitter.svg (the X logo already bundled for the social link).
 shareIcon = "brand-twitter"
 # OGP画像にサイト名（.Site.Title = りんりんのメモ帳）を描画する。
-# テーマ 0.5.0 の新機能。siteNameSince 以降の日付の記事だけに描画され、
-# それより前／日付なしの記事は既存の生成画像のまま変わらない。
+# 既にサイト名が入っている記事を固定指定する。公開日を修正しても OGP 画像は変わらない。
+# 新規記事は archetype の ogpSiteName = true でサイト名を入れる。
 [ogp]
 siteName = true
-siteNameSince = "2026-07-14"
+siteNamePages = [
+    "post/pumlv-go-ouw3hxjl9upmqm/index.md",
+    "post/2026/why-i-chose-marp-c96659vtvjaprs/index.md",
+    "post/2026/ocaml-basics-q7m2k9v4x8p3nz/index.md",
+    "post/claude-max-plan-review-e4bfb08989ad56/index.md", # blog PR #107
+]
 [footer]
 since = 2026
 customText = ""

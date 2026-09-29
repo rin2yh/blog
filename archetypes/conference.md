@@ -1,6 +1,7 @@
 +++
 date = '{{ .Date }}'
 draft = true
+ogpSiteName = true
 title = 'XXXに参加しました！'
 categories = ['idea']
 tags = ['conference']
