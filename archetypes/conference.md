@@ -1,5 +1,4 @@
 +++
-date = '{{ .Date }}'
 draft = true
 title = 'XXXに参加しました！'
 categories = ['idea']

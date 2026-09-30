@@ -64,6 +64,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           base-url: http://localhost:1313
+          environment: preview
           build-drafts: 'true'
 
       - name: Setup Node

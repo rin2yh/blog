@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: read
+      contents: write
       pages: read
     env:
       TZ: Asia/Tokyo
@@ -24,9 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
+          ref: main
           submodules: recursive
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Prepare articles for publication
+        run: go run ./cmd/publish
 
       - name: Setup Pages
         id: pages
@@ -36,6 +40,19 @@ jobs:
         uses: ./.github/actions/build
         with:
           base-url: ${{ steps.pages.outputs.base_url }}
+
+      - name: Record publication dates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add -- content/post
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --message "docs(post): 公開日を記録する"
+            gh auth setup-git
+            git push origin HEAD:main
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

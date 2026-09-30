@@ -6,6 +6,10 @@ inputs:
     description: Optional base URL passed to hugo --baseURL (trailing slash is appended)
     required: false
     default: ''
+  environment:
+    description: Hugo configuration environment
+    required: false
+    default: production
   build-drafts:
     description: When 'true', build draft and future-dated content (adds --buildDrafts --buildFuture)
     required: false
@@ -62,10 +66,11 @@ runs:
       shell: bash
       env:
         BASE_URL: ${{ inputs.base-url }}
+        HUGO_ENVIRONMENT: ${{ inputs.environment }}
         BUILD_DRAFTS: ${{ inputs.build-drafts }}
         CACHE_DIR: ${{ runner.temp }}/hugo_cache
       run: |
-        args=(--gc --minify --cacheDir "${CACHE_DIR}")
+        args=(--environment "${HUGO_ENVIRONMENT}" --gc --minify --cacheDir "${CACHE_DIR}")
         if [[ -n "${BASE_URL}" ]]; then
           args+=(--baseURL "${BASE_URL}/")
         fi

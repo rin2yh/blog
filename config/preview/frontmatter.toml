@@ -1,0 +1,2 @@
+# A temporary display date for articles that have not been published yet.
+date = ['date', ':fileModTime']
