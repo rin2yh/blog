@@ -20,5 +20,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Test publication dates
+        run: python3 -B -m unittest discover -s .github/publish
+
       - name: Build
         uses: ./.github/actions/build
+        with:
+          environment: preview
