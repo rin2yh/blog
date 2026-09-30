@@ -76,49 +76,55 @@ func writePublicationDate(path string, now time.Time) (bool, error) {
 		return false, err
 	}
 	defer file.Close()
+
 	reader := bufio.NewReader(file)
 	frontMatter, metadata, err := readFrontMatter(reader)
-	if err != nil || !needsDate(metadata) {
+	if err != nil {
 		return false, err
+	}
+	if !needsDate(metadata) {
+		return false, nil
 	}
 
-	temp, err := os.CreateTemp(filepath.Dir(path), ".setdates-*.tmp")
-	if err != nil {
-		return false, err
-	}
-	defer os.Remove(temp.Name())
-	defer temp.Close()
-	info, err := file.Stat()
-	if err != nil {
-		return false, err
-	}
-	if err := temp.Chmod(info.Mode().Perm()); err != nil {
-		return false, err
-	}
-	if err := withDate(temp, frontMatter, now); err != nil {
-		return false, err
-	}
-	// Copy the body unchanged without loading it into memory.
-	if _, err := io.Copy(temp, reader); err != nil {
-		return false, err
-	}
-	if err := temp.Close(); err != nil {
-		return false, err
-	}
-	if err := os.Rename(temp.Name(), path); err != nil {
+	content := io.MultiReader(bytes.NewReader(withDate(frontMatter, now)), reader)
+	if err := replaceFile(file, content); err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func withDate(writer io.Writer, frontMatter []byte, now time.Time) error {
+func withDate(frontMatter []byte, now time.Time) []byte {
 	opening, rest, _ := bytes.Cut(frontMatter, []byte("\n"))
 	newline := "\n"
 	if bytes.HasSuffix(opening, []byte("\r")) {
 		newline = "\r\n"
 	}
-	_, err := fmt.Fprintf(writer, "%s\ndate = '%s'%s%s", opening, now.Format(time.RFC3339), newline, rest)
-	return err
+	return fmt.Appendf(nil, "%s\ndate = '%s'%s%s", opening, now.Format(time.RFC3339), newline, rest)
+}
+
+// replaceFile streams content to a temporary file and replaces the original only after success.
+func replaceFile(file *os.File, content io.Reader) error {
+	info, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	temp, err := os.CreateTemp(filepath.Dir(file.Name()), ".setdates-*.tmp")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(temp.Name())
+	defer temp.Close()
+
+	if err := temp.Chmod(info.Mode().Perm()); err != nil {
+		return err
+	}
+	if _, err := io.Copy(temp, content); err != nil {
+		return err
+	}
+	if err := temp.Close(); err != nil {
+		return err
+	}
+	return os.Rename(temp.Name(), file.Name())
 }
 
 func readFrontMatter(reader *bufio.Reader) ([]byte, map[string]any, error) {

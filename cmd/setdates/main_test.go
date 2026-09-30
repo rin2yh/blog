@@ -99,22 +99,7 @@ func TestSetDates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			root := t.TempDir()
-			name := tt.input.path
-			if name == "" {
-				name = filepath.Base(tt.input.file)
-			}
-			path := filepath.Join(root, name)
-			content, err := os.ReadFile(tt.input.file)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-				t.Fatal(err)
-			}
-			if err := os.WriteFile(path, content, 0o644); err != nil {
-				t.Fatal(err)
-			}
+			root, path := prepareArticle(t, tt.input.file, tt.input.path)
 
 			paths, err := setDates(root, tt.input.now)
 			if (err != nil) != tt.want.err {
@@ -127,17 +112,39 @@ func TestSetDates(t *testing.T) {
 			if diff := cmp.Diff(wantPaths, paths); diff != "" {
 				t.Errorf("updated paths (-want +got):\n%s", diff)
 			}
-			expected, err := os.ReadFile(tt.want.file)
-			if err != nil {
-				t.Fatal(err)
-			}
-			actual, err := os.ReadFile(path)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if diff := cmp.Diff(string(expected), string(actual)); diff != "" {
-				t.Errorf("content (-want +got):\n%s", diff)
-			}
+			assertFileContent(t, path, tt.want.file)
 		})
 	}
+}
+
+func prepareArticle(t *testing.T, fixture, name string) (root, path string) {
+	t.Helper()
+	root = t.TempDir()
+	if name == "" {
+		name = filepath.Base(fixture)
+	}
+	path = filepath.Join(root, name)
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, readTestFile(t, fixture), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	return root, path
+}
+
+func assertFileContent(t *testing.T, actual, expected string) {
+	t.Helper()
+	if diff := cmp.Diff(string(readTestFile(t, expected)), string(readTestFile(t, actual))); diff != "" {
+		t.Errorf("content (-want +got):\n%s", diff)
+	}
+}
+
+func readTestFile(t *testing.T, path string) []byte {
+	t.Helper()
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return content
 }
