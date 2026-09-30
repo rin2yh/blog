@@ -5,4 +5,5 @@ title = 'Firebase  [cloud_firestore/permission-denied] The caller does not have 
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/7a63ad3d315d95bb7e4d'
+ogpSiteName = false
 +++

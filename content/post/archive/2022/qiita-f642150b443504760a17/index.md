@@ -5,4 +5,5 @@ title = 'Railsのバージョンを変える方法'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/f642150b443504760a17'
+ogpSiteName = false
 +++

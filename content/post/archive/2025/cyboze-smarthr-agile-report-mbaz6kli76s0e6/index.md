@@ -5,4 +5,5 @@ title = 'サイボウズ x SmartHR アジャイル文化醸成への挑戦 ～ �
 categories = ['idea', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/eb178eb233c5d7'
+ogpSiteName = false
 +++

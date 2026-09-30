@@ -4,6 +4,7 @@ draft = false
 title = 'Flutter Crashlytics導入ログ'
 categories = ['tech']
 tags = ["Flutter", "Firebase", "memo"]
+ogpSiteName = false
 +++
 
 ガイドに従い、実行していく

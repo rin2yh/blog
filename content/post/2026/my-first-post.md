@@ -4,6 +4,7 @@ draft = false
 title = 'Hugoでブログ作ってみた。'
 categories = ['tech']
 tags = ['Hugo', 'blog']
+ogpSiteName = false
 +++
 
 

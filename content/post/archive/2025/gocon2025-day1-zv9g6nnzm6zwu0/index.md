@@ -4,6 +4,7 @@ draft = false
 title = 'Gocon2025 Day1'
 categories = ['idea']
 tags = ['conference', 'memo']
+ogpSiteName = false
 +++
 
 go con day1のメモ。

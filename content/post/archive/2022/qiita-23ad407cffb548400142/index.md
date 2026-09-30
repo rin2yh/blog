@@ -5,4 +5,5 @@ title = 'iOS Simulatorが起動しない時の対処法'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/23ad407cffb548400142'
+ogpSiteName = false
 +++

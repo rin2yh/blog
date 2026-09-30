@@ -5,4 +5,5 @@ title = 'Macでもバ美肉したい！'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/5364845e661df5d08b9b'
+ogpSiteName = false
 +++

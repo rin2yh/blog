@@ -4,6 +4,7 @@ draft = false
 title = 'Terminal Night #2 メモ'
 categories = ['idea']
 tags = ['memo']
+ogpSiteName = false
 +++
 
 # Terminal Night #2

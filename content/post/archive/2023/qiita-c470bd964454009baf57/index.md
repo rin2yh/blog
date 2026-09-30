@@ -5,4 +5,5 @@ title = 'Tailwind初心者あるある'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/c470bd964454009baf57'
+ogpSiteName = false
 +++

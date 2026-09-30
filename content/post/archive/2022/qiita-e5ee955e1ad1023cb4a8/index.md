@@ -5,4 +5,5 @@ title = 'IntelliJ エミュレータがサイドバーに出てしまう問題'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/e5ee955e1ad1023cb4a8'
+ogpSiteName = false
 +++

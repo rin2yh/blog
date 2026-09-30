@@ -4,6 +4,7 @@ draft = false
 title = '自律的にE2EをデバッグするSkillを作ってみた'
 categories = ['tech']
 tags = ['E2E', 'Playwright', 'GitHub Actions', 'Codex']
+ogpSiteName = false
 +++
 
 ## 概要

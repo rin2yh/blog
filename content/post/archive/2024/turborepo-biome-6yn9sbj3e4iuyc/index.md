@@ -5,4 +5,5 @@ title = 'npm, turborepo, VSCodeのモノレポでbiomeを使えるようにす�
 categories = ['tech', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/a12967005183c8'
+ogpSiteName = false
 +++

@@ -5,4 +5,5 @@ title = 'aliasでコマンドを簡略化してみた'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/93484bbf964bfab9d360'
+ogpSiteName = false
 +++

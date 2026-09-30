@@ -4,6 +4,7 @@ draft = false
 title = 'Neovimの環境構築で気づいたこと'
 categories = ['tech']
 tags = ["Neovim", "dotfiles"]
+ogpSiteName = false
 +++
 
 

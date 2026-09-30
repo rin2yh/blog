@@ -4,6 +4,7 @@ draft = false
 title = 'Colab Conference 2025/12/13に行ってきた！'
 categories = ['idea']
 tags = ['conference', 'memo']
+ogpSiteName = false
 +++
 
 ↓に行ってきた時のメモ。

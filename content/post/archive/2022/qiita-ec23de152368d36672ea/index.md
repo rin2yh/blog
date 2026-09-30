@@ -5,4 +5,5 @@ title = 'Fly.ioでRailsアプリをデプロイしてみた for Mac'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/ec23de152368d36672ea'
+ogpSiteName = false
 +++

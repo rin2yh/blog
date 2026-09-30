@@ -5,4 +5,5 @@ title = 'Flutter 環境構築 for Mac(初心者向け)'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/7f2c8e64b241eb0f43c6'
+ogpSiteName = false
 +++

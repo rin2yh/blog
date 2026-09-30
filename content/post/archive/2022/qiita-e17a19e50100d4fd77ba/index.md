@@ -5,4 +5,5 @@ title = '大規模リクエストを捌くコツ'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/e17a19e50100d4fd77ba'
+ogpSiteName = false
 +++

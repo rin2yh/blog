@@ -5,4 +5,5 @@ title = 'Ransackで作るラクラク検索'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/bb086da6e07ca1ab0c77'
+ogpSiteName = false
 +++

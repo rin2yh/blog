@@ -4,6 +4,7 @@ draft = false
 title = 'gh CLIの学習めも'
 categories = ['tech']
 tags = ["GitHub", "CLI", "memo"]
+ogpSiteName = false
 +++
 
 ## ざっくり所感

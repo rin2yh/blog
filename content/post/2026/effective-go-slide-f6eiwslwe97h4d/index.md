@@ -5,4 +5,5 @@ title = 'Recurrent Effective Go 〜改めての学び〜'
 categories = ['tech', 'external']
 tags = ['slide', 'go']
 externalUrl = 'https://speakerdeck.com/rin2yh/recurrent-effective-go-gai-metenoxue-bi'
+ogpSiteName = false
 +++

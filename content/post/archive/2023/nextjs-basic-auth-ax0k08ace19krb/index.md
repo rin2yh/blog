@@ -5,4 +5,5 @@ title = 'Next.js Basic認証'
 categories = ['tech', 'external']
 tags = ['zenn']
 externalUrl = 'https://zenn.dev/rinrin_yuuki/articles/d047c0f01cee2b'
+ogpSiteName = false
 +++

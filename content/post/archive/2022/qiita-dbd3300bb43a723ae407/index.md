@@ -5,4 +5,5 @@ title = '三項演算子　returnできない時の対処法'
 categories = ['tech', 'external']
 tags = ['qiita']
 externalUrl = 'https://qiita.com/yuuki-h/items/dbd3300bb43a723ae407'
+ogpSiteName = false
 +++
