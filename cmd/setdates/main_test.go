@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bytes"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"reflect"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestSetDates(t *testing.T) {
@@ -27,58 +27,29 @@ func TestSetDates(t *testing.T) {
 		want  want
 	}{
 		{
-			name: "公開済みの記事だけに日時を追加する",
-			input: input{
-				files: "testdata/input",
-				now:   now,
-			},
-			want: want{
-				files:   "testdata/golden",
-				updated: []string{"implicit.md", "multiline.md", "nested.md", "new/index.md", "windows.md"},
-			},
+			name:  "公開済みの記事だけに日時を追加する",
+			input: input{files: "testdata/input", now: now},
+			want:  want{files: "testdata/golden", updated: []string{"implicit.md", "multiline.md", "nested.md", "new/index.md", "windows.md"}},
 		},
 		{
-			name: "再実行しても公開日時を変更しない",
-			input: input{
-				files: "testdata/golden",
-				now:   now.Add(24 * time.Hour),
-			},
-			want: want{
-				files: "testdata/golden",
-			},
+			name:  "再実行しても公開日時を変更しない",
+			input: input{files: "testdata/golden", now: now.Add(24 * time.Hour)},
+			want:  want{files: "testdata/golden"},
 		},
 		{
-			name: "front matterがない場合はどの記事も変更しない",
-			input: input{
-				files: "testdata/invalid/missing",
-				now:   now,
-			},
-			want: want{
-				files: "testdata/invalid/missing",
-				err:   true,
-			},
+			name:  "front matterがない場合はどの記事も変更しない",
+			input: input{files: "testdata/invalid/missing", now: now},
+			want:  want{files: "testdata/invalid/missing", err: true},
 		},
 		{
-			name: "front matterが閉じていない場合はどの記事も変更しない",
-			input: input{
-				files: "testdata/invalid/unclosed",
-				now:   now,
-			},
-			want: want{
-				files: "testdata/invalid/unclosed",
-				err:   true,
-			},
+			name:  "front matterが閉じていない場合はどの記事も変更しない",
+			input: input{files: "testdata/invalid/unclosed", now: now},
+			want:  want{files: "testdata/invalid/unclosed", err: true},
 		},
 		{
-			name: "TOMLが不正な場合はどの記事も変更しない",
-			input: input{
-				files: "testdata/invalid/invalid-toml",
-				now:   now,
-			},
-			want: want{
-				files: "testdata/invalid/invalid-toml",
-				err:   true,
-			},
+			name:  "TOMLが不正な場合はどの記事も変更しない",
+			input: input{files: "testdata/invalid/invalid-toml", now: now},
+			want:  want{files: "testdata/invalid/invalid-toml", err: true},
 		},
 	}
 	for _, tt := range tests {
@@ -99,37 +70,33 @@ func TestSetDates(t *testing.T) {
 				}
 				names = append(names, filepath.ToSlash(name))
 			}
-			if !reflect.DeepEqual(names, tt.want.updated) {
-				t.Errorf("updated = %v, want %v", names, tt.want.updated)
+			if diff := cmp.Diff(tt.want.updated, names); diff != "" {
+				t.Errorf("updated paths (-want +got):\n%s", diff)
 			}
-			compareFiles(t, root, tt.want.files)
+			if diff := cmp.Diff(readFiles(t, tt.want.files), readFiles(t, root)); diff != "" {
+				t.Errorf("files (-want +got):\n%s", diff)
+			}
 		})
 	}
 }
 
-func compareFiles(t *testing.T, root, expected string) {
+func readFiles(t *testing.T, root string) map[string]string {
 	t.Helper()
-	err := fs.WalkDir(os.DirFS(expected), ".", func(name string, entry fs.DirEntry, err error) error {
+	files := make(map[string]string)
+	dir := os.DirFS(root)
+	err := fs.WalkDir(dir, ".", func(name string, entry fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if entry.IsDir() {
 			return nil
 		}
-		want, err := os.ReadFile(filepath.Join(expected, name))
-		if err != nil {
-			return err
-		}
-		got, err := os.ReadFile(filepath.Join(root, name))
-		if err != nil {
-			return err
-		}
-		if !bytes.Equal(got, want) {
-			t.Errorf("%s: content = %q, want %q", name, got, want)
-		}
-		return nil
+		content, err := fs.ReadFile(dir, name)
+		files[name] = string(content)
+		return err
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
+	return files
 }
