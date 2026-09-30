@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
 
       - name: Set missing publication dates
-        run: go run ./cmd/setdates
+        run: go run ./cmd/fill-publication-date
 
       - name: Setup Pages
         id: pages

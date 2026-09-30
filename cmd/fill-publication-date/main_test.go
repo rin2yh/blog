@@ -10,7 +10,7 @@ import (
 	"github.com/sebdah/goldie/v2"
 )
 
-func TestWriteDate(t *testing.T) {
+func TestFillPublicationDate(t *testing.T) {
 	type input struct {
 		file string
 		now  time.Time
@@ -91,7 +91,7 @@ func TestWriteDate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, path := prepareArticle(t, tt.input.file, tt.input.path)
 
-			_, err := writeDate(path, tt.input.now)
+			_, err := fillPublicationDate(path, tt.input.now)
 			var message string
 			if err != nil {
 				message = err.Error()

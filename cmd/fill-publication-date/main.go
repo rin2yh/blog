@@ -1,4 +1,4 @@
-// Command setdates records missing publication dates without rewriting article content.
+// Command fill-publication-date fills missing publication dates without rewriting article content.
 package main
 
 import (
@@ -29,7 +29,7 @@ func main() {
 	}
 	now := time.Now().In(zone)
 	for _, path := range paths {
-		updated, err := writeDate(path, now)
+		updated, err := fillPublicationDate(path, now)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
 			os.Exit(1)
@@ -59,7 +59,7 @@ func needsDate(metadata map[string]any) bool {
 	return !exists && metadata["draft"] != true
 }
 
-func writeDate(path string, now time.Time) (bool, error) {
+func fillPublicationDate(path string, now time.Time) (bool, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return false, err
@@ -97,7 +97,7 @@ func replaceFile(file *os.File, content io.Reader) error {
 	if err != nil {
 		return err
 	}
-	temp, err := os.CreateTemp(filepath.Dir(file.Name()), ".setdates-*.tmp")
+	temp, err := os.CreateTemp(filepath.Dir(file.Name()), ".fill-publication-date-*.tmp")
 	if err != nil {
 		return err
 	}
