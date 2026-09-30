@@ -2,11 +2,14 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 	_ "time/tzdata"
 
@@ -35,32 +38,27 @@ func setDates(root string, now time.Time) ([]string, error) {
 		return nil, err
 	}
 
-	type update struct {
-		path    string
-		content []byte
-	}
-	var updates []update
-	// Prepare every update before writing, so invalid front matter changes no files.
+	// Validate all front matter before writing. Keep only paths in memory.
+	var pending []string
 	for _, path := range paths {
-		content, err := os.ReadFile(path)
-		if err != nil {
-			return nil, err
-		}
-		updated, err := withDate(content, now)
+		needed, err := needsPublicationDate(path)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", path, err)
 		}
-		if updated != nil {
-			updates = append(updates, update{path: path, content: updated})
+		if needed {
+			pending = append(pending, path)
 		}
 	}
 
 	var changed []string
-	for _, update := range updates {
-		if err := os.WriteFile(update.path, update.content, 0o644); err != nil {
-			return changed, err
+	for _, path := range pending {
+		updated, err := writePublicationDate(path, now)
+		if err != nil {
+			return changed, fmt.Errorf("%s: %w", path, err)
 		}
-		changed = append(changed, update.path)
+		if updated {
+			changed = append(changed, path)
+		}
 	}
 	return changed, nil
 }
@@ -79,37 +77,95 @@ func articlePaths(root string) ([]string, error) {
 	return paths, err
 }
 
-func withDate(content []byte, now time.Time) ([]byte, error) {
-	metadata, err := parseFrontMatter(content)
+func needsPublicationDate(path string) (bool, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	if _, exists := metadata["date"]; exists || metadata["draft"] == true {
-		return nil, nil
+	defer file.Close()
+	_, metadata, err := readFrontMatter(bufio.NewReader(file))
+	if err != nil {
+		return false, err
+	}
+	return needsDate(metadata), nil
+}
+
+func needsDate(metadata map[string]any) bool {
+	_, exists := metadata["date"]
+	return !exists && metadata["draft"] != true
+}
+
+func writePublicationDate(path string, now time.Time) (bool, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+	reader := bufio.NewReader(file)
+	frontMatter, metadata, err := readFrontMatter(reader)
+	if err != nil || !needsDate(metadata) {
+		return false, err
 	}
 
-	opening, rest, _ := bytes.Cut(content, []byte("\n"))
+	temp, err := os.CreateTemp(filepath.Dir(path), ".setdates-*.tmp")
+	if err != nil {
+		return false, err
+	}
+	defer os.Remove(temp.Name())
+	defer temp.Close()
+	info, err := file.Stat()
+	if err != nil {
+		return false, err
+	}
+	if err := temp.Chmod(info.Mode().Perm()); err != nil {
+		return false, err
+	}
+	if err := withDate(temp, frontMatter, now); err != nil {
+		return false, err
+	}
+	// Copy the body unchanged without loading it into memory.
+	if _, err := io.Copy(temp, reader); err != nil {
+		return false, err
+	}
+	if err := temp.Close(); err != nil {
+		return false, err
+	}
+	if err := os.Rename(temp.Name(), path); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func withDate(writer io.Writer, frontMatter []byte, now time.Time) error {
+	opening, rest, _ := bytes.Cut(frontMatter, []byte("\n"))
 	newline := "\n"
 	if bytes.HasSuffix(opening, []byte("\r")) {
 		newline = "\r\n"
 	}
-	return fmt.Appendf(nil, "%s\ndate = '%s'%s%s", opening, now.Format(time.RFC3339), newline, rest), nil
+	_, err := fmt.Fprintf(writer, "%s\ndate = '%s'%s%s", opening, now.Format(time.RFC3339), newline, rest)
+	return err
 }
 
-func parseFrontMatter(content []byte) (map[string]any, error) {
-	lines := bytes.SplitAfter(content, []byte("\n"))
-	if string(bytes.TrimSpace(lines[0])) != "+++" {
-		return nil, fmt.Errorf("expected TOML front matter")
+func readFrontMatter(reader *bufio.Reader) ([]byte, map[string]any, error) {
+	opening, err := reader.ReadString('\n')
+	if strings.TrimSpace(opening) != "+++" {
+		return nil, nil, fmt.Errorf("expected TOML front matter")
 	}
-	for i := 1; i < len(lines); i++ {
-		if string(bytes.TrimSpace(lines[i])) != "+++" {
-			continue
+	var header bytes.Buffer
+	for err == nil {
+		var line string
+		line, err = reader.ReadString('\n')
+		if strings.TrimSpace(line) == "+++" {
+			var metadata map[string]any
+			if err := toml.Unmarshal(header.Bytes(), &metadata); err != nil {
+				return nil, nil, err
+			}
+			return []byte(opening + header.String() + line), metadata, nil
 		}
-		var metadata map[string]any
-		if err := toml.Unmarshal(bytes.Join(lines[1:i], nil), &metadata); err != nil {
-			return nil, err
-		}
-		return metadata, nil
+		header.WriteString(line)
 	}
-	return nil, fmt.Errorf("unclosed front matter")
+	if err != io.EOF {
+		return nil, nil, err
+	}
+	return nil, nil, fmt.Errorf("unclosed front matter")
 }
