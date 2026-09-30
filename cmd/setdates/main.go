@@ -29,7 +29,7 @@ func main() {
 	}
 	now := time.Now().In(zone)
 	for _, path := range paths {
-		updated, err := setDate(path, now)
+		updated, err := writeDate(path, now)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
 			os.Exit(1)
@@ -59,7 +59,7 @@ func needsDate(metadata map[string]any) bool {
 	return !exists && metadata["draft"] != true
 }
 
-func setDate(path string, now time.Time) (bool, error) {
+func writeDate(path string, now time.Time) (bool, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return false, err
