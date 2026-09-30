@@ -1,4 +1,4 @@
-// Command fill-publication-date fills missing publication dates without rewriting article content.
+// Command publish prepares articles for publication.
 package main
 
 import (

@@ -29,8 +29,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Set missing publication dates
-        run: go run ./cmd/fill-publication-date
+      - name: Prepare articles for publication
+        run: go run ./cmd/publish
 
       - name: Setup Pages
         id: pages
