@@ -17,9 +17,8 @@ func TestSetDate(t *testing.T) {
 		path string
 	}
 	type want struct {
-		file    string
-		updated bool
-		err     bool
+		file string
+		err  string
 	}
 	now := time.Date(2026, 9, 30, 12, 34, 56, 0, time.FixedZone("JST", 9*60*60))
 	tests := []struct {
@@ -30,42 +29,42 @@ func TestSetDate(t *testing.T) {
 		{
 			name:  "既存の公開日は変更しない",
 			input: input{file: "testdata/input/existing.md", now: now},
-			want:  want{file: "testdata/golden/existing.md", updated: false},
+			want:  want{file: "testdata/golden/existing.md"},
 		},
 		{
 			name:  "下書きは変更しない",
 			input: input{file: "testdata/input/draft.md", now: now},
-			want:  want{file: "testdata/golden/draft.md", updated: false},
+			want:  want{file: "testdata/golden/draft.md"},
 		},
 		{
 			name:  "ネストした記事に公開日を追加する",
 			input: input{file: "testdata/input/new/index.md", now: now, path: "new/index.md"},
-			want:  want{file: "testdata/golden/new/index.md", updated: true},
+			want:  want{file: "testdata/golden/new/index.md"},
 		},
 		{
 			name:  "draft未指定の記事に公開日を追加する",
 			input: input{file: "testdata/input/implicit.md", now: now},
-			want:  want{file: "testdata/golden/implicit.md", updated: true},
+			want:  want{file: "testdata/golden/implicit.md"},
 		},
 		{
 			name:  "CRLFを維持する",
 			input: input{file: "testdata/input/windows.md", now: now},
-			want:  want{file: "testdata/golden/windows.md", updated: true},
+			want:  want{file: "testdata/golden/windows.md"},
 		},
 		{
 			name:  "paramsのdateは公開日と扱わない",
 			input: input{file: "testdata/input/nested.md", now: now},
-			want:  want{file: "testdata/golden/nested.md", updated: true},
+			want:  want{file: "testdata/golden/nested.md"},
 		},
 		{
 			name:  "複数行文字列内のdateとdraftは判定に使わない",
 			input: input{file: "testdata/input/multiline.md", now: now},
-			want:  want{file: "testdata/golden/multiline.md", updated: true},
+			want:  want{file: "testdata/golden/multiline.md"},
 		},
 		{
 			name:  "引用符付きのdateも維持する",
 			input: input{file: "testdata/input/quoted.md", now: now},
-			want:  want{file: "testdata/golden/quoted.md", updated: false},
+			want:  want{file: "testdata/golden/quoted.md"},
 		},
 		{
 			name:  "再実行しても公開日時を変更しない",
@@ -75,29 +74,30 @@ func TestSetDate(t *testing.T) {
 		{
 			name:  "front matterがない場合はエラー",
 			input: input{file: "testdata/invalid/missing/z.md", now: now},
-			want:  want{file: "testdata/invalid/missing/z.md", err: true},
+			want:  want{file: "testdata/invalid/missing/z.md", err: "expected TOML front matter"},
 		},
 		{
 			name:  "front matterが閉じていない場合はエラー",
 			input: input{file: "testdata/invalid/unclosed/z.md", now: now},
-			want:  want{file: "testdata/invalid/unclosed/z.md", err: true},
+			want:  want{file: "testdata/invalid/unclosed/z.md", err: "unclosed front matter"},
 		},
 		{
 			name:  "TOMLが不正な場合はエラー",
 			input: input{file: "testdata/invalid/invalid-toml/z.md", now: now},
-			want:  want{file: "testdata/invalid/invalid-toml/z.md", err: true},
+			want:  want{file: "testdata/invalid/invalid-toml/z.md", err: "toml: incomplete number"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, path := prepareArticle(t, tt.input.file, tt.input.path)
 
-			updated, err := setDate(path, tt.input.now)
-			if (err != nil) != tt.want.err {
-				t.Fatalf("setDate() error = %v, want error = %v", err, tt.want.err)
+			_, err := setDate(path, tt.input.now)
+			var message string
+			if err != nil {
+				message = err.Error()
 			}
-			if diff := cmp.Diff(tt.want.updated, updated); diff != "" {
-				t.Errorf("updated (-want +got):\n%s", diff)
+			if diff := cmp.Diff(tt.want.err, message); diff != "" {
+				t.Errorf("error (-want +got):\n%s", diff)
 			}
 			golden := goldie.New(t, goldie.WithFixtureDir("."), goldie.WithNameSuffix(""))
 			golden.Assert(t, tt.want.file, readTestFile(t, path))
