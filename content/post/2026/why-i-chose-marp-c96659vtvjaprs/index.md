@@ -1,5 +1,5 @@
 +++
-date = '2026-07-27T12:00:00+09:00'
+date = '2026-07-28T18:22:58+09:00'
 draft = false
 title = 'スライド作成にMarpを選んだ話'
 categories = ['tech']
