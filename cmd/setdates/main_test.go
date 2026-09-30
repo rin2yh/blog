@@ -7,9 +7,10 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/sebdah/goldie/v2"
 )
 
-func TestSetDates(t *testing.T) {
+func TestSetDate(t *testing.T) {
 	type input struct {
 		file string
 		now  time.Time
@@ -35,11 +36,6 @@ func TestSetDates(t *testing.T) {
 			name:  "下書きは変更しない",
 			input: input{file: "testdata/input/draft.md", now: now},
 			want:  want{file: "testdata/golden/draft.md", updated: false},
-		},
-		{
-			name:  "セクションページは変更しない",
-			input: input{file: "testdata/input/_index.md", now: now},
-			want:  want{file: "testdata/golden/_index.md", updated: false},
 		},
 		{
 			name:  "ネストした記事に公開日を追加する",
@@ -72,11 +68,6 @@ func TestSetDates(t *testing.T) {
 			want:  want{file: "testdata/golden/quoted.md", updated: false},
 		},
 		{
-			name:  "Markdown以外は変更しない",
-			input: input{file: "testdata/input/ignored.txt", now: now},
-			want:  want{file: "testdata/golden/ignored.txt", updated: false},
-		},
-		{
 			name:  "再実行しても公開日時を変更しない",
 			input: input{file: "testdata/golden/implicit.md", now: now.Add(24 * time.Hour)},
 			want:  want{file: "testdata/golden/implicit.md"},
@@ -99,20 +90,66 @@ func TestSetDates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			root, path := prepareArticle(t, tt.input.file, tt.input.path)
+			_, path := prepareArticle(t, tt.input.file, tt.input.path)
 
-			paths, err := setDates(root, tt.input.now)
+			updated, err := setDate(path, tt.input.now)
 			if (err != nil) != tt.want.err {
-				t.Fatalf("setDates() error = %v, want error = %v", err, tt.want.err)
+				t.Fatalf("setDate() error = %v, want error = %v", err, tt.want.err)
 			}
-			var wantPaths []string
-			if tt.want.updated {
-				wantPaths = []string{path}
+			if diff := cmp.Diff(tt.want.updated, updated); diff != "" {
+				t.Errorf("updated (-want +got):\n%s", diff)
 			}
-			if diff := cmp.Diff(wantPaths, paths); diff != "" {
-				t.Errorf("updated paths (-want +got):\n%s", diff)
+			golden := goldie.New(t, goldie.WithFixtureDir("."), goldie.WithNameSuffix(""))
+			golden.Assert(t, tt.want.file, readTestFile(t, path))
+		})
+	}
+}
+
+func TestArticlePaths(t *testing.T) {
+	type input struct {
+		file string
+		path string
+	}
+	tests := []struct {
+		name  string
+		input input
+		want  []string
+	}{
+		{
+			name:  "Markdown記事を対象にする",
+			input: input{file: "testdata/input/implicit.md"},
+			want:  []string{"implicit.md"},
+		},
+		{
+			name:  "ネストした記事を対象にする",
+			input: input{file: "testdata/input/new/index.md", path: "new/index.md"},
+			want:  []string{"new/index.md"},
+		},
+		{
+			name:  "セクションページを除外する",
+			input: input{file: "testdata/input/_index.md"},
+			want:  nil,
+		},
+		{
+			name:  "Markdown以外を除外する",
+			input: input{file: "testdata/input/ignored.txt"},
+			want:  nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			root, _ := prepareArticle(t, tt.input.file, tt.input.path)
+			paths, err := articlePaths(root)
+			if err != nil {
+				t.Fatal(err)
 			}
-			assertFileContent(t, path, tt.want.file)
+			var want []string
+			for _, path := range tt.want {
+				want = append(want, filepath.Join(root, path))
+			}
+			if diff := cmp.Diff(want, paths); diff != "" {
+				t.Errorf("paths (-want +got):\n%s", diff)
+			}
 		})
 	}
 }
@@ -131,13 +168,6 @@ func prepareArticle(t *testing.T, fixture, name string) (root, path string) {
 		t.Fatal(err)
 	}
 	return root, path
-}
-
-func assertFileContent(t *testing.T, actual, expected string) {
-	t.Helper()
-	if diff := cmp.Diff(string(readTestFile(t, expected)), string(readTestFile(t, actual))); diff != "" {
-		t.Errorf("content (-want +got):\n%s", diff)
-	}
 }
 
 func readTestFile(t *testing.T, path string) []byte {

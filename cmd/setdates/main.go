@@ -22,33 +22,22 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	paths, err := setDates("content/post", time.Now().In(zone))
+	paths, err := articlePaths("content/post")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+	now := time.Now().In(zone)
 	for _, path := range paths {
-		fmt.Println(path)
-	}
-}
-
-func setDates(root string, now time.Time) ([]string, error) {
-	paths, err := articlePaths(root)
-	if err != nil {
-		return nil, err
-	}
-
-	var changed []string
-	for _, path := range paths {
-		updated, err := writePublicationDate(path, now)
+		updated, err := setDate(path, now)
 		if err != nil {
-			return changed, fmt.Errorf("%s: %w", path, err)
+			fmt.Fprintf(os.Stderr, "%s: %v\n", path, err)
+			os.Exit(1)
 		}
 		if updated {
-			changed = append(changed, path)
+			fmt.Println(path)
 		}
 	}
-	return changed, nil
 }
 
 func articlePaths(root string) ([]string, error) {
@@ -70,7 +59,7 @@ func needsDate(metadata map[string]any) bool {
 	return !exists && metadata["draft"] != true
 }
 
-func writePublicationDate(path string, now time.Time) (bool, error) {
+func setDate(path string, now time.Time) (bool, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return false, err
