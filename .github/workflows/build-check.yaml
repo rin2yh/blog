@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
 
       - name: Test publication dates
-        run: python3 -B -m unittest discover -s .github/publish
+        run: go test ./cmd/setdates
 
       - name: Build
         uses: ./.github/actions/build

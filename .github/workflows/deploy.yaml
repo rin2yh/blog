@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
 
       - name: Set missing publication dates
-        run: python3 -B .github/publish/set_dates.py
+        run: go run ./cmd/setdates
 
       - name: Setup Pages
         id: pages
