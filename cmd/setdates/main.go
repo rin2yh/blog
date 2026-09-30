@@ -38,20 +38,8 @@ func setDates(root string, now time.Time) ([]string, error) {
 		return nil, err
 	}
 
-	// Validate all front matter before writing. Keep only paths in memory.
-	var pending []string
-	for _, path := range paths {
-		needed, err := needsPublicationDate(path)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", path, err)
-		}
-		if needed {
-			pending = append(pending, path)
-		}
-	}
-
 	var changed []string
-	for _, path := range pending {
+	for _, path := range paths {
 		updated, err := writePublicationDate(path, now)
 		if err != nil {
 			return changed, fmt.Errorf("%s: %w", path, err)
@@ -75,19 +63,6 @@ func articlePaths(root string) ([]string, error) {
 		return nil
 	})
 	return paths, err
-}
-
-func needsPublicationDate(path string) (bool, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return false, err
-	}
-	defer file.Close()
-	_, metadata, err := readFrontMatter(bufio.NewReader(file))
-	if err != nil {
-		return false, err
-	}
-	return needsDate(metadata), nil
 }
 
 func needsDate(metadata map[string]any) bool {
