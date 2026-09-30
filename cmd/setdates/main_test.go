@@ -105,7 +105,7 @@ func TestSetDate(t *testing.T) {
 	}
 }
 
-func TestArticlePaths(t *testing.T) {
+func TestCollectArticlePaths(t *testing.T) {
 	type input struct {
 		file string
 		path string
@@ -139,7 +139,7 @@ func TestArticlePaths(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			root, _ := prepareArticle(t, tt.input.file, tt.input.path)
-			paths, err := articlePaths(root)
+			paths, err := collectArticlePaths(root)
 			if err != nil {
 				t.Fatal(err)
 			}

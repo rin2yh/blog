@@ -22,7 +22,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	paths, err := articlePaths("content/post")
+	paths, err := collectArticlePaths("content/post")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -40,7 +40,7 @@ func main() {
 	}
 }
 
-func articlePaths(root string) ([]string, error) {
+func collectArticlePaths(root string) ([]string, error) {
 	var paths []string
 	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
@@ -75,14 +75,14 @@ func setDate(path string, now time.Time) (bool, error) {
 		return false, nil
 	}
 
-	content := io.MultiReader(bytes.NewReader(withDate(frontMatter, now)), reader)
+	content := io.MultiReader(bytes.NewReader(addDate(frontMatter, now)), reader)
 	if err := replaceFile(file, content); err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
-func withDate(frontMatter []byte, now time.Time) []byte {
+func addDate(frontMatter []byte, now time.Time) []byte {
 	opening, rest, _ := bytes.Cut(frontMatter, []byte("\n"))
 	newline := "\n"
 	if bytes.HasSuffix(opening, []byte("\r")) {
