@@ -1,10 +1,8 @@
 +++
-date = '2026-10-11T12:00:00+09:00'
 draft = false
 title = 'TinyGo Conf 2026で初めて登壇しました！'
 categories = ['idea']
 tags = ['conference', 'TinyGo', 'Go']
-ogpSiteName = false
 +++
 
 ## はじめに
