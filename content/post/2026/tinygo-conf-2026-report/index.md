@@ -1,4 +1,5 @@
 +++
+date = '2026-10-12T21:01:47+09:00'
 draft = false
 title = 'TinyGo Conf 2026で初めて登壇しました！'
 categories = ['idea']
