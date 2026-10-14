@@ -1,8 +1,7 @@
 +++
-date = '2026-09-09T01:21:46+09:00'
 draft = false
 title = 'Claude Maxプラン(5x)を半年使って見直した話'
-categories = ['tech']
+categories = ['idea']
 tags = ['Claude Code', 'ChatGPT', 'Codex']
 +++
 
