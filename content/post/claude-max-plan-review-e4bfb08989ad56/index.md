@@ -72,7 +72,7 @@ Proプランだけに戻す場合、以前と同じく利用制限に当たる�
 
 <!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->
 
-それとは別に、Codex自体も、Claude Codeを使っていた頃と比べて利用量の消費が少ないと感じています。プロンプトキャッシュのような仕組みが影響しているのかもしれません。現在は開発用途も含めてChatGPT Plusプランの範囲で足りています。
+最近はChatGPTのスケジュール機能も活用しています。GoやWeb・バックエンド、Google Cloud、Cloudflareなどの最新情報を、技術的な解説も交えて毎日まとめて受け取っています。自分の関心に合わせて情報を絞り込めるだけでなく、配信内容の変更もチャット上で指示できるので、気軽に調整できて便利です。
 
 <!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->
 
