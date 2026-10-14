@@ -56,7 +56,11 @@ CfPで選んだテーマは初めて勉強する内容でした。内容をま�
 
 [^1]: GopherCon Singaporeのオーガナイザー。
 
+<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->
+
 会話はすべて英語でした。英語で言葉に詰まると待ってくださり、翻訳アプリを使ってもいいよと声をかけてくださいました。すごく変な英語だったと思いますが、聞き取って意図をくみ取ってくださり、感謝しています。
+
+<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->
 
 Thanks for pre-party talking, Conejo-san and Valentine-san!! I was glad for your hospitality.
 
@@ -122,11 +126,19 @@ https://github.com/mokiat/lacking
 
 ### 初めての登壇
 
+<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->
+
 展示を見てリラックスしてから登壇しました。初めてCfPに採択されたセッションだったため、登壇前は多少緊張しました。一方で、これまでGo Connectや社内勉強会で登壇していたため、人前で話すこと自体にはあまり緊張しませんでした。これまでの経験や直前までリラックスできたこともあり、多分、話自体はできたと思います。登壇したセッションはこちらです。
+
+<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->
 
 https://slides.rin2yh.com/understanding-hid-through-tinygo/
 
+<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->
+
 なるべく分かりやすくかみ砕いてお伝えしたつもりです。ただ、HIDについて深く触れる機会はなかなかないため、少し難しい内容だったかもしれません。
+
+<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->
 
 発表後、何人かの方から感想をいただきました。声もかけていただけてうれしかったです。聞いてくださった皆さん、ありがとうございました！
 
@@ -153,7 +165,11 @@ LTにも個性が出ていました。AIが流行する今でも、技術その�
 ### 1次会
 
 懇親会では、「二日酔い」というお店に行きました。お店に入った時は英語が全く聞き取れないくらい疲弊していたのですが、大変おいしい料理と頑張った後のお酒で1日の疲れもいつの間にか吹き飛びました。
+<!-- textlint-disable ja-technical-writing/ja-no-weak-phrase -->
+
 これがtinygoasap？かもしれませんね笑。
+
+<!-- textlint-enable ja-technical-writing/ja-no-weak-phrase -->
 
 LTに登壇した[Ibukiさん](https://x.com/hoki621)と[ixxxyさん](https://x.com/I_CANNOT_APE)ともお話しできました。ありがとうございました！
 
