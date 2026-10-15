@@ -1,4 +1,5 @@
 +++
+date = '2026-10-15T12:08:26+09:00'
 draft = false
 title = 'Claude Maxプラン(5x)を半年使って見直した話'
 categories = ['idea']
