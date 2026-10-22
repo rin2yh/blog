@@ -50,7 +50,11 @@ jobs:
             git switch --force-create "${SYNC_BRANCH}"
           fi
 
-      # Go はランナー同梱のものを使う。go.mod の toolchain 指定で必要なら自動で揃う
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
       - name: Generate posts for new decks
         id: generate
         run: |
