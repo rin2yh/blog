@@ -41,5 +41,17 @@
       ],
       "datasourceTemplate": "npm"
     }
+  ],
+  "minimumReleaseAge": "3 days",
+  "platformAutomerge": false,
+  "packageRules": [
+    {
+      "description": "Automatically merge minor and patch updates after release age and status checks pass",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true
+    }
   ]
 }
