@@ -17,7 +17,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     permissions:
       contents: read
@@ -44,7 +44,7 @@ jobs:
   preview:
     needs: prepare
     if: needs.prepare.outputs.urls != '[]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     permissions:
       contents: read
@@ -110,7 +110,7 @@ jobs:
   comment:
     needs: [prepare, preview]
     if: needs.prepare.outputs.urls != '[]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     permissions:
       actions: read
