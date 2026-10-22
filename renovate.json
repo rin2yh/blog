@@ -42,7 +42,7 @@
       "datasourceTemplate": "npm"
     }
   ],
-  "minimumReleaseAge": "3 days",
+  "minimumReleaseAge": "7 days",
   "platformAutomerge": false,
   "packageRules": [
     {
