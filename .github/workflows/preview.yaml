@@ -72,9 +72,13 @@ jobs:
         with:
           node-version: 22
 
+      - name: Setup npm with minimum release age support
+        run: npm install --global npm@11.10.0 --no-audit --no-fund
+
       - name: Install Playwright Chromium
         working-directory: .github/preview
         env:
+          NPM_CONFIG_MIN_RELEASE_AGE: '7'
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # postinstall で全ブラウザを落とさない
         run: |
           npm install --no-audit --no-fund

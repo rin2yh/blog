@@ -8,6 +8,8 @@ on:
       - 'prh-style.yml'
       - '.textlintignore'
       - 'mise.toml'
+      - 'package.json'
+      - '.npmrc'
       - '.github/workflows/textlint.yaml'
 
 permissions: {}
