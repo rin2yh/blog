@@ -1,0 +1,84 @@
+name: Ubuntu compatibility
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/build/**'
+      - '.github/preview/**'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  smoke:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      TZ: Asia/Tokyo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Record runner and tool versions
+        run: |
+          cat /etc/os-release
+          go version
+          git --version
+          gh --version
+          jq --version
+
+      # Exercise publication preparation locally; never commit or deploy.
+      - name: Prepare articles for publication
+        run: go run ./cmd/publish
+
+      - name: Build production site
+        uses: ./.github/actions/build
+
+      - name: Build preview site
+        uses: ./.github/actions/build
+        with:
+          base-url: http://localhost:1313
+          environment: preview
+          build-drafts: 'true'
+
+      - name: Setup Node
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: 22
+
+      - name: Setup npm with minimum release age support
+        run: npm install --global npm@11.10.0 --no-audit --no-fund
+
+      - name: Install Playwright Chromium
+        working-directory: .github/preview
+        env:
+          NPM_CONFIG_MIN_RELEASE_AGE: '7'
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Screenshot a built article
+        env:
+          PORT: '1313'
+          PUBLIC_DIR: public
+          OUT_DIR: ${{ runner.temp }}/compatibility-shots
+        run: |
+          article="$(find public/post -mindepth 2 -type f -name index.html -print -quit)"
+          test -n "${article}"
+          export URL="/${article#public/}"
+          URL="${URL%index.html}"
+          node .github/preview/shoot.mjs
+
+      # Generate into the checkout only; never push or create a sync PR.
+      - name: Check slides synchronization
+        run: |
+          git clone --depth 1 https://github.com/rin2yh/slides.git "${RUNNER_TEMP}/slides"
+          go run ./cmd/slidesync --out "${RUNNER_TEMP}/created.md" "${RUNNER_TEMP}/slides"
+          git diff --stat
