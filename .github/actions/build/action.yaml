@@ -33,15 +33,10 @@ runs:
         echo "${HOME}/.local/dart-sass" >> "${GITHUB_PATH}"
 
     - name: Install Hugo
-      shell: bash
-      env:
-        HUGO_VERSION: 0.154.2
-      run: |
-        curl -sLJO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
-        mkdir "${HOME}/.local/hugo"
-        tar -C "${HOME}/.local/hugo" -xf "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
-        rm "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
-        echo "${HOME}/.local/hugo" >> "${GITHUB_PATH}"
+      uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
+      with:
+        hugo-version: '0.154.2'
+        extended: true
 
     - name: Verify installations
       shell: bash
