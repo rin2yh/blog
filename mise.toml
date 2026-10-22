@@ -2,6 +2,7 @@
 go = "1.25.6"
 hugo = "latest"
 node = "22"
+"npm:npm" = "11.10.0"
 
 [tasks.setup]
 description = 'Hugoをインストールする'
@@ -34,9 +35,9 @@ run = 'npm install --ignore-scripts --no-package-lock --no-audit --no-fund'
 [tasks.lint]
 depends = ['lint:setup']
 description = 'textlintで記事を検査する（過去記事は.textlintignoreで除外）'
-run = 'npm exec --offline -- textlint {{arg(name="files", var=true, default="content/**/*.md")}}'
+run = 'npm run lint -- {{arg(name="files", var=true, default="content/**/*.md")}}'
 
 [tasks."lint:fix"]
 depends = ['lint:setup']
 description = 'textlintで自動修正可能な問題を修正する'
-run = 'npm exec --offline -- textlint --fix {{arg(name="files", var=true, default="content/**/*.md")}}'
+run = 'npm run lint:fix -- {{arg(name="files", var=true, default="content/**/*.md")}}'
