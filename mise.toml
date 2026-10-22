@@ -2,7 +2,7 @@
 go = "1.27.2"
 hugo = "latest"
 node = "22"
-"npm:npm" = "11.10.0"
+"npm:npm" = "11.21.0"
 
 [tasks.setup]
 description = 'Hugoをインストールする'
