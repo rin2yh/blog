@@ -9,6 +9,7 @@ on:
       - '.textlintignore'
       - 'mise.toml'
       - 'package.json'
+      - '.npmrc'
       - '.github/workflows/textlint.yaml'
 
 permissions: {}
