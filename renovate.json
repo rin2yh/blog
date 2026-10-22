@@ -18,16 +18,6 @@
       ],
       "depNameTemplate": "sass/dart-sass",
       "datasourceTemplate": "github-releases"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^mise\\.toml$/"
-      ],
-      "matchStrings": [
-        "-p (?<depName>textlint(?:-[a-z0-9-]+)?)@(?<currentValue>\\d+\\.\\d+\\.\\d+)"
-      ],
-      "datasourceTemplate": "npm"
     }
   ],
   "minimumReleaseAge": "7 days",
