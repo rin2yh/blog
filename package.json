@@ -8,5 +8,9 @@
     "textlint-filter-rule-comments": "1.2.2",
     "textlint-filter-rule-allowlist": "4.0.0",
     "textlint-rule-prh": "6.1.0"
+  },
+  "scripts": {
+    "lint": "textlint",
+    "lint:fix": "textlint --fix"
   }
 }
