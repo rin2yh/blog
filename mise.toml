@@ -1,7 +1,7 @@
 [tools]
 go = "1.27.3"
 hugo = "latest"
-node = "22"
+node = "24"
 "npm:npm" = "11.21.1"
 
 [tasks.setup]
