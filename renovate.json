@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended"
   ],
-  "automerge": true,
+  "automerge": false,
   "git-submodules": {
     "enabled": true
   },
@@ -23,13 +23,6 @@
   "minimumReleaseAge": "7 days",
   "platformAutomerge": false,
   "packageRules": [
-    {
-      "description": "Require manual review for major updates",
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "automerge": false
-    },
     {
       "description": "Automatically merge minor and patch updates after release age and status checks pass",
       "matchUpdateTypes": [
