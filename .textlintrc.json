@@ -15,7 +15,10 @@
         "strict": true
       }
     },
-    "preset-ja-spacing": true,
+    "preset-ja-spacing": {
+      "ja-space-around-code": false,
+      "ja-space-around-link": false
+    },
     "prh": {
       "rulePaths": [
         "prh-ai.yml",
