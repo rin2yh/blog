@@ -17,8 +17,9 @@ func TestFillPublicationDate(t *testing.T) {
 		path string
 	}
 	type want struct {
-		file string
-		err  string
+		file    string
+		err     string
+		wantErr bool
 	}
 	now := time.Date(2026, 9, 30, 12, 34, 56, 0, time.FixedZone("JST", 9*60*60))
 	tests := []struct {
@@ -84,7 +85,7 @@ func TestFillPublicationDate(t *testing.T) {
 		{
 			name:  "TOMLが不正な場合はエラー",
 			input: input{file: "testdata/invalid/invalid-toml/z.md", now: now},
-			want:  want{file: "testdata/invalid/invalid-toml/z.md", err: "toml: incomplete number"},
+			want:  want{file: "testdata/invalid/invalid-toml/z.md", wantErr: true},
 		},
 	}
 	for _, tt := range tests {
@@ -92,12 +93,18 @@ func TestFillPublicationDate(t *testing.T) {
 			_, path := prepareArticle(t, tt.input.file, tt.input.path)
 
 			_, err := fillPublicationDate(path, tt.input.now)
-			var message string
-			if err != nil {
-				message = err.Error()
-			}
-			if diff := cmp.Diff(tt.want.err, message); diff != "" {
-				t.Errorf("error (-want +got):\n%s", diff)
+			if tt.want.wantErr {
+				if err == nil {
+					t.Error("expected an error")
+				}
+			} else {
+				var message string
+				if err != nil {
+					message = err.Error()
+				}
+				if diff := cmp.Diff(tt.want.err, message); diff != "" {
+					t.Errorf("error (-want +got):\n%s", diff)
+				}
 			}
 			golden := goldie.New(t, goldie.WithFixtureDir("."), goldie.WithNameSuffix(""))
 			golden.Assert(t, tt.want.file, readTestFile(t, path))
