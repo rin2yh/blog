@@ -1,5 +1,5 @@
 [tools]
-go = "1.27.3"
+go = "1.27.4"
 hugo = "latest"
 node = "26"
 "npm:npm" = "12.2.2"
