@@ -1,4 +1,5 @@
 +++
+draft = false
 title = '18サービスの一斉リリースを半年かけて解体した'
 categories = ['tech']
 tags = ['monorepo', 'CI/CD']
