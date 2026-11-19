@@ -1,7 +1,7 @@
 +++
 date = '2026-11-19T00:00:00+09:00'
 draft = true
-title = '18サービスを一斉リリースから個別リリースへ切り替えた半年'
+title = '18サービスの一斉リリースを半年かけて解体した'
 categories = ['tech']
 tags = ['monorepo', 'CI/CD']
 mermaid = true
