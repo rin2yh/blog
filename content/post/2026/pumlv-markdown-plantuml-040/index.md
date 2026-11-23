@@ -9,6 +9,8 @@ tags = ['pumlv', 'PlantUML', 'Markdown', 'ADR']
 
 pumlvの背景や構成、基本的な使い方は[Zennの記事](https://zenn.dev/rinrin_yuuki/articles/9b69cca81875f6)にまとめています。ここでは、v0.4.0で追加したMarkdown内のPlantUMLプレビューと、実装時に記録した設計判断を紹介します。
 
+この機能のきっかけは、同僚との会話でした。同僚もpumlvを使ってくれていて、GitLabではMarkdown内のPlantUMLをプレビューできるので、同じことをローカルでもできないかという話が出ました。そこで、Markdownに書いた図もpumlvでプレビューできるようにしました。
+
 ## Markdown内の図をプレビューする
 
 Markdownのコードブロックに `plantuml`、`puml`、`iuml`、`wsd` のいずれかを指定すると、ファイルツリーに図が表示されます。
