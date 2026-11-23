@@ -7,7 +7,7 @@ tags = ['pumlv', 'PlantUML', 'Markdown', 'ADR']
 
 ## はじめに
 
-pumlvの背景や構成、基本的な使い方は、[Zennの記事](https://zenn.dev/rinrin_yuuki/articles/9b69cca81875f6)で紹介しました。この記事では、v0.4.0で追加したMarkdown内のPlantUMLプレビューと、実装時に記録した設計判断を紹介します。
+pumlvの背景や構成、基本的な使い方は[Zennの記事](https://zenn.dev/rinrin_yuuki/articles/9b69cca81875f6)にまとめています。ここでは、v0.4.0で追加したMarkdown内のPlantUMLプレビューと、実装時に記録した設計判断を紹介します。
 
 ## Markdown内の図をプレビューする
 
