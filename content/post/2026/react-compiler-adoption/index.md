@@ -67,6 +67,8 @@ function ExampleInput({
 }
 ```
 
+React Compilerを有効にした状態で保存すると、次のような挙動となりました。
+
 1. 保存後に `reset()` が呼ばれ、入力欄の登録が消える。
 2. フォームを再レンダリングするとき、React Compilerが `register("value")` の戻り値を使い回す（`register()` は呼ばれず、入力欄は再登録されない）。
 3. 入力すると `onChange` は呼ばれる。入力欄が未登録のため、React Hook Formは新しい値を取り込まない。
