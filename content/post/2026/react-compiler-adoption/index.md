@@ -72,9 +72,11 @@ function ExampleInput({
                          └─ 戻り値を再利用      → 登録されず、入力が反映されない
 ```
 
-この例では、親が `reset()` を呼び、子がpropsから受け取った `register()` を呼んでいました。そこで、実際に `register()` を呼ぶ子も含め、該当コンポーネントを `"use no memo"` で最適化対象から外しました。
+React Hook Formには、`reset()` のあともフィールドの参照を保持する `keepFieldsRef` があります。この設定を使っても、保存や破棄を繰り返すと、入力欄の表示とフォームの値がずれました。
 
-修正では、子コンポーネントの先頭に1行追加しました。
+また、React Compilerを有効にしたときの挙動は、ビルド後にしか確認できません。現状ではE2Eテストも存在しないため、動作確認のコストが非常に重い状況です。そこで、当面は `"use no memo"` を使うことにしました。
+
+この例では、親から受け取った `register()` を子が呼ぶので、子コンポーネントの先頭に1行追加しました。
 
 ```diff
  function ExampleInput({
@@ -99,3 +101,4 @@ React Compilerは導入できました。React Hook Formを使う箇所では`"u
 
 - [React公式ドキュメント「incompatible-library」](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library)
 - [React公式ドキュメント「Incremental Adoption」](https://react.dev/learn/react-compiler/incremental-adoption)
+- [React Hook Form公式ドキュメント「reset」](https://react-hook-form.com/docs/useform/reset)
