@@ -32,24 +32,25 @@ tags = ['React']
 
 有効化したアプリの一部は、不具合が見つかって切り戻しました。再有効化に向けてフォームの動作を調べると、最初の編集と保存は成功しました。同じ画面で入力し直すと、入力欄の表示は変わりました。ただ、フォームが管理する値は更新されませんでした。「変更を破棄」の直後にも同じことが起きました。
 
-該当するフォームは、保存や破棄のあとに `reset()` を呼んでいました。この実装では、`reset()` でフィールドの登録が消え、次のレンダー時に `register()` を呼ぶことで再登録していました。Compilerが `register()` の戻り値を再利用すると、呼び出しが省かれ、再登録も行われません。
-
-
-設定の編集画面では、親が `reset()` を呼び、子がpropsから受け取った `register()` を呼んでいました。そこで、実際に `register()` を呼ぶ子も含め、該当コンポーネントを `"use no memo"` で最適化対象から外しました。
-
-次の例では、親が `reset()` を呼び、子は渡された `register()` を使います。
+修正前のフォームを簡略化すると、次のような構成です。`saveValue` は入力値を保存する関数です。
 
 ```tsx
-import { useForm, type UseFormRegister } from "react-hook-form";
-
 function ExampleForm() {
-  const { register, reset } = useForm({ defaultValues: { value: '' } });
+  const { register, reset, handleSubmit } = useForm({
+    defaultValues: { value: "" },
+  });
+
+  const onSubmit = handleSubmit(async ({ value }) => {
+    await saveValue(value);
+    reset({ value });
+  });
 
   return (
-    <form>
+    <form onSubmit={onSubmit}>
       <ExampleInput register={register} />
+      <button type="submit">保存</button>
       <button type="button" onClick={() => reset()}>
-        リセット
+        変更を破棄
       </button>
     </form>
   );
@@ -60,9 +61,26 @@ function ExampleInput({
 }: {
   register: UseFormRegister<{ value: string }>;
 }) {
-  "use no memo";
   return <input aria-label="値" {...register("value")} />;
 }
+```
+
+該当するフォームは、保存や破棄のあとに `reset()` を呼んでいました。この実装では、`reset()` でフィールドの登録が消え、次のレンダー時に `register()` を呼ぶことで再登録していました。Compilerが `register()` の戻り値を再利用すると、呼び出しが省かれ、再登録も行われません。
+
+
+設定の編集画面では、親が `reset()` を呼び、子がpropsから受け取った `register()` を呼んでいました。そこで、実際に `register()` を呼ぶ子も含め、該当コンポーネントを `"use no memo"` で最適化対象から外しました。
+
+修正では、子コンポーネントの先頭に1行追加しました。
+
+```diff
+ function ExampleInput({
+   register,
+ }: {
+   register: UseFormRegister<{ value: string }>;
+ }) {
++  "use no memo";
+   return <input aria-label="値" {...register("value")} />;
+ }
 ```
 
 さらに同じ呼び出し方を他のアプリから探し、4アプリの計22ファイルを修正しました。
