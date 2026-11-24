@@ -14,7 +14,7 @@ tags = ['React']
 
 ### `watch()` を `useWatch()` に置き換えた
 
-React Compilerを有効化した後、一部の画面で不具合が見つかり、導入を切り戻しました。最初に読んだReact公式の「Installation」には `watch()` の注意点が載っておらず、個人開発でもうまくいっていたので、驚きました。
+React Compilerを有効化した後、一部の画面で不具合が見つかり、導入を切り戻しました。最初に読んだReact公式の「Installation」には `watch()` の注意点が載っていませんでした。個人開発でもうまくいっていたので、驚きました。
 
 再導入に向けて既存の実装を見直す中で、React公式のESLintルール `incompatible-library` の解説を読みました。そこには、`watch()` をメモ化すると表示が更新されなくなる例が載っていました。
 
