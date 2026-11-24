@@ -7,7 +7,7 @@ tags = ['React']
 
 ## はじめに
 
-副業先でReact Compilerの導入を進めました。同じリポジトリにある10アプリが対象です。
+副業先でReact Compilerの導入を進めました。
 
 ## React Hook Formとの互換性
 
