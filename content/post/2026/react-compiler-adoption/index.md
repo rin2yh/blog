@@ -14,7 +14,9 @@ tags = ['React']
 
 ### `watch()` を `useWatch()` に置き換えた
 
-React Compilerを有効化した後、一部の画面で不具合が見つかり、切り戻すことになりました。。。再導入に向けて既存の実装を見直したとき、React Hook Formの `watch()` が、React公式ドキュメントでメモ化と相性の悪いAPIとして挙げられていました。
+React Compilerを有効化した後、一部の画面で不具合が見つかり、切り戻すことになりました。。。
+
+最初に読んだReact Compilerの導入ガイドには、`watch()` の注意点が載っていなかったので、導入時はこの問題を知りませんでした。切り戻したあとに調べて、React公式のESLintルール `incompatible-library` の解説で見つけました。
 
 `watch()` は関数の参照が同じでも、フォームの状態によって異なる値を返します。`watch()` の戻り値を使い回すと、フォームの値を変えても、画面の表示は古い値のままになります。そこで、画面表示に使う値は `useWatch()` で購読するように変更しました。
 
@@ -94,6 +96,7 @@ React Hook Formには、`reset()` のあともフィールドの参照を保持�
 
 ## 参考文献
 
+- [React Compilerの導入ガイド](https://react.dev/learn/react-compiler/installation)
 - [React公式ドキュメント「incompatible-library」](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library)
 - [React公式ドキュメント「Incremental Adoption」](https://react.dev/learn/react-compiler/incremental-adoption)
 - [React Hook Form公式ドキュメント「reset」](https://react-hook-form.com/docs/useform/reset)
