@@ -14,9 +14,9 @@ tags = ['React']
 
 ### `watch()` を `useWatch()` に置き換えた
 
-React Compilerを有効化した後、一部の画面で不具合が見つかり、切り戻すことになりました。。。
+React Compilerを有効化した後、一部の画面で不具合が見つかり、導入を切り戻しました。最初に読んだReact公式の「Installation」には `watch()` の注意点が載っておらず、個人開発でもうまくいっていたので、驚きました。
 
-最初に読んだReact Compilerの導入ガイドには、`watch()` の注意点が載っていなかったので、導入時はこの問題を知りませんでした。切り戻したあとに調べて、React公式のESLintルール `incompatible-library` の解説で見つけました。
+再導入に向けて既存の実装を見直す中で、React公式のESLintルール `incompatible-library` の解説を読みました。そこには、`watch()` をメモ化すると表示が更新されなくなる例が載っていました。
 
 `watch()` は関数の参照が同じでも、フォームの状態によって異なる値を返します。`watch()` の戻り値を使い回すと、フォームの値を変えても、画面の表示は古い値のままになります。そこで、画面表示に使う値は `useWatch()` で購読するように変更しました。
 
@@ -98,7 +98,7 @@ React Compilerを有効にした状態で保存すると、次のような挙動
 
 ## 参考文献
 
-- [React Compilerの導入ガイド](https://react.dev/learn/react-compiler/installation)
+- [React公式ドキュメント「Installation」](https://react.dev/learn/react-compiler/installation)
 - [React公式ドキュメント「incompatible-library」](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library)
 - [React公式ドキュメント「Incremental Adoption」](https://react.dev/learn/react-compiler/incremental-adoption)
 - [React Hook Form公式ドキュメント「reset」](https://react-hook-form.com/docs/useform/reset)
