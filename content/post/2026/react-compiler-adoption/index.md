@@ -28,8 +28,6 @@ tags = ['React']
 
 一部の画面では、フォームの変更とあわせて、画面側の状態管理も修正しました。
 
-[React公式ドキュメント「incompatible-library」](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library)
-
 ### `"use no memo"` で保存後の入力が反映されない問題を回避した
 
 有効化したアプリの一部は、不具合が見つかって切り戻しました。再有効化に向けてフォームの動作を調べると、最初の編集と保存は成功しました。同じ画面で入力し直すと、入力欄の表示は変わりました。ただ、フォームが管理する値は更新されませんでした。「変更を破棄」の直後にも同じことが起きました。
@@ -69,8 +67,6 @@ function ExampleInput({
 
 さらに同じ呼び出し方を他のアプリから探し、4アプリの計22ファイルを修正しました。
 
-[React公式ドキュメント「Incremental Adoption」](https://react.dev/learn/react-compiler/incremental-adoption)
-
 このフォームの確認は、一度目の保存で終えると不具合を見逃します。同じ画面で値を変えてもう一度保存し、再読み込み後に二度目の値が残るところまで確認します。破棄の操作がある画面なら、破棄してから編集と保存をやり直す経路も確認します。どちらも普段の操作ですが、今回壊れたのは `reset()` を挟んだあとの入力でした。
 
 ## おわりに
@@ -78,3 +74,8 @@ function ExampleInput({
 React Compilerは導入できました。React Hook Formを使う箇所では`"use no memo"`で最適化を外すしかないケースが多く、すべてのコンポーネントに適用できたわけではありません。
 
 フォームをメモ化するために、動いている実装を無理に変えるほどのメリットは、今のところ感じていません。今回の導入で困った箇所については、当面は`"use no memo"`でよいと思っています。v8の対応が安定したら、アップデートして、最適化から外した箇所を見直したいです。
+
+## 参考文献
+
+- [React公式ドキュメント「incompatible-library」](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library)
+- [React公式ドキュメント「Incremental Adoption」](https://react.dev/learn/react-compiler/incremental-adoption)
