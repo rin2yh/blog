@@ -7,7 +7,7 @@ tags = ['React']
 
 ## はじめに
 
-副業先でReact Compilerの導入を進めました。
+副業先でReact Compilerを導入しました。やってみると意外と大変だったので、そのときの話を書きます。
 
 ## React Hook Formとの互換性
 
