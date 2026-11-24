@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 338" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">
+  <rect width="720" height="338" rx="16" fill="#f5f7fb"/>
+  <g fill="#172235">
+    <text x="360" y="40" font-weight="bold">保存または「変更を破棄」</text>
+    <text x="360" y="73">↓</text>
+    <text x="360" y="106">reset() でフィールドの登録が消える</text>
+  </g>
+  <path d="M360 120v18H188v19m172-19h172v19" fill="none" stroke="#65738b" stroke-width="2"/>
+  <rect x="26" y="157" width="324" height="154" rx="12" fill="#e4f4eb"/>
+  <rect x="370" y="157" width="324" height="154" rx="12" fill="#fae9e3"/>
+  <g fill="#172235">
+    <text x="188" y="193" font-weight="bold">register() を再実行</text>
+    <text x="188" y="234">フィールドが再登録される</text>
+    <text x="188" y="278">入力が値に反映される</text>
+    <text x="532" y="193" font-weight="bold">戻り値を再利用</text>
+    <text x="532" y="234">フィールドが再登録されない</text>
+    <text x="532" y="278">入力が値に反映されない</text>
+  </g>
+</svg>
