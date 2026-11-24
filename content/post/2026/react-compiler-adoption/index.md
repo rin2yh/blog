@@ -19,7 +19,14 @@ tags = ['React']
 
 `watch()` は同じ関数を呼んでも、フォームの内部状態に応じて違う値を返します。関数の参照が同じだからといって戻り値を使い回すと、入力を変えても表示が更新されません。React公式の `incompatible-library` ルールでも、このAPIが例に挙がっています。
 
-表示に使う値は `useWatch({ control, name: 'payoutMethod' })` で購読するようにしました。管理画面と制作ツールでは、フォームの変更とあわせて、画面側の状態管理も修正しました。制作ツールでは分析画面のフィルターやグラフも対象でした。
+表示に使う値は `useWatch()` で購読するようにしました。フィールドを1つに絞ると、変更は次のようになります。
+
+```diff
+- const value = watch('value');
++ const value = useWatch({ control, name: 'value' });
+```
+
+管理画面と制作ツールでは、フォームの変更とあわせて、画面側の状態管理も修正しました。制作ツールでは分析画面のフィルターやグラフも対象でした。
 
 [React公式ドキュメント「incompatible-library」](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library)
 
@@ -43,7 +50,37 @@ tags = ['React']
 
 該当するフォームは、保存や破棄のあとに `reset()` を呼んでいました。この実装では、`reset()` でフィールドの登録が消え、次のレンダー時に `register()` を呼ぶことで再登録していました。Compilerが `register()` の戻り値を再利用すると、呼び出しが省かれ、再登録も行われません。
 
-設定の編集画面では、親が `reset()` を呼び、子がpropsから受け取った `register()` を呼んでいました。そこで、実際に `register()` を呼ぶ子も含め、該当コンポーネントを `"use no memo"` で最適化対象から外しました。さらに同じ呼び出し方を他のアプリから探し、管理画面や制作ツールを含む4アプリの計22ファイルを修正しました。
+設定の編集画面では、親が `reset()` を呼び、子がpropsから受け取った `register()` を呼んでいました。そこで、実際に `register()` を呼ぶ子も含め、該当コンポーネントを `"use no memo"` で最適化対象から外しました。
+
+次の例では、親が `reset()` を呼び、子は渡された `register()` を使います。
+
+```tsx
+import { useForm, type UseFormRegister } from "react-hook-form";
+
+function ExampleForm() {
+  const { register, reset } = useForm({ defaultValues: { value: '' } });
+
+  return (
+    <form>
+      <ExampleInput register={register} />
+      <button type="button" onClick={() => reset()}>
+        リセット
+      </button>
+    </form>
+  );
+}
+
+function ExampleInput({
+  register,
+}: {
+  register: UseFormRegister<{ value: string }>;
+}) {
+  "use no memo";
+  return <input aria-label="値" {...register("value")} />;
+}
+```
+
+さらに同じ呼び出し方を他のアプリから探し、管理画面や制作ツールを含む4アプリの計22ファイルを修正しました。
 
 [React公式ドキュメント「Incremental Adoption」](https://react.dev/learn/react-compiler/incremental-adoption)
 
